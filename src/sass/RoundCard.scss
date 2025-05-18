@@ -1,0 +1,17 @@
+.round-card {
+    transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
+    cursor: pointer;
+
+    &.active {
+        border-left: 4px solid var(--mantine-color-success-6);
+    }
+
+    &.past {
+        border-left: 4px solid var(--mantine-color-danger-6);
+    }
+
+    &:hover {
+        transform: translateY(-4px);
+        filter: brightness(1.1);
+    }
+}

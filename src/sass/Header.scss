@@ -1,0 +1,16 @@
+.nav-group {
+    display: flex;
+    width: 95%;
+    height: auto;
+    align-items: center;
+    margin: 0 auto;
+    justify-content: space-between;
+
+    .logo-image {
+        transition: transform 0.2s ease-in-out;
+
+        &:hover {
+            transform: scale(1.1);
+        }
+    }
+}

@@ -1,0 +1,38 @@
+{
+    "compilerOptions": {
+        "target": "es2020",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "baseUrl": "./",
+        "outDir": "../dist",
+        "strict": true,
+        "noImplicitAny": false,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true,
+        "typeRoots": [
+            "../node_modules/@types",
+            "../interfaces"
+        ],
+        "paths": {
+            "@controllers/*": ["./controllers/*"],
+            "@routers/*": ["./routers/*"],
+            "@models/*": ["./models/*"],
+            "@interfaces/*": ["../interfaces/*"],
+            "@helpers/*": ["./helpers/*"],
+            "@middlewares/*": ["./middlewares/*"],
+            "@services/*": ["./services/*"],
+        }
+    },
+    "include": [".", "../interfaces"],
+    "exclude": [
+        "../src",
+        "node_modules",
+        "dist",
+        "build",
+        "public/assets",
+        "**/*.test.ts",
+        "**/*.spec.ts"
+    ],
+}
