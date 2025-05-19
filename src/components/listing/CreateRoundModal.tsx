@@ -6,6 +6,8 @@ import useStaff from "../../hooks/useUsers";
 import { IUser } from "../../../interfaces/User";
 import { toUTCDateOnly } from "../../../utils/common";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { loggedInUserAtom } from "../../store/atoms";
+import { useAtom } from "jotai";
 
 interface IProps {
     opened: boolean;
@@ -13,6 +15,8 @@ interface IProps {
 }
 
 export default function CreateRoundModal({ opened, onClose }: IProps) {
+    const [loggedInUser] = useAtom(loggedInUserAtom);
+
     const createRoundMutation = useCreateRound();
     const { data: staff } = useStaff();
 
@@ -50,6 +54,8 @@ export default function CreateRoundModal({ opened, onClose }: IProps) {
             console.error("Error creating round:", error);
         }
     };
+
+    if (!loggedInUser?.isAdmin) return null;
 
     return (
         <Modal opened={opened} onClose={onClose} title="Create Round">
