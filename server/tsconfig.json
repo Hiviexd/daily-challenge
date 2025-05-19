@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "es2020",
-        "module": "commonjs",
+        "module": "ESNext",
         "moduleResolution": "node",
         "baseUrl": "./",
         "outDir": "../dist",
@@ -16,13 +16,14 @@
             "../interfaces"
         ],
         "paths": {
-            "@controllers/*": ["./controllers/*"],
-            "@routers/*": ["./routers/*"],
-            "@models/*": ["./models/*"],
+            "@controllers/*": ["controllers/*"],
+            "@routers/*": ["routers/*"],
+            "@models/*": ["models/*"],
             "@interfaces/*": ["../interfaces/*"],
-            "@helpers/*": ["./helpers/*"],
-            "@middlewares/*": ["./middlewares/*"],
-            "@services/*": ["./services/*"],
+            "@helpers/*": ["helpers/*"],
+            "@middlewares/*": ["middlewares/*"],
+            "@services/*": ["services/*"],
+            "@utils/*": ["../utils/*"]
         }
     },
     "include": [".", "../interfaces"],

@@ -3,11 +3,16 @@ import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import session from "express-session";
 import MongoStoreSession from "connect-mongo";
-import config from "../config.json";
 import "express-async-errors";
-import { logger } from "./middlewares/logger";
+import { logger } from "@middlewares/logger";
 import path from "path";
-import utils from "../utils";
+import utils from "@utils/index";
+
+// Load config
+import { loadJson } from "@utils/config";
+import { IConfig } from "@interfaces/Config";
+
+const config = loadJson<IConfig>("../config.json");
 
 // Return the "new" updated object by default when doing findByIdAndUpdate
 mongoose.plugin((schema) => {
@@ -67,9 +72,9 @@ app.use(
 );
 
 // routes
-import authRouter from "./routers/authRouter";
-import usersRouter from "./routers/usersRouter";
-import roundRouter from "./routers/roundRouter";
+import authRouter from "@routers/authRouter";
+import usersRouter from "@routers/usersRouter";
+import roundRouter from "@routers/roundRouter";
 
 // setup api routes
 const apiRouter = express.Router();
@@ -86,6 +91,12 @@ app.use("/api/*", (req, res) => {
 });
 
 // serve production frontend
+import { fileURLToPath } from "url";
+
+// At top of your file
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../../dist")));
 

@@ -2,17 +2,17 @@
     "name": "tournament-tracker",
     "private": true,
     "version": "0.0.0",
+    "type": "module",
     "scripts": {
         "dev": "run-p -rl dev-server dev-client",
         "dev-client": "cross-env NODE_ENV=development vite --mode development",
-        "dev-server": "cross-env NODE_ENV=development ts-node-dev --respawn --transpile-only --no-notify --project server/tsconfig.json server/app.ts",
+        "dev-server": "cross-env NODE_ENV=development tsx watch --tsconfig server/tsconfig.json server/app.ts",
         "prod": "cross-env NODE_ENV=production PORT=8118 node ./dist/server/app.js",
         "build": "yarn build-client && yarn build-server",
         "build-client": "vite build",
-        "build-server": "cross-env NODE_ENV=production tsc --project server/tsconfig.json",
+        "build-server": "tsup && cpx config.json dist",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-        "preview": "vite preview",
-        "tsc": "tsc --noEmit true --project server/tsconfig.json"
+        "preview": "vite preview"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.6.0",
@@ -54,6 +54,7 @@
         "@typescript-eslint/eslint-plugin": "^7.2.0",
         "@typescript-eslint/parser": "^7.2.0",
         "@vitejs/plugin-react": "^4.2.1",
+        "cpx": "^1.5.0",
         "eslint": "^8.57.0",
         "eslint-plugin-react-hooks": "^4.6.0",
         "eslint-plugin-react-refresh": "^0.4.6",
@@ -63,7 +64,8 @@
         "postcss-preset-mantine": "^1.15.0",
         "postcss-simple-vars": "^7.0.1",
         "sass": "^1.76.0",
-        "ts-node-dev": "^2.0.0",
+        "tsup": "^8.5.0",
+        "tsx": "^4.19.4",
         "typescript": "^5.2.2",
         "vite": "^5.2.0"
     }
