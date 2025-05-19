@@ -121,7 +121,7 @@ app.use((err, req, res, next) => {
 });
 
 // server setup
-const port = process.env.PORT || "3000";
+const port = process.env.PORT || "3113";
 const environmentString = process.env.NODE_ENV || "⚠ Unknown";
 const environmentStyled = process.env.NODE_ENV
     ? utils.consoleStyles(process.env.NODE_ENV, ["yellow", "underline"])
