@@ -6,11 +6,41 @@
     margin: 0 1rem;
     justify-content: space-between;
 
-    .logo-image {
-        transition: transform 0.2s ease-in-out;
+    .logo-flip-container {
+        perspective: 600px;
+        display: inline-block;
+        height: 45px;
+    }
 
-        &:hover {
-            transform: scale(1.1);
-        }
+    .logo-flip-card {
+        width: 45px;
+        height: 45px;
+        position: relative;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-style: preserve-3d;
+    }
+
+    .logo-flip-container:hover .logo-flip-card {
+        transform: rotateY(180deg);
+    }
+
+    .logo-image-front,
+    .logo-image-back {
+        position: absolute;
+        width: 45px;
+        height: 45px;
+        top: 0;
+        left: 0;
+        backface-visibility: hidden;
+    }
+
+    .logo-image-back {
+        transform: rotateY(180deg);
+    }
+
+    /* Navbar avatar hover effect */
+    .user-avatar {
+        transition: border 0.2s ease;
+        border: 2px solid transparent;
     }
 }

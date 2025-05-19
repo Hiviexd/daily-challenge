@@ -15,7 +15,12 @@ export default function Header() {
         <AppShell.Header>
             <Group h="100%" px="xl">
                 <div className="nav-group">
-                    <Image src="/assets/logo-main.svg" alt="Logo" h={45} className="logo-image" />
+                    <div className="logo-flip-container">
+                        <div className="logo-flip-card">
+                            <Image src="/assets/logo-main.svg" alt="Logo" h={45} className="logo-image-front" />
+                            <Image src="/assets/logo-decidious.svg" alt="Logo" h={45} className="logo-image-back" />
+                        </div>
+                    </div>
                     <UserMenu user={user} />
                 </div>
             </Group>
