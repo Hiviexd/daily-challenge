@@ -1,4 +1,5 @@
 import ListingPage from "@pages/ListingPage";
+import { Navigate } from "react-router-dom";
 
 interface RouteConfig {
     path: string;
@@ -12,16 +13,11 @@ const routes: RouteConfig[] = [
         page: <ListingPage />,
         permissions: [],
     },
-    /*{
-        path: "/admin",
-        page: <AdminPage />,
-        permissions: ["admin"],
-    },*/
-    /*{
+    {
         path: "*",
-        page: <NotFoundPage />,
+        page: <Navigate to="/" />,
         permissions: [],
-    },*/
+    },
 ];
 
 export default routes;
