@@ -4,7 +4,18 @@
     "osuApp": {
         "id": 0,
         "secret": "",
-        "redirect": "http://localhost:8088/api/auth/callback"
+        "redirect": "http://localhost:8118/api/auth/callback"
     },
-    "devs" : []
+    "discord": {
+        "webhooks": {
+            "main": {
+                "id": "",
+                "token": ""
+            },
+            "dev": {
+                "id": "",
+                "token": ""
+            }
+        }
+    }
 }
