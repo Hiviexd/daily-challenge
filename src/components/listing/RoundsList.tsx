@@ -1,6 +1,6 @@
 import { ScrollArea, Stack, Skeleton, Text } from "@mantine/core";
 import { useAtom } from "jotai";
-import { roundsAtom, selectedRoundAtom } from "@store/atoms";
+import { roundsAtom, selectedRoundIdAtom } from "@store/atoms";
 import { useInfiniteRounds } from "@hooks/useRounds";
 import RoundCard from "@components/listing/RoundCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -21,7 +21,7 @@ function EmptyState({ hasError }: { hasError: boolean }) {
 
 export default function RoundsList() {
     const [rounds] = useAtom(roundsAtom);
-    const [selectedRound, setSelectedRound] = useAtom(selectedRoundAtom);
+    const [selectedRoundId, setSelectedRoundId] = useAtom(selectedRoundIdAtom);
     const { fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } = useInfiniteRounds();
 
     const loadingState = () => {
@@ -56,8 +56,8 @@ export default function RoundsList() {
                                 className="round-card-animate">
                                 <RoundCard
                                     round={round}
-                                    selected={selectedRound && selectedRound.id === round.id}
-                                    onClick={() => setSelectedRound(round)}
+                                    selected={selectedRoundId === round.id}
+                                    onClick={() => setSelectedRoundId(round.id)}
                                 />
                             </div>
                         ))}

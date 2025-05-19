@@ -11,4 +11,4 @@ export const loggedInUserAtom = atom<IUser | null>(null);
 
 /* Rounds */
 export const roundsAtom = atom<IRound[]>([]);
-export const selectedRoundAtom = atom<IRound | null>(null);
+export const selectedRoundIdAtom = atom<string | null>(null);

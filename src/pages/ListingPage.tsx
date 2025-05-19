@@ -1,7 +1,7 @@
 import { AppShell, TextInput, Stack, Paper, Divider, Button } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useDisclosure } from "@mantine/hooks";
-import { selectedRoundAtom, roundsAtom, loggedInUserAtom } from "@store/atoms";
+import { selectedRoundIdAtom, roundsAtom, loggedInUserAtom } from "@store/atoms";
 import { useAtom } from "jotai";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -14,16 +14,18 @@ export default function ListingPage() {
     const [loggedInUser] = useAtom(loggedInUserAtom);
     const [search, setSearch] = useState("");
 
-    const [selectedRound, setSelectedRound] = useAtom(selectedRoundAtom);
+    const [selectedRoundId, setSelectedRoundId] = useAtom(selectedRoundIdAtom);
     const [rounds] = useAtom(roundsAtom);
 
-    // Set selected round to the active round on initial load
+    const selectedRound = rounds.find((r) => r.id === selectedRoundId) ?? null;
+
+    // Set selected round ID to the active round on initial load
     useEffect(() => {
-        if (rounds.length > 0 && !selectedRound) {
+        if (rounds.length > 0 && !selectedRoundId) {
             const active = rounds.find((r) => r.isActive);
-            if (active) setSelectedRound(active);
+            if (active) setSelectedRoundId(active.id);
         }
-    }, [rounds, selectedRound, setSelectedRound]);
+    }, [rounds, selectedRoundId, setSelectedRoundId]);
 
     const [createRoundModalOpen, { open: openCreateRoundModal, close: closeCreateRoundModal }] = useDisclosure(false);
 
