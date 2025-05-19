@@ -58,14 +58,24 @@
 :root[data-mantine-color-scheme="dark"] {
     --mantine-color-body: var(--mantine-color-primary-11) !important;
     --mantine-color-text: var(--mantine-color-white) !important;
+    --mantine-color-primary-filled: var(--mantine-color-primary-9) !important;
+    --mantine-color-primary-filled-hover: darken(var(--mantine-color-primary-9), 10%) !important;
 
     .mantine-Menu-dropdown {
         background-color: var(--mantine-color-primary-11) !important;
     }
 
+    .mantine-Menu-item {
+        text-decoration: none !important;
+    }
+
     /* Notifications */
+    .mantine-Notification-title {
+        font-weight: 700 !important;
+    }
+
     .mantine-Notification-description {
-        color: var(--mantine-color-gray-4) !important;
+        color: var(--mantine-color-white) !important;
     }
 
     .mantine-Notification-root {

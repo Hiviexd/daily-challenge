@@ -1,37 +1,40 @@
 import { Card, Text, Group } from "@mantine/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserLink from "../common/UserLink";
-import { IUser } from "@interfaces/User";
+import { IRound } from "../../../interfaces/Round";
 
 interface IProps {
-    title: string;
-    isPublished: boolean;
-    assignedUser: { username: string };
-    theme?: string;
-    isActive: boolean;
-    isPast: boolean;
+    round: IRound;
+    selected?: boolean | null;
+    onClick?: () => void;
 }
 
-export default function RoundCard({ title, isPublished, assignedUser, theme, isActive, isPast }: IProps) {
+export default function RoundCard({ round, selected = false, onClick }: IProps) {
     return (
         <Card
             radius="md"
             p="md"
-            className={`round-card ${isActive ? "active" : isPast ? "past" : ""}`}>
+            className={`round-card ${round.isActive ? "active" : round.isPast ? "past" : ""}${
+                selected ? " selected" : ""
+            }`}
+            onClick={onClick}
+            style={{ cursor: onClick ? "pointer" : undefined }}>
             <Group gap="xs" align="center" mb={4}>
-                {isPublished ? (
+                {round.isPublished ? (
                     <FontAwesomeIcon icon="eye" color="var(--mantine-color-info-6)" />
                 ) : (
                     <FontAwesomeIcon icon="eye-slash" color="var(--mantine-color-gray-6)" />
                 )}
                 <Text fw={700} size="md" truncate>
-                    {title}
+                    {round.title}
                 </Text>
             </Group>
             <Text size="sm" c="dimmed" mb={2}>
-                by <UserLink user={assignedUser as IUser} />
+                by <UserLink user={round.assignedUser} />
             </Text>
-            <Text size="sm" fs="italic">{theme || "No Theme"}</Text>
+            <Text size="sm" fs="italic">
+                {round.theme || "No Theme"}
+            </Text>
         </Card>
     );
 }

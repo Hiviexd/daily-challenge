@@ -69,12 +69,14 @@ app.use(
 // routes
 import authRouter from "./routers/authRouter";
 import usersRouter from "./routers/usersRouter";
+import roundRouter from "./routers/roundRouter";
 
 // setup api routes
 const apiRouter = express.Router();
 
 apiRouter.use("/auth", authRouter);
 apiRouter.use("/users", usersRouter);
+apiRouter.use("/rounds", roundRouter);
 
 app.use("/api", apiRouter);
 

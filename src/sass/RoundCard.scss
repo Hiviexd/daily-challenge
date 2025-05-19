@@ -1,6 +1,26 @@
+@keyframes roundCardPop {
+    0% {
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.round-card-animate {
+    opacity: 0;
+    animation-fill-mode: both;
+    animation-name: roundCardPop;
+}
+
 .round-card {
-    transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    background: var(--mantine-color-body);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 
     &.active {
         border-left: 4px solid var(--mantine-color-success-6);
@@ -10,8 +30,18 @@
         border-left: 4px solid var(--mantine-color-danger-6);
     }
 
+    &.selected,
+    &.selected:hover {
+        background: rgba(var(--mantine-primary-color-rgb), 0.08);
+        box-shadow: 0 4px 16px rgba(var(--mantine-primary-color-rgb), 0.10), 0 1.5px 8px rgba(0, 0, 0, 0.08);
+        transform: scale(1.03);
+        filter: brightness(1.2);
+        z-index: 1;
+    }
+
     &:hover {
         transform: translateY(-4px);
-        filter: brightness(1.1);
+        filter: brightness(1.08);
+        box-shadow: 0 6px 24px rgba(var(--mantine-primary-color-rgb), 0.13), 0 2px 12px rgba(0, 0, 0, 0.10);
     }
 }

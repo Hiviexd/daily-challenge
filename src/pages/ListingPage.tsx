@@ -1,134 +1,35 @@
-import { AppShell, Box, TextInput, Stack, Paper, Divider } from "@mantine/core";
+import { AppShell, TextInput, Stack, Paper, Divider, Button, Skeleton, Text } from "@mantine/core";
 import { useCallback, useState, useEffect } from "react";
-import { useDebouncedValue } from "@mantine/hooks";
+import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
-import { useSetAtom } from "jotai";
-import { roundsAtom, selectedRoundAtom } from "../store/atoms";
+import { selectedRoundAtom } from "../store/atoms";
+import { useAtom } from "jotai";
+import useRounds from "../hooks/useRounds";
 
 // components
 import Header from "../components/common/Header";
-import RoundCard from "@components/listing/RoundCard";
-import { IRound } from "@interfaces/Round";
-// import { IRound } from "@interfaces/Round";
-// import { IUser } from "@interfaces/User";
-// import { IBeatmap } from "@interfaces/Beatmap";
+import RoundCard from "../components/listing/RoundCard";
+import CreateRoundModal from "../components/listing/CreateRoundModal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function ListingPage() {
     const [search, setSearch] = useState("");
     const [debouncedSearch] = useDebouncedValue(search, 300);
     const [cursor, setCursor] = useState<string | null>(null);
 
-    const [rounds, setRounds] = useState<IRound[]>([]);
-    const [selectedRound, setSelectedRound] = useState<IRound | null>(null);
+    const [selectedRound, setSelectedRound] = useAtom(selectedRoundAtom);
 
-    // Dummy data for rounds
-    const dummyRounds = [
-        {
-            assignedUser: {
-                osuId: 1,
-                username: "UserOne",
-                groups: ["user"],
-                avatarUrl: "https://dummyimage.com/100x100/000/fff&text=U1",
-                osuProfileUrl: "https://osu.ppy.sh/users/1",
-                hasAccess: true,
-                isStaff: false,
-                isSpectator: false,
-                isAdmin: false,
-            },
-            beatmaps: [
-                {
-                    beatmapId: 101,
-                    beatmapsetId: 201,
-                    artist: "Artist A",
-                    title: "Song A",
-                    version: "Hard",
-                    cover: "https://dummyimage.com/200x100/000/fff&text=BM1",
-                    rankedDate: new Date(),
-                    creator: { osuId: 1, username: "UserOne" },
-                },
-            ],
-            startDate: new Date(),
-            endDate: new Date(Date.now() + 86400000),
-            theme: "Theme A",
-            isPublished: true,
-            isActive: true,
-            isUpcoming: false,
-            isPast: false,
-            title: "May 15 — May 21 2025",
-        },
-        {
-            assignedUser: {
-                osuId: 2,
-                username: "UserTwo",
-                groups: ["staff"],
-                avatarUrl: "https://dummyimage.com/100x100/000/fff&text=U2",
-                osuProfileUrl: "https://osu.ppy.sh/users/2",
-                hasAccess: true,
-                isStaff: true,
-                isSpectator: false,
-                isAdmin: false,
-            },
-            beatmaps: [
-                {
-                    beatmapId: 102,
-                    beatmapsetId: 202,
-                    artist: "Artist B",
-                    title: "Song B",
-                    version: "Insane",
-                    cover: "https://dummyimage.com/200x100/000/fff&text=BM2",
-                    rankedDate: new Date(),
-                    creator: { osuId: 2, username: "UserTwo" },
-                },
-            ],
-            startDate: new Date(),
-            endDate: new Date(Date.now() + 172800000),
-            theme: "Theme B",
-            isPublished: false,
-            isActive: false,
-            isUpcoming: true,
-            isPast: false,
-            title: "May 15 — May 21 2025",
-        },
-        {
-            assignedUser: {
-                osuId: 3,
-                username: "UserThree",
-                groups: ["admin"],
-                avatarUrl: "https://dummyimage.com/100x100/000/fff&text=U3",
-                osuProfileUrl: "https://osu.ppy.sh/users/3",
-                hasAccess: true,
-                isStaff: false,
-                isSpectator: false,
-                isAdmin: true,
-            },
-            beatmaps: [
-                {
-                    beatmapId: 103,
-                    beatmapsetId: 203,
-                    artist: "Artist C",
-                    title: "Song C",
-                    version: "Expert",
-                    cover: "https://dummyimage.com/200x100/000/fff&text=BM3",
-                    rankedDate: new Date(Date.now() - 604800000),
-                    creator: { osuId: 3, username: "UserThree" },
-                },
-            ],
-            startDate: new Date(Date.now() - 1209600000), // 14 days ago
-            endDate: new Date(Date.now() - 604800000), // 7 days ago
-            theme: "Theme C",
-            isPublished: true,
-            isActive: false,
-            isUpcoming: false,
-            isPast: true,
-            title: "May 15 — May 21 2025",
-        },
-    ] as any;
+    const { data: rounds, isLoading: isLoadingRounds, isError: isErrorRounds } = useRounds();
 
-    // Preload dummy data on mount
+    const [createRoundModalOpen, { open: openCreateRoundModal, close: closeCreateRoundModal }] = useDisclosure(false);
+
+    // Set selected round to the active round on initial load
     useEffect(() => {
-        setRounds(dummyRounds);
-        setSelectedRound(dummyRounds[0]);
-    }, []);
+        if (rounds && rounds.length > 0 && !selectedRound) {
+            const active = rounds.find((r) => r.isActive);
+            if (active) setSelectedRound(active);
+        }
+    }, [rounds, selectedRound, setSelectedRound]);
 
     const handleScroll = useCallback((event: React.UIEvent<HTMLDivElement>) => {
         const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
@@ -138,6 +39,24 @@ export default function ListingPage() {
         }
     }, []);
 
+    const loadingState = () => {
+        return Array.from({ length: 10 }).map((_, index) => <Skeleton key={index} height={100} width="100%" />);
+    };
+
+    const EmptyState = ({ hasError }: { hasError: boolean }) => {
+        return (
+            <Stack align="center" justify="center" h={200}>
+                <FontAwesomeIcon icon="poll-h" size="2x" style={{ opacity: 0.5 }} />
+                <Text size="lg" c="dimmed">
+                    {hasError ? "Error loading rounds" : "No rounds found..."}
+                </Text>
+                <Text size="sm" c="dimmed">
+                    {hasError ? `Try refreshing the page.` : "Try adjusting your filters."}
+                </Text>
+            </Stack>
+        );
+    };
+
     return (
         <AppShell
             padding="md"
@@ -146,6 +65,7 @@ export default function ListingPage() {
                 width: 300,
                 breakpoint: "sm",
             }}>
+            <CreateRoundModal opened={createRoundModalOpen} onClose={closeCreateRoundModal} />
             <AppShell.Header>
                 <Header />
             </AppShell.Header>
@@ -157,11 +77,30 @@ export default function ListingPage() {
                         onChange={(e) => setSearch(e.currentTarget.value)}
                         leftSection={<IconSearch size={16} />}
                     />
+                    <Button onClick={openCreateRoundModal}>Create Round</Button>
                     <Divider />
                     <Stack style={{ flex: 1 }} onScroll={handleScroll}>
-                        {rounds.map((round) => (
-                            <RoundCard key={round.id} {...round} />
-                        ))}
+                        {isLoadingRounds ? (
+                            loadingState()
+                        ) : isErrorRounds || rounds?.length === 0 ? (
+                            <EmptyState hasError={isErrorRounds} />
+                        ) : (
+                            rounds?.map((round, idx) => (
+                                <div
+                                    key={round.id}
+                                    style={{
+                                        animation: "roundCardPop 0.4s cubic-bezier(0.4,0,0.2,1) both",
+                                        animationDelay: `${idx * 60}ms`,
+                                    }}
+                                    className="round-card-animate">
+                                    <RoundCard
+                                        round={round}
+                                        selected={selectedRound && selectedRound.id === round.id}
+                                        onClick={() => setSelectedRound(round)}
+                                    />
+                                </div>
+                            ))
+                        )}
                     </Stack>
                 </Stack>
             </AppShell.Navbar>
@@ -177,7 +116,7 @@ export default function ListingPage() {
                         alignItems: "center",
                         justifyContent: "center",
                     }}>
-                    Round Display
+                    Selected Round: {selectedRound?.title}
                 </Paper>
             </AppShell.Main>
         </AppShell>

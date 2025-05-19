@@ -94,5 +94,63 @@ export const theme = createTheme({
                 },
             },
         },
+        Tooltip: {
+            defaultProps: {
+                withArrow: true,
+                color: "primary.11",
+            },
+            styles: {
+                tooltip: {
+                    border: "1px solid var(--mantine-color-primary-6)",
+                    boxShadow: "0 4px 4px rgba(0, 0, 0, 0.1)",
+                    filter: "drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1))",
+                },
+                arrow: {
+                    border: "1px solid var(--mantine-color-primary-6)",
+                    filter: "drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1))",
+                },
+            },
+        },
+        Button: {
+            styles: {
+                root: {
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                        transform: "translateY(-2px)",
+                    },
+                },
+            },
+        },
+        ActionIcon: {
+            styles: {
+                root: {
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                        transform: "translateY(-2px)",
+                    },
+                },
+            },
+        },
+        Notification: {
+            styles: {
+                root: {
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                },
+            },
+        },
+        Select: {
+            defaultProps: {
+                withScrollArea: false,
+                comboboxProps: { transitionProps: { transition: "scale-y", duration: 150 } },
+            },
+            styles: {
+                dropdown: {
+                    maxHeight: 200,
+                    overflowY: "auto",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+
+                },
+            },
+        },
     },
 });

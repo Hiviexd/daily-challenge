@@ -44,7 +44,6 @@ async function isLoggedIn(req: Request, res: Response, next: NextFunction) {
 
         utils.setSession(req.session, response);
     }
-
     res.locals!.user = user;
     next();
 }

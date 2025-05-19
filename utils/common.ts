@@ -58,3 +58,12 @@ export function formatGameMode(mode: string) {
             return mode;
     }
 }
+
+/**
+ * Converts a JS Date to a UTC-only date (midnight UTC)
+ * @param date The date to normalize
+ * @returns Date at 00:00:00 UTC
+ */
+export function toUTCDateOnly(date: Date) {
+    return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+}
