@@ -1,14 +1,14 @@
 import { AppShell, TextInput, Stack, Paper, Divider, Button } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useDisclosure } from "@mantine/hooks";
-import { selectedRoundAtom, roundsAtom, loggedInUserAtom } from "../store/atoms";
+import { selectedRoundAtom, roundsAtom, loggedInUserAtom } from "@store/atoms";
 import { useAtom } from "jotai";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // components
-import Header from "../components/common/Header";
-import CreateRoundModal from "../components/listing/CreateRoundModal";
-import RoundsList from "../components/listing/RoundsList";
+import Header from "@components/common/Header";
+import CreateRoundModal from "@components/listing/CreateRoundModal";
+import RoundsList from "@components/listing/RoundsList";
 
 export default function ListingPage() {
     const [loggedInUser] = useAtom(loggedInUserAtom);

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useLoggedInUser from "../hooks/useLoggedInUser";
+import useLoggedInUser from "@hooks/useLoggedInUser";
 import { useAtom } from "jotai";
-import { loggedInUserAtom, redirectAtom } from "../store/atoms";
-import utils from "../../utils";
+import { loggedInUserAtom, redirectAtom } from "@store/atoms";
+import utils from "@utils/index";
 import { notifications } from "@mantine/notifications";
-import Loading from "../components/common/Loading";
+import Loading from "@components/common/Loading";
 
 interface IPropTypes {
     permissions?: string[];

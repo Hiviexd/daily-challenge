@@ -8,18 +8,18 @@ const queryClient = new QueryClient();
 
 // Mantine
 import { MantineProvider } from "@mantine/core";
-import { theme } from "./themes/main";
+import { theme } from "@themes/main";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/dates/styles.css";
-import "./sass/app.scss";
+import "@sass/app.scss";
 
 // Layout
-import AuthRouter from "./base/AuthRouter";
+import AuthRouter from "@base/AuthRouter";
 
 // Fontawesome icons
-import loadIcons from "./themes/icons";
+import loadIcons from "@themes/icons";
 loadIcons();
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

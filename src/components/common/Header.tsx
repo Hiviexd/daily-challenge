@@ -1,12 +1,12 @@
 // state
 import { useAtom } from "jotai";
-import { loggedInUserAtom } from "../../store/atoms";
+import { loggedInUserAtom } from "@store/atoms";
 
 // Mantine
 import { AppShell, Group, Image } from "@mantine/core";
 
 // components
-import UserMenu from "./header/UserMenu";
+import UserMenu from "@components/common/header/UserMenu";
 
 export default function Header() {
     const [user] = useAtom(loggedInUserAtom);

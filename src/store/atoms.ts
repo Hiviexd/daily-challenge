@@ -1,6 +1,6 @@
 import { atom } from "jotai";
-import { IUser } from "../../interfaces/User";
-import { IRound } from "../../interfaces/Round";
+import { IUser } from "@interfaces/User";
+import { IRound } from "@interfaces/Round";
 
 /* Base */
 export const loadingAtom = atom(true);

@@ -1,4 +1,4 @@
-import ListingPage from "../pages/ListingPage";
+import ListingPage from "@pages/ListingPage";
 
 interface RouteConfig {
     path: string;

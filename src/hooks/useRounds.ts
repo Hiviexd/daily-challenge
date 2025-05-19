@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
-import { roundsAtom } from "../store/atoms";
-import utils from "../../utils";
-import { IRound } from "../../interfaces/Round";
+import { roundsAtom } from "@store/atoms";
+import utils from "@utils/index";
+import { IRound } from "@interfaces/Round";
 import { useEffect } from "react";
 
 export default function useRounds() {

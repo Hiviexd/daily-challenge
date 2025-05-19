@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IUser } from "../interfaces/User";
+import { IUser } from "@interfaces/User";
 import { notifications } from "@mantine/notifications";
 // import * as d3 from "d3";
 

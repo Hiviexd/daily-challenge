@@ -1,4 +1,4 @@
-import { IOsuAuthResponse, IBeatmapWithNotes } from "../interfaces/OsuApi";
+import { IOsuAuthResponse } from "@interfaces/OsuApi";
 import moment from "moment";
 
 export function setSession(session, response: IOsuAuthResponse) {
@@ -46,92 +46,10 @@ export function discordTimestamp(date: Date, type: DiscordTimestampType = "relat
     return `<t:${Math.floor(date.getTime() / 1000)}:${types[type]}>`;
 }
 
-/**
- * Validates a MongoDB ObjectId
- * @param id ID to validate
- */
-export function isValidMongoId(id: string): boolean {
-    return /^[0-9a-fA-F]{24}$/.test(id);
-}
-
-/**
- * Truncates a filename to a certain length
- * @param filename Filename to truncate
- * @param maxLength Maximum length of the filename (defaults to `30`)
- */
-export function truncateFilename(filename: string, maxLength: number = 30): string {
-    if (filename.length <= maxLength) return filename;
-
-    const extension = filename.includes(".") ? filename.split(".").pop()! : "";
-    const nameWithoutExt = filename.substring(0, filename.lastIndexOf("."));
-    const truncatedName = nameWithoutExt.substring(0, maxLength - extension.length - 3);
-
-    return `${truncatedName}[...]${extension ? "." + extension : ""}`;
-}
-
-export function validateOsuProfileLink(input: string): string | null {
-    const urlPattern = /^(?:https?:\/\/)?osu\.ppy\.sh\/users\/([\w\-[\]]+)\/?$/i;
-
-    const urlMatch = input.match(urlPattern);
-
-    if (urlMatch) {
-        const value = urlMatch[1];
-        return value;
-    }
-
-    return null;
-}
-
-/** * Delay execution for specified milliseconds */
-export const delay = (ms: number): Promise<void> => {
+/** * Sleep for specified milliseconds */
+export const sleep = (ms: number): Promise<void> => {
     return new Promise((resolve) => setTimeout(resolve, ms));
 };
-
-/**
- * Sanitizes user input string into a set of beatmap IDs
- * @param input The input string to sanitize
- * @returns A set of beatmap IDs
- */
-export function sanitizeBeatmapInput(input: string): Set<number> {
-    const ids = new Set<number>();
-
-    // Remove mode-specific tags
-    const cleanInput = input.replace(/#(?:osu|taiko|fruits|mania)/g, "");
-
-    // Split by any combination of delimiters (newlines, commas, spaces, tabs)
-    const parts = cleanInput.split(/[\n,\s\t]+/).filter((part) => part.length > 0);
-
-    for (const part of parts) {
-        try {
-            // Extract ID from URL or use the part directly
-            let processedPart = part;
-            if (part.includes("/")) {
-                processedPart = part.split("/").pop() || "";
-            }
-
-            const id = parseInt(processedPart);
-            if (!isNaN(id)) {
-                ids.add(id);
-            }
-        } catch {
-            // Skip invalid parts instead of returning empty set
-            continue;
-        }
-    }
-
-    return ids;
-}
-
-/**
- * Sorts beatmaps by their status
- * * Order: graveyard -> pending -> loved -> approved -> qualified -> ranked
- * @param beatmaps Beatmaps to sort
- * @returns Sorted beatmaps
- */
-export function sortBeatmapsByStatus(beatmaps: IBeatmapWithNotes[]) {
-    const statusOrder = ["graveyard", "pending", "loved", "approved", "qualified", "ranked"];
-    return beatmaps.sort((a, b) => statusOrder.indexOf(a.beatmapset.status) - statusOrder.indexOf(b.beatmapset.status));
-}
 
 /**
  * Sets a date to noon (12:00:00)

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import utils from "../../utils";
+import utils from "@utils/index";
 
 export default function useLoggedInUser() {
     return useQuery({

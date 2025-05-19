@@ -1,8 +1,8 @@
 import { ScrollArea, Stack, Skeleton, Text } from "@mantine/core";
 import { useAtom } from "jotai";
-import { roundsAtom, selectedRoundAtom } from "../../store/atoms";
-import { useInfiniteRounds } from "../../hooks/useRounds";
-import RoundCard from "./RoundCard";
+import { roundsAtom, selectedRoundAtom } from "@store/atoms";
+import { useInfiniteRounds } from "@hooks/useRounds";
+import RoundCard from "@components/listing/RoundCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function EmptyState({ hasError }: { hasError: boolean }) {

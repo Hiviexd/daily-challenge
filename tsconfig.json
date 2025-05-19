@@ -27,10 +27,15 @@
     /* Paths */
     "baseUrl": "./",
     "paths": {
-        "@components/*": ["src/components/*"],
-        "@pages/*": ["src/pages/*"],
-        "@store/*": ["src/store/*"],
         "@interfaces/*": ["interfaces/*"],
+        "@base/*": ["src/base/*"],
+        "@components/*": ["src/components/*"],
+        "@hooks/*": ["src/hooks/*"],
+        "@pages/*": ["src/pages/*"],
+        "@sass/*": ["src/sass/*"],
+        "@store/*": ["src/store/*"],
+        "@themes/*": ["src/themes/*"],
+        "@utils/*": ["utils/*"]
     }
   },
   "include": ["src"],

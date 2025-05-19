@@ -1,5 +1,5 @@
 import { Anchor, AnchorProps, Text } from "@mantine/core";
-import { IUser } from "../../../interfaces/User";
+import { IUser } from "@interfaces/User";
 
 interface IPropTypes extends Omit<AnchorProps, "href"> {
     user?: IUser;

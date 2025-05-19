@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Menu, Avatar } from "@mantine/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHover } from "@mantine/hooks";
-import { IUser } from "../../../../interfaces/User";
-import LoginButton from "../LoginButton";
+import { IUser } from "@interfaces/User";
+import LoginButton from "@components/common/LoginButton";
 
 interface IProps {
     user: IUser | null;

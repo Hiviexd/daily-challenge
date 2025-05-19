@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import { useAtom } from "jotai";
-import { loggedInUserAtom } from "../store/atoms";
-import useLoggedInUser from "../hooks/useLoggedInUser";
-import routes from "./routes.config";
-import Loading from "../components/common/Loading";
-import utils from "../../utils";
+import { loggedInUserAtom } from "@store/atoms";
+import useLoggedInUser from "@hooks/useLoggedInUser";
+import routes from "@base/routes.config";
+import Loading from "@components/common/Loading";
+import utils from "@utils/index";
 
 export default function AuthRouter() {
     const { data: user, isLoading } = useLoggedInUser();

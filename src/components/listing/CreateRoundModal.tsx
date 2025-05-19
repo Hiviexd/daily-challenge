@@ -1,12 +1,12 @@
 import { Modal, TextInput, Stack, Select, Button, Group } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
-import { useCreateRound } from "../../hooks/useRounds";
-import useStaff from "../../hooks/useUsers";
-import { IUser } from "../../../interfaces/User";
-import { toUTCDateOnly } from "../../../utils/common";
+import { useCreateRound } from "@hooks/useRounds";
+import useStaff from "@hooks/useUsers";
+import { IUser } from "@interfaces/User";
+import utils from "@utils/index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { loggedInUserAtom } from "../../store/atoms";
+import { loggedInUserAtom } from "@store/atoms";
 import { useAtom } from "jotai";
 
 interface IProps {
@@ -41,7 +41,7 @@ export default function CreateRoundModal({ opened, onClose }: IProps) {
     const handleSubmit = async (values) => {
         try {
             // Convert the start date to UTC midnight to avoid timezone schenanigans
-            const utcStartDate = values.startDate ? toUTCDateOnly(values.startDate) : null;
+            const utcStartDate = values.startDate ? utils.toUTCDateOnly(values.startDate) : null;
 
             await createRoundMutation.mutateAsync({
                 ...values,

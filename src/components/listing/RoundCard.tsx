@@ -1,7 +1,7 @@
 import { Card, Text, Group } from "@mantine/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import UserLink from "../common/UserLink";
-import { IRound } from "../../../interfaces/Round";
+import UserLink from "@components/common/UserLink";
+import { IRound } from "@interfaces/Round";
 
 interface IProps {
     round: IRound;
