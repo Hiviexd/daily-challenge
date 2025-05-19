@@ -11,8 +11,21 @@ import {
     faCalendar,
     faUser,
     faComment,
+    faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function loadIcons() {
-    library.add(fab, faSignOutAlt, faUserCircle, faEye, faEyeSlash, faPollH, faPlus, faCalendar, faUser, faComment);
+    library.add(
+        fab,
+        faSignOutAlt,
+        faUserCircle,
+        faEye,
+        faEyeSlash,
+        faPollH,
+        faPlus,
+        faCalendar,
+        faUser,
+        faComment,
+        faSearch
+    );
 }
