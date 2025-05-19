@@ -1,9 +1,9 @@
 import { Document } from "mongoose";
-import { IUser } from "./User";
 
 export interface IBeatmap extends Document {
     beatmapId: number;
     beatmapsetId: number;
+    starRating: number;
     artist: string;
     title: string;
     version: string;
@@ -13,7 +13,5 @@ export interface IBeatmap extends Document {
         osuId: number;
         username: string;
     };
-    suggestedBy?: IUser;
-    suggestedMods?: string[];
     notes?: string;
 }

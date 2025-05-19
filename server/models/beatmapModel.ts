@@ -3,8 +3,9 @@ import { IBeatmap } from "@interfaces/Beatmap";
 
 const BeatmapSchema = new mongoose.Schema<IBeatmap>(
     {
-        beatmapId: { type: Number, required: true },
+        beatmapId: { type: Number, required: true, unique: true },
         beatmapsetId: { type: Number, required: true },
+        starRating: { type: Number, required: true },
         artist: { type: String, required: true },
         title: { type: String, required: true },
         version: { type: String, required: true },
@@ -14,8 +15,6 @@ const BeatmapSchema = new mongoose.Schema<IBeatmap>(
             osuId: { type: Number, required: true },
             username: { type: String, required: true },
         },
-        suggestedMods: { type: [String] },
-        suggestedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         notes: { type: String },
     },
     { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
