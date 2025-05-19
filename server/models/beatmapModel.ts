@@ -1,7 +1,7 @@
-import mongoose, { Schema } from "mongoose";
-import { IBeatmap } from "../../interfaces/Beatmap";
+import mongoose from "mongoose";
+import { IBeatmap } from "@interfaces/Beatmap";
 
-const BeatmapSchema = new Schema<IBeatmap>(
+const BeatmapSchema = new mongoose.Schema<IBeatmap>(
     {
         beatmapId: { type: Number, required: true },
         beatmapsetId: { type: Number, required: true },
@@ -15,7 +15,7 @@ const BeatmapSchema = new Schema<IBeatmap>(
             username: { type: String, required: true },
         },
         suggestedMods: { type: [String] },
-        suggestedBy: { type: Schema.Types.ObjectId, ref: "User" },
+        suggestedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         notes: { type: String },
     },
     { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }

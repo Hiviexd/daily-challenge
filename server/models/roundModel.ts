@@ -1,11 +1,11 @@
-import mongoose, { Schema } from "mongoose";
-import { IRound } from "../../interfaces/Round";
+import mongoose from "mongoose";
+import { IRound } from "@interfaces/Round";
 import moment from "moment";
 
-const RoundSchema = new Schema<IRound>(
+const RoundSchema = new mongoose.Schema<IRound>(
     {
-        assignedUser: { type: Schema.Types.ObjectId, ref: "User", required: true },
-        beatmaps: [{ type: Schema.Types.ObjectId, ref: "Beatmap", required: true }],
+        assignedUser: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+        beatmaps: [{ type: mongoose.Schema.Types.ObjectId, ref: "Beatmap", required: true }],
         startDate: { type: Date, required: true },
         endDate: { type: Date, required: true },
         theme: { type: String },

@@ -1,5 +1,5 @@
-import User from "../models/userModel";
 import { Request, Response } from "express";
+import User from "@models/userModel";
 
 class UsersController {
     /** GET logged in user */

@@ -1,9 +1,13 @@
 import axios, { AxiosRequestConfig } from "axios";
 import querystring from "querystring";
-import utils from "../../utils";
-import { IBeatmap, IBeatmapResponse, IOsuAuthResponse, IOsuUser } from "../../interfaces/OsuApi";
-import { ErrorResponse } from "../../interfaces/Responses";
-import config from "../../config.json";
+import utils from "@utils/index";
+import { IBeatmap, IBeatmapResponse, IOsuAuthResponse, IOsuUser } from "@interfaces/OsuApi";
+import { ErrorResponse } from "@interfaces/Responses";
+
+import { loadJson } from "@utils/config";
+import { IConfig } from "@interfaces/Config";
+
+const config = loadJson<IConfig>("../config.json");
 
 export default class OsuApiService {
     static isOsuResponseError<T>(errorResponse: T | ErrorResponse): errorResponse is ErrorResponse {

@@ -1,8 +1,8 @@
-import User from "../models/userModel";
-import { IUser } from "../../interfaces/User";
-import { IOsuUser } from "../../interfaces/OsuApi";
-import OsuApiService from "./OsuApiService";
-import LogService from "./LogService";
+import User from "@models/userModel";
+import { IUser } from "@interfaces/User";
+import { IOsuUser } from "@interfaces/OsuApi";
+import OsuApiService from "@services/OsuApiService";
+import LogService from "@services/LogService";
 
 class UserService {
     /**

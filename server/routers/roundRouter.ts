@@ -1,6 +1,6 @@
 import express from "express";
-import RoundController from "../controllers/RoundController";
-import auth from "../middlewares/auth";
+import RoundController from "@controllers/RoundController";
+import auth from "@middlewares/auth";
 
 const roundRouter = express.Router();
 

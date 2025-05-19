@@ -1,7 +1,7 @@
 import morgan from "morgan";
 import moment from "moment";
-import utils from "../../utils";
-import { StyleName } from "../../utils/backend";
+import utils from "@utils/index";
+import { StyleName } from "@utils/backend";
 
 morgan.token("time", () => moment().format("HH:mm:ss.SSS"));
 

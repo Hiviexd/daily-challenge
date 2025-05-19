@@ -1,8 +1,8 @@
-import mongoose, { Schema } from "mongoose";
-import { IUser, IUserStatics } from "../../interfaces/User";
-import utils from "../../utils";
+import mongoose from "mongoose";
+import { IUser, IUserStatics } from "@interfaces/User";
+import utils from "@utils/index";
 
-const UserSchema = new Schema<IUser, IUserStatics>(
+const UserSchema = new mongoose.Schema<IUser, IUserStatics>(
     {
         osuId: { type: Number, required: true, unique: true },
         username: { type: String, required: true },

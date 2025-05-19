@@ -1,4 +1,4 @@
-import Log from "../models/logModel";
+import Log from "@models/logModel";
 
 class LogService {
     /**

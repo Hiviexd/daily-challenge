@@ -1,10 +1,14 @@
 import crypto from "crypto";
-import config from "../../config.json";
-import OsuApiService from "../services/OsuApiService";
-import utils from "../../utils";
-import UserService from "../services/UserService";
-import User from "../models/userModel";
+import OsuApiService from "@services/OsuApiService";
+import utils from "@utils/index";
+import UserService from "@services/UserService";
+import User from "@models/userModel";
 import { Request, Response } from "express";
+
+import { loadJson } from "@utils/config";
+import { IConfig } from "@interfaces/Config";
+
+const config = loadJson<IConfig>("../config.json");
 
 class AuthController {
     /** osu! OAuth login */

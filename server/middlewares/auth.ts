@@ -1,6 +1,6 @@
-import User from "../models/userModel";
-import utils from "../../utils";
-import OsuApiService from "../services/OsuApiService";
+import User from "@models/userModel";
+import utils from "@utils/index";
+import OsuApiService from "@services/OsuApiService";
 import { Request, Response, NextFunction } from "express";
 
 /**

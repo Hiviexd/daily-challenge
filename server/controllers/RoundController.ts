@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import Round from "../models/roundModel";
-import LogService from "../services/LogService";
-import User from "../models/userModel";
+import Round from "@models/roundModel";
+import LogService from "@services/LogService";
+import User from "@models/userModel";
 
 const DEFAULT_POPULATE = [{ path: "assignedUser", select: "username osuId groups" }];
 const DEFAULT_LIMIT = 10;
