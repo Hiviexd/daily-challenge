@@ -1,4 +1,4 @@
-import { AppShell, TextInput, Stack, Paper, Divider, Button } from "@mantine/core";
+import { AppShell, TextInput, Stack, Paper, Divider, Button, Card } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { selectedRoundIdAtom, roundsAtom, loggedInUserAtom } from "@store/atoms";
@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Header from "@components/common/Header";
 import CreateRoundModal from "@components/listing/CreateRoundModal";
 import RoundsList from "@components/listing/RoundsList";
+import RoundDetails from "@components/details/RoundDetails";
 
 export default function ListingPage() {
     const [loggedInUser] = useAtom(loggedInUserAtom);
@@ -63,18 +64,9 @@ export default function ListingPage() {
             </AppShell.Navbar>
 
             <AppShell.Main>
-                <Paper
-                    shadow="sm"
-                    p="xl"
-                    withBorder
-                    h={400}
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}>
-                    Selected Round: {selectedRound?.title}
-                </Paper>
+                <Card shadow="sm" p="xl">
+                    <RoundDetails selectedRound={selectedRound} />
+                </Card>
             </AppShell.Main>
         </AppShell>
     );
