@@ -4,7 +4,6 @@ import LogService from "../services/LogService";
 import User from "../models/userModel";
 
 const DEFAULT_POPULATE = [{ path: "assignedUser", select: "username osuId groups" }];
-
 const DEFAULT_LIMIT = 10;
 
 const selectFields = (hasAccess: boolean) => {
@@ -13,16 +12,26 @@ const selectFields = (hasAccess: boolean) => {
 
 class RoundController {
     /** GET all rounds */
-    public async index(_: Request, res: Response) {
+    public async index(req: Request, res: Response) {
         const loggedInUser = res.locals!.user;
         const isStaff = !!(loggedInUser && loggedInUser.isStaff);
 
-        const rounds = await Round.find(isStaff ? {} : { isPublished: true })
+        const cursor = req.query.cursor as string | undefined;
+
+        const query: any = isStaff ? {} : { isPublished: true };
+        if (cursor) {
+            query.startDate = { $lt: new Date(cursor) };
+        }
+
+        const rounds = await Round.find(query)
             .select(selectFields(isStaff))
             .populate(DEFAULT_POPULATE)
-            .sort({ startDate: -1 });
+            .sort({ startDate: -1 })
+            .limit(DEFAULT_LIMIT);
 
-        res.status(200).json(rounds);
+        const nextCursor = rounds.length === DEFAULT_LIMIT ? rounds[rounds.length - 1].startDate.toISOString() : null;
+
+        res.status(200).json({ rounds, nextCursor });
     }
 
     /* POST create round */

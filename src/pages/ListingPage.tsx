@@ -1,46 +1,37 @@
-import { AppShell, TextInput, Stack, Paper, Divider, Button, Skeleton, Text } from "@mantine/core";
-import { useCallback, useState, useEffect } from "react";
-import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
+import { AppShell, TextInput, Stack, Paper, Divider, Button, Skeleton, Text, ScrollArea } from "@mantine/core";
+import { useState, useEffect } from "react";
+import { useDisclosure } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
-import { selectedRoundAtom } from "../store/atoms";
+import { selectedRoundAtom, roundsAtom } from "../store/atoms";
 import { useAtom } from "jotai";
-import useRounds from "../hooks/useRounds";
+import { useInfiniteRounds } from "../hooks/useRounds";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // components
 import Header from "../components/common/Header";
 import RoundCard from "../components/listing/RoundCard";
 import CreateRoundModal from "../components/listing/CreateRoundModal";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function ListingPage() {
     const [search, setSearch] = useState("");
-    const [debouncedSearch] = useDebouncedValue(search, 300);
-    const [cursor, setCursor] = useState<string | null>(null);
 
     const [selectedRound, setSelectedRound] = useAtom(selectedRoundAtom);
+    const [rounds] = useAtom(roundsAtom);
 
-    const { data: rounds, isLoading: isLoadingRounds, isError: isErrorRounds } = useRounds();
-
-    const [createRoundModalOpen, { open: openCreateRoundModal, close: closeCreateRoundModal }] = useDisclosure(false);
+    const { fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } = useInfiniteRounds();
 
     // Set selected round to the active round on initial load
     useEffect(() => {
-        if (rounds && rounds.length > 0 && !selectedRound) {
+        if (rounds.length > 0 && !selectedRound) {
             const active = rounds.find((r) => r.isActive);
             if (active) setSelectedRound(active);
         }
     }, [rounds, selectedRound, setSelectedRound]);
 
-    const handleScroll = useCallback((event: React.UIEvent<HTMLDivElement>) => {
-        const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
-        if (scrollHeight - scrollTop <= clientHeight * 1.5) {
-            // Load more rounds here using the cursor
-            // TODO: Implement loading more rounds
-        }
-    }, []);
-
     const loadingState = () => {
-        return Array.from({ length: 10 }).map((_, index) => <Skeleton key={index} height={100} width="100%" />);
+        return Array.from({ length: 8 }).map((_, index) => (
+            <Skeleton key={index} radius="md" height={100} width="100%" />
+        ));
     };
 
     const EmptyState = ({ hasError }: { hasError: boolean }) => {
@@ -57,6 +48,8 @@ export default function ListingPage() {
         );
     };
 
+    const [createRoundModalOpen, { open: openCreateRoundModal, close: closeCreateRoundModal }] = useDisclosure(false);
+
     return (
         <AppShell
             padding="md"
@@ -69,8 +62,8 @@ export default function ListingPage() {
             <AppShell.Header>
                 <Header />
             </AppShell.Header>
-            <AppShell.Navbar p="md">
-                <Stack>
+            <AppShell.Navbar p="md" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+                <Stack style={{ flex: 1, minHeight: 0 }}>
                     <TextInput
                         placeholder="Search rounds..."
                         value={search}
@@ -79,29 +72,43 @@ export default function ListingPage() {
                     />
                     <Button onClick={openCreateRoundModal}>Create Round</Button>
                     <Divider />
-                    <Stack style={{ flex: 1 }} onScroll={handleScroll}>
-                        {isLoadingRounds ? (
-                            loadingState()
-                        ) : isErrorRounds || rounds?.length === 0 ? (
-                            <EmptyState hasError={isErrorRounds} />
-                        ) : (
-                            rounds?.map((round, idx) => (
-                                <div
-                                    key={round.id}
-                                    style={{
-                                        animation: "roundCardPop 0.4s cubic-bezier(0.4,0,0.2,1) both",
-                                        animationDelay: `${idx * 60}ms`,
-                                    }}
-                                    className="round-card-animate">
-                                    <RoundCard
-                                        round={round}
-                                        selected={selectedRound && selectedRound.id === round.id}
-                                        onClick={() => setSelectedRound(round)}
-                                    />
-                                </div>
-                            ))
-                        )}
-                    </Stack>
+
+                    <ScrollArea
+                        style={{ flex: 1, minHeight: 0 }}
+                        onBottomReached={() => {
+                            if (hasNextPage && !isFetchingNextPage) {
+                                fetchNextPage();
+                            }
+                        }}>
+                        <Stack>
+                            {isLoading ? (
+                                loadingState()
+                            ) : isError || rounds.length === 0 ? (
+                                <EmptyState hasError={isError} />
+                            ) : (
+                                <>
+                                    {rounds.map((round, idx) => (
+                                        <div
+                                            key={round.id}
+                                            style={{
+                                                animation: "roundCardPop 0.4s cubic-bezier(0.4,0,0.2,1) both",
+                                                animationDelay: `${idx * 60}ms`,
+                                                overflow: "visible",
+                                            }}
+                                            className="round-card-animate">
+                                            <RoundCard
+                                                round={round}
+                                                selected={selectedRound && selectedRound.id === round.id}
+                                                onClick={() => setSelectedRound(round)}
+                                            />
+                                        </div>
+                                    ))}
+                                    {isFetchingNextPage && loadingState()}
+                                    <div style={{ height: 64 }} />
+                                </>
+                            )}
+                        </Stack>
+                    </ScrollArea>
                 </Stack>
             </AppShell.Navbar>
 
