@@ -1,7 +1,7 @@
 import axios from "axios";
 import { IUser } from "@interfaces/User";
 import { notifications } from "@mantine/notifications";
-// import * as d3 from "d3";
+import * as d3 from "d3";
 
 export interface ApiResponse<T = any> {
     data?: T;
@@ -220,7 +220,7 @@ export function hslToHex(h: number, s: number, l: number): string {
 }
 
 // https://github.com/ppy/osu-web/blob/87212089ea72cae7c6dbcde78450516181ccb96c/resources/js/utils/beatmap-helper.ts
-/*const difficultyColourSpectrum = d3
+const difficultyColourSpectrum = d3
     .scaleLinear<string>()
     .domain([0.1, 1.25, 2, 2.5, 3.3, 4.2, 4.9, 5.8, 6.7, 7.7, 9])
     .clamp(true)
@@ -243,9 +243,9 @@ export function hslToHex(h: number, s: number, l: number): string {
  * Get the difficulty color for a given rating
  * @param rating The rating to get the color for
  * @returns The difficulty color
- *
+ */
 export function getDifficultyColor(rating: number) {
     if (rating < 0.1) return "#AAAAAA";
     if (rating >= 9) return "#000000";
     return difficultyColourSpectrum(rating);
-}*/
+}

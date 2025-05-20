@@ -9,6 +9,7 @@ import { IWarning } from "@interfaces/Round";
 import DuplicateStatusCell from "./DuplicateStatusCell";
 import { loggedInUserAtom } from "@store/atoms";
 import { useAtom } from "jotai";
+import StarRatingBadge from "@components/common/StarRatingBadge";
 
 interface IProps {
     beatmap: IBeatmap | null;
@@ -101,7 +102,9 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
             </Table.Td>
             {/* Star Rating */}
             <Table.Td style={{ textAlign: "center" }}>
-                {typeof beatmap?.starRating === "number" ? `★ ${beatmap?.starRating}` : "-"}
+                {typeof beatmap?.starRating === "number" ? (
+                    <StarRatingBadge rating={beatmap?.starRating} />
+                ) : "-"}
             </Table.Td>
             {/* Artist - Title with Banner */}
             <Table.Td>
