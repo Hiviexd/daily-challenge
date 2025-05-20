@@ -7,6 +7,8 @@ import moment from "moment";
 import UserLink from "@components/common/UserLink";
 import { IWarning } from "@interfaces/Round";
 import DuplicateStatusCell from "./DuplicateStatusCell";
+import { loggedInUserAtom } from "@store/atoms";
+import { useAtom } from "jotai";
 
 interface IProps {
     beatmap: IBeatmap | null;
@@ -19,6 +21,7 @@ interface IProps {
 export default function BeatmapRow({ beatmap, index, roundId, warning, hasCheckedDuplicates }: IProps) {
     const updateRoundBeatmapId = useUpdateRoundBeatmapId(roundId);
     const updateRoundBeatmapNote = useUpdateRoundBeatmapNote(roundId);
+    const [loggedInUser] = useAtom(loggedInUserAtom);
 
     const [beatmapId, setBeatmapId] = useState(
         beatmap?.beatmapId === 0 || beatmap?.beatmapId == null ? "" : beatmap?.beatmapId?.toString()
@@ -88,9 +91,11 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
                         <Text size="sm" fw={500}>
                             {beatmapId || ""}
                         </Text>
-                        <ActionIcon color="blue" variant="subtle" onClick={() => setIsEditingBeatmapId(true)} size="sm">
-                            <FontAwesomeIcon icon="pen-to-square" size="sm" />
-                        </ActionIcon>
+                        {loggedInUser?.isStaff && (
+                            <ActionIcon color="blue" variant="subtle" onClick={() => setIsEditingBeatmapId(true)} size="sm">
+                                <FontAwesomeIcon icon="pen-to-square" size="sm" />
+                            </ActionIcon>
+                        )}
                     </Group>
                 )}
             </Table.Td>
@@ -162,21 +167,25 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
                         <Text size="sm" fw={500}>
                             {notes || ""}
                         </Text>
-                        <ActionIcon
-                            color="blue"
-                            variant="subtle"
-                            onClick={() => setIsEditingNotes(true)}
-                            size="sm"
-                            disabled={beatmap?.beatmapId === 0 || beatmap?.beatmapId == null}>
-                            <FontAwesomeIcon icon="pen-to-square" size="sm" />
-                        </ActionIcon>
+                        {loggedInUser?.isStaff && (
+                            <ActionIcon
+                                color="blue"
+                                variant="subtle"
+                                onClick={() => setIsEditingNotes(true)}
+                                size="sm"
+                                disabled={beatmap?.beatmapId === 0 || beatmap?.beatmapId == null}>
+                                <FontAwesomeIcon icon="pen-to-square" size="sm" />
+                            </ActionIcon>
+                        )}
                     </Group>
                 )}
             </Table.Td>
             {/* Duplicate Status */}
-            <Table.Td style={{ textAlign: "center" }}>
-                <DuplicateStatusCell warning={warning} hasCheckedDuplicates={hasCheckedDuplicates} />
-            </Table.Td>
+            {loggedInUser?.isStaff && (
+                <Table.Td style={{ textAlign: "center" }}>
+                    <DuplicateStatusCell warning={warning} hasCheckedDuplicates={hasCheckedDuplicates} />
+                </Table.Td>
+            )}
         </Table.Tr>
     );
 }

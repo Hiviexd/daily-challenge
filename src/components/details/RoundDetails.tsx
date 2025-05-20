@@ -7,12 +7,15 @@ import { useCheckRoundDuplicates } from "@hooks/useRounds";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAtom } from "jotai";
 import { roundDuplicateWarningsAtom } from "@store/atoms";
+import { loggedInUserAtom } from "@store/atoms";
 
 interface IProps {
     round: IRound | null;
 }
 
 export default function RoundDetails({ round }: IProps) {
+    const [loggedInUser] = useAtom(loggedInUserAtom);
+
     // Build a map from beatmapId to beatmap object
     const beatmapMap = new Map<string, IBeatmap>();
     (round?.beatmaps ?? []).forEach((bm) => {
@@ -90,8 +93,27 @@ export default function RoundDetails({ round }: IProps) {
                         </Badge>
                     </Group>
                     {/* round management */}
-                    <Divider />
-                    <RoundManagement round={round!} />
+                    {loggedInUser?.isStaff ? (
+                        <>
+                            <Divider />
+                            <RoundManagement round={round!} />
+                        </>
+                    ) : (
+                        <Group gap="xs">
+                            <Text size="sm" fw={700}>
+                                Theme:
+                            </Text>
+                            {round?.theme ? (
+                                <Text size="sm" fw={500}>
+                                    {round?.theme}
+                                </Text>
+                            ) : (
+                                <Text size="sm" c="dimmed" fs="italic">
+                                    No Theme
+                                </Text>
+                            )}
+                        </Group>
+                    )}
                 </Stack>
             </Card>
             <Card shadow="sm" p="md" bg="primary.11">
@@ -106,20 +128,22 @@ export default function RoundDetails({ round }: IProps) {
                                 <Table.Th>Mapper</Table.Th>
                                 <Table.Th>Date Ranked</Table.Th>
                                 <Table.Th>Notes/Mods</Table.Th>
-                                <Table.Th style={{ textAlign: "center" }}>
-                                    {!hasCheckedDuplicates ? (
-                                        <Button
-                                            size="xs"
-                                            variant="light"
-                                            onClick={handleCheckDuplicates}
-                                            loading={checkDuplicatesMutation.isPending}
-                                            leftSection={<FontAwesomeIcon icon="clone" />}>
-                                            Check Duplicates
-                                        </Button>
-                                    ) : (
-                                        "Duplicate Status"
-                                    )}
-                                </Table.Th>
+                                {loggedInUser?.isStaff && (
+                                    <Table.Th style={{ textAlign: "center" }}>
+                                        {!hasCheckedDuplicates ? (
+                                            <Button
+                                                size="xs"
+                                                variant="light"
+                                                onClick={handleCheckDuplicates}
+                                                loading={checkDuplicatesMutation.isPending}
+                                                leftSection={<FontAwesomeIcon icon="clone" />}>
+                                                Check Duplicates
+                                            </Button>
+                                        ) : (
+                                            "Duplicate Status"
+                                        )}
+                                    </Table.Th>
+                                )}
                             </Table.Tr>
                         </Table.Thead>
                         <Table.Tbody>

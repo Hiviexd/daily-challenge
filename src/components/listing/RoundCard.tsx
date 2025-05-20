@@ -2,6 +2,8 @@ import { Card, Text, Group } from "@mantine/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserLink from "@components/common/UserLink";
 import { IRound } from "@interfaces/Round";
+import { loggedInUserAtom } from "@store/atoms";
+import { useAtom } from "jotai";
 
 interface IProps {
     round: IRound;
@@ -10,6 +12,8 @@ interface IProps {
 }
 
 export default function RoundCard({ round, selected = false, onClick }: IProps) {
+    const [loggedInUser] = useAtom(loggedInUserAtom);
+
     return (
         <Card
             radius="md"
@@ -29,9 +33,11 @@ export default function RoundCard({ round, selected = false, onClick }: IProps) 
                     {round.title}
                 </Text>
             </Group>
-            <Text size="sm" c="dimmed" mb={2}>
-                by <UserLink user={round.assignedUser} />
-            </Text>
+            {loggedInUser?.hasAccess && (
+                <Text size="sm" c="dimmed" mb={2}>
+                    by <UserLink user={round.assignedUser} />
+                </Text>
+            )}
             <Text size="sm" fs="italic">
                 {round.theme || "No Theme"}
             </Text>
