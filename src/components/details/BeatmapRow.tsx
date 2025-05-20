@@ -1,4 +1,4 @@
-import { Table, TextInput, Image, Group, Anchor, Popover, Text, ActionIcon } from "@mantine/core";
+import { Table, TextInput, Image, Group, Anchor, Text, ActionIcon } from "@mantine/core";
 import { IBeatmap } from "@interfaces/Beatmap";
 import { useUpdateRoundBeatmapId, useUpdateRoundBeatmapNote } from "@hooks/useRounds";
 import { useState, useEffect } from "react";
@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import UserLink from "@components/common/UserLink";
 import { IWarning } from "@interfaces/Round";
+import DuplicateStatusCell from "./DuplicateStatusCell";
 
 interface IProps {
     beatmap: IBeatmap | null;
@@ -58,56 +59,6 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
         });
         setIsEditingNotes(false);
     };
-
-    // Duplicate status cell
-    let duplicateStatus;
-    if (!hasCheckedDuplicates) {
-        duplicateStatus = <FontAwesomeIcon icon="question-circle" color="var(--mantine-color-gray-6)" />;
-    } else if (warning) {
-        if (warning.type === "duplicate_difficulty") {
-            duplicateStatus = (
-                <Popover width={260} position="bottom" withArrow shadow="md">
-                    <Popover.Target>
-                        <ActionIcon color="red" variant="subtle">
-                            <FontAwesomeIcon icon="times-circle" color="var(--mantine-color-red-6)" />
-                        </ActionIcon>
-                    </Popover.Target>
-                    <Popover.Dropdown>
-                        <Text fw={500} c="danger" mb={4}>
-                            Duplicate difficulty in:
-                        </Text>
-                        {warning.duplicates.map((title, i) => (
-                            <Text key={i} size="sm">
-                                {title}
-                            </Text>
-                        ))}
-                    </Popover.Dropdown>
-                </Popover>
-            );
-        } else if (warning.type === "duplicate_set") {
-            duplicateStatus = (
-                <Popover width={260} position="bottom" withArrow shadow="md">
-                    <Popover.Target>
-                        <ActionIcon color="yellow" variant="subtle">
-                            <FontAwesomeIcon icon="exclamation-triangle" color="var(--mantine-color-warning-6)" />
-                        </ActionIcon>
-                    </Popover.Target>
-                    <Popover.Dropdown>
-                        <Text fw={500} c="warning" mb={4}>
-                            Duplicate beatmapset in:
-                        </Text>
-                        {warning.duplicates.map((title, i) => (
-                            <Text key={i} size="sm">
-                                {title}
-                            </Text>
-                        ))}
-                    </Popover.Dropdown>
-                </Popover>
-            );
-        }
-    } else {
-        duplicateStatus = <FontAwesomeIcon icon="check-circle" color="var(--mantine-color-success-6)" />;
-    }
 
     return (
         <Table.Tr key={index}>
@@ -223,7 +174,9 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
                 )}
             </Table.Td>
             {/* Duplicate Status */}
-            <Table.Td style={{ textAlign: "center" }}>{duplicateStatus}</Table.Td>
+            <Table.Td style={{ textAlign: "center" }}>
+                <DuplicateStatusCell warning={warning} hasCheckedDuplicates={hasCheckedDuplicates} />
+            </Table.Td>
         </Table.Tr>
     );
 }
