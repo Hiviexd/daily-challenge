@@ -5,7 +5,6 @@ class LogService {
      * Create a log for a user action
      * @param userId Mongo ID of action user
      * @param action Action
-     * @param category Log category
      */
     public async generate(userId: string, action: string): Promise<void> {
         const log = new Log({ user: userId, action });
