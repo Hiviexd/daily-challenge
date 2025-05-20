@@ -9,7 +9,13 @@ import { Request, Response, NextFunction } from "express";
  * @param res
  * @param next
  */
-function unauthorize(req: Request, res: Response) {
+function unauthorize(req: Request, res: Response, next: NextFunction) {
+    // Admin bypass
+    const user = res.locals!.user || null;
+    if (user && user.isAdmin) {
+        return next();
+    }
+
     if (req.accepts(["html", "json"]) === "json") {
         res.json({ error: "Unauthorized, login first" });
     } else {
@@ -27,7 +33,7 @@ async function isLoggedIn(req: Request, res: Response, next: NextFunction) {
     const user = await User.findById(req.session.mongoId);
 
     if (!user) {
-        return unauthorize(req, res);
+        return unauthorize(req, res, next);
     }
 
     // Refresh if less than 2 hours left for some possible edge cases
@@ -56,7 +62,7 @@ async function isLoggedIn(req: Request, res: Response, next: NextFunction) {
  */
 function hasAccess(req: Request, res: Response, next: NextFunction) {
     const user = res.locals!.user;
-    if (!user || !user.hasAccess) return unauthorize(req, res);
+    if (!user || !user.hasAccess) return unauthorize(req, res, next);
 
     next();
 }
@@ -69,7 +75,7 @@ function hasAccess(req: Request, res: Response, next: NextFunction) {
  */
 function isStaff(req: Request, res: Response, next: NextFunction) {
     const user = res.locals!.user;
-    if (!user || !user.isStaff) return unauthorize(req, res);
+    if (!user || !user.isStaff) return unauthorize(req, res, next);
 
     next();
 }
@@ -82,7 +88,7 @@ function isStaff(req: Request, res: Response, next: NextFunction) {
  */
 function isSpectator(req: Request, res: Response, next: NextFunction) {
     const user = res.locals!.user;
-    if (!user || !user.isSpectator) return unauthorize(req, res);
+    if (!user || !user.isSpectator) return unauthorize(req, res, next);
 
     next();
 }
@@ -95,7 +101,7 @@ function isSpectator(req: Request, res: Response, next: NextFunction) {
  */
 function isAdmin(req: Request, res: Response, next: NextFunction) {
     const user = res.locals!.user;
-    if (!user || !user.isAdmin) return unauthorize(req, res);
+    if (!user || !user.isAdmin) return unauthorize(req, res, next);
 
     next();
 }
