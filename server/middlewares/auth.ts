@@ -88,6 +88,19 @@ function isSpectator(req: Request, res: Response, next: NextFunction) {
 }
 
 /**
+ * Check if user is admin
+ * @param req
+ * @param res
+ * @param next
+ */
+function isAdmin(req: Request, res: Response, next: NextFunction) {
+    const user = res.locals!.user;
+    if (!user || !user.isAdmin) return unauthorize(req, res);
+
+    next();
+}
+
+/**
  * Optional authentication middleware
  * Allows logged-out users to access routes, but still sets res.locals for logged-in users
  * @param req
@@ -129,5 +142,6 @@ export default {
     hasAccess,
     isStaff,
     isSpectator,
+    isAdmin,
     optionalAuth,
 };

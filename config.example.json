@@ -6,6 +6,7 @@
         "secret": "",
         "redirect": "http://localhost:8118/api/auth/callback"
     },
+    "modsSource": "https://raw.githubusercontent.com/ppy/osu-web/master/database/mods.json",
     "discord": {
         "webhooks": {
             "main": {
