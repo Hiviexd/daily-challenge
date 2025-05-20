@@ -17,6 +17,10 @@ import {
     faExclamationTriangle,
     faQuestionCircle,
     faClone,
+    faPenToSquare,
+    faCheck,
+    faTimes,
+    faFloppyDisk,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function loadIcons() {
@@ -36,6 +40,10 @@ export default function loadIcons() {
         faTimesCircle,
         faExclamationTriangle,
         faQuestionCircle,
-        faClone
+        faClone,
+        faPenToSquare,
+        faCheck,
+        faTimes,
+        faFloppyDisk,
     );
 }

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Select, TextInput, Group } from "@mantine/core";
-import { useDebouncedValue } from "@mantine/hooks";
+import { Select, TextInput, Group, ActionIcon, Text, Loader } from "@mantine/core";
 import { IRound } from "@interfaces/Round";
 import useStaff from "@hooks/useUsers";
 import { useUpdateRound } from "@hooks/useRounds";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface IProps {
     round: IRound;
@@ -13,21 +13,18 @@ export default function RoundManagement({ round }: IProps) {
     const { data: staff = [] } = useStaff();
     const updateRound = useUpdateRound(round?._id || "");
     const [theme, setTheme] = useState(round?.theme || "");
-    const [debouncedTheme] = useDebouncedValue(theme, 500);
-
-    // Auto-save theme
-    useEffect(() => {
-        const original = round?.theme || "";
-        if (debouncedTheme !== original) {
-            updateRound.mutateAsync({ theme: debouncedTheme });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [debouncedTheme]);
+    const [isEditingTheme, setIsEditingTheme] = useState(false);
 
     // sync theme with prop changes
     useEffect(() => {
         setTheme(round?.theme || "");
     }, [round?.theme]);
+
+    // Save handler for theme
+    const handleSaveTheme = async () => {
+        await updateRound.mutateAsync({ theme });
+        setIsEditingTheme(false);
+    };
 
     // Handler for assigned user change
     const handleAssignedUserChange = (val: string | null) => {
@@ -37,20 +34,53 @@ export default function RoundManagement({ round }: IProps) {
     };
 
     return (
-        <Group align="flex-end" gap="md">
+        <Group align="flex-end" gap="xl">
             <Select
                 label="Assigned User"
                 data={staff.map((user) => ({ value: user._id, label: user.username }))}
                 value={round?.assignedUser?._id || null}
                 onChange={handleAssignedUserChange}
                 style={{ maxWidth: 220 }}
+                rightSection={updateRound.isPending ? <Loader size="xs" /> : null}
+                disabled={updateRound.isPending}
             />
-            <TextInput
-                label="Theme"
-                value={theme}
-                onChange={(e) => setTheme(e.currentTarget.value)}
-                style={{ minWidth: 300 }}
-            />
+            <div style={{ minWidth: 300 }}>
+                <label style={{ fontSize: 14, fontWeight: 500, display: "block", marginBottom: 4 }}>Theme</label>
+                {isEditingTheme ? (
+                    <Group gap={4} wrap="nowrap">
+                        <TextInput
+                            value={theme}
+                            onChange={(e) => setTheme(e.currentTarget.value)}
+                            size="sm"
+                            style={{ maxWidth: 200 }}
+                            disabled={updateRound.isPending}
+                        />
+                        <ActionIcon
+                            color="green"
+                            variant="light"
+                            onClick={handleSaveTheme}
+                            loading={updateRound.isPending}>
+                            <FontAwesomeIcon icon="floppy-disk" size="sm" />
+                        </ActionIcon>
+                    </Group>
+                ) : (
+                    <Group gap={4} wrap="nowrap">
+                        {theme ? (
+                            <Text size="sm" fw={500}>
+                                {theme}
+                            </Text>
+                        ) : (
+                            <Text size="sm" c="dimmed" fs="italic">
+                                No Theme
+                            </Text>
+                        )}
+
+                        <ActionIcon color="blue" variant="subtle" onClick={() => setIsEditingTheme(true)}>
+                            <FontAwesomeIcon icon="pen-to-square" size="sm" />
+                        </ActionIcon>
+                    </Group>
+                )}
+            </div>
         </Group>
     );
 }

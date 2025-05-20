@@ -1,7 +1,6 @@
-import { Table, TextInput, Image, Group, Loader, Anchor, Popover, Text, ActionIcon } from "@mantine/core";
+import { Table, TextInput, Image, Group, Anchor, Popover, Text, ActionIcon } from "@mantine/core";
 import { IBeatmap } from "@interfaces/Beatmap";
 import { useUpdateRoundBeatmapId, useUpdateRoundBeatmapNote } from "@hooks/useRounds";
-import { useDebouncedValue } from "@mantine/hooks";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
@@ -25,45 +24,40 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
     );
     const [notes, setNotes] = useState(beatmap?.notes || "");
 
-    const [debouncedBeatmapId] = useDebouncedValue(beatmapId, 500);
-    const [debouncedNotes] = useDebouncedValue(notes, 500);
-
-    // Auto-save beatmapId
-    useEffect(() => {
-        const original = beatmap?.beatmapId === 0 || beatmap?.beatmapId == null ? "" : beatmap?.beatmapId?.toString();
-        if (debouncedBeatmapId === "" && original !== "") {
-            // Delete beatmap from round
-            updateRoundBeatmapId.mutateAsync({
-                index,
-                beatmapId: "",
-            });
-        } else if (debouncedBeatmapId !== "" && debouncedBeatmapId !== original) {
-            updateRoundBeatmapId.mutateAsync({
-                index,
-                beatmapId: Number(debouncedBeatmapId),
-            });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [debouncedBeatmapId]);
-
-    // Auto-save notes
-    useEffect(() => {
-        const original = beatmap?.notes || "";
-        if (debouncedNotes !== original) {
-            updateRoundBeatmapNote.mutateAsync({
-                index,
-                notes: debouncedNotes,
-            });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [debouncedNotes]);
+    // Editing states
+    const [isEditingBeatmapId, setIsEditingBeatmapId] = useState(false);
+    const [isEditingNotes, setIsEditingNotes] = useState(false);
 
     // Sync state with prop changes if parent updates beatmap
     useEffect(() => {
         setBeatmapId(beatmap?.beatmapId === 0 || beatmap?.beatmapId == null ? "" : beatmap?.beatmapId?.toString());
         setNotes(beatmap?.notes || "");
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [beatmap?.beatmapId, beatmap?.notes]);
+
+    const handleSaveBeatmapId = async () => {
+        if (beatmap?.beatmapId === Number(beatmapId)) {
+            setIsEditingBeatmapId(false);
+            return;
+        }
+
+        await updateRoundBeatmapId.mutateAsync({
+            index,
+            beatmapId: beatmapId === "" ? "" : Number(beatmapId),
+        });
+        setIsEditingBeatmapId(false);
+    };
+    const handleSaveNotes = async () => {
+        if (beatmap?.notes === notes) {
+            setIsEditingNotes(false);
+            return;
+        }
+
+        await updateRoundBeatmapNote.mutateAsync({
+            index,
+            notes,
+        });
+        setIsEditingNotes(false);
+    };
 
     // Duplicate status cell
     let duplicateStatus;
@@ -79,7 +73,7 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
                         </ActionIcon>
                     </Popover.Target>
                     <Popover.Dropdown>
-                        <Text fw={500} color="red" mb={4}>
+                        <Text fw={500} c="danger" mb={4}>
                             Duplicate difficulty in:
                         </Text>
                         {warning.duplicates.map((title, i) => (
@@ -99,8 +93,8 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
                         </ActionIcon>
                     </Popover.Target>
                     <Popover.Dropdown>
-                        <Text fw={500} color="yellow.7" mb={4}>
-                            Duplicate set in:
+                        <Text fw={500} c="warning" mb={4}>
+                            Duplicate beatmapset in:
                         </Text>
                         {warning.duplicates.map((title, i) => (
                             <Text key={i} size="sm">
@@ -118,14 +112,36 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
     return (
         <Table.Tr key={index}>
             {/* Beatmap ID Input (for empty rows, this is how you add a beatmap) */}
-            <Table.Td style={{ width: 120 }}>
-                <TextInput
-                    value={beatmapId}
-                    onChange={(e) => setBeatmapId(e.currentTarget.value)}
-                    rightSection={updateRoundBeatmapId.isPending && <Loader size={16} />}
-                    size="xs"
-                    placeholder="..."
-                />
+            <Table.Td style={{ width: 140, minWidth: 120, maxWidth: 180 }}>
+                {isEditingBeatmapId ? (
+                    <Group gap={4} wrap="nowrap">
+                        <TextInput
+                            value={beatmapId}
+                            onChange={(e) => setBeatmapId(e.currentTarget.value)}
+                            size="xs"
+                            placeholder="..."
+                            disabled={updateRoundBeatmapId.isPending}
+                            style={{ maxWidth: 90 }}
+                        />
+                        <ActionIcon
+                            color="green"
+                            variant="light"
+                            onClick={handleSaveBeatmapId}
+                            loading={updateRoundBeatmapId.isPending}
+                            size="sm">
+                            <FontAwesomeIcon icon="floppy-disk" size="sm" />
+                        </ActionIcon>
+                    </Group>
+                ) : (
+                    <Group gap={4}>
+                        <Text size="sm" fw={500}>
+                            {beatmapId || ""}
+                        </Text>
+                        <ActionIcon color="blue" variant="subtle" onClick={() => setIsEditingBeatmapId(true)} size="sm">
+                            <FontAwesomeIcon icon="pen-to-square" size="sm" />
+                        </ActionIcon>
+                    </Group>
+                )}
             </Table.Td>
             {/* Star Rating */}
             <Table.Td style={{ textAlign: "center" }}>
@@ -141,13 +157,15 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
                             size="sm"
                             href={`https://osu.ppy.sh/beatmapsets/${beatmap?.beatmapsetId}`}
                             target="_blank">
-                            {beatmap?.artist} - {beatmap?.title} [{beatmap?.version}]
+                            {beatmap?.artist} - {beatmap?.title}
                         </Anchor>
                     </Group>
                 ) : (
                     "-"
                 )}
             </Table.Td>
+            {/* Difficulty */}
+            <Table.Td>{beatmap?.version}</Table.Td>
             {/* Mapper */}
             <Table.Td>
                 {beatmap?.creator?.osuId ? (
@@ -162,17 +180,47 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
                 )}
             </Table.Td>
             {/* Date Ranked */}
-            <Table.Td>{beatmap?.rankedDate ? moment(beatmap?.rankedDate).format("YYYY-MM-DD") : "-"}</Table.Td>
+            <Table.Td>{beatmap?.rankedDate ? moment(beatmap?.rankedDate).format("DD MMM YYYY") : "-"}</Table.Td>
             {/* Notes Input */}
-            <Table.Td style={{ width: 150, minWidth: 150, maxWidth: 200 }}>
-                <TextInput
-                    value={notes}
-                    onChange={(e) => setNotes(e.currentTarget.value)}
-                    rightSection={updateRoundBeatmapNote.isPending && <Loader size={16} />}
-                    size="xs"
-                    placeholder="..."
-                    disabled={beatmap?.beatmapId === 0 || beatmap?.beatmapId == null}
-                />
+            <Table.Td style={{ width: 180, minWidth: 180, maxWidth: 220 }}>
+                {isEditingNotes ? (
+                    <Group gap={4} wrap="nowrap">
+                        <TextInput
+                            value={notes}
+                            onChange={(e) => setNotes(e.currentTarget.value)}
+                            size="xs"
+                            placeholder="..."
+                            disabled={
+                                updateRoundBeatmapNote.isPending ||
+                                beatmap?.beatmapId === 0 ||
+                                beatmap?.beatmapId == null
+                            }
+                            style={{ maxWidth: 120 }}
+                        />
+                        <ActionIcon
+                            color="green"
+                            variant="light"
+                            onClick={handleSaveNotes}
+                            loading={updateRoundBeatmapNote.isPending}
+                            size="sm">
+                            <FontAwesomeIcon icon="floppy-disk" size="sm" />
+                        </ActionIcon>
+                    </Group>
+                ) : (
+                    <Group gap={4}>
+                        <Text size="sm" fw={500}>
+                            {notes || ""}
+                        </Text>
+                        <ActionIcon
+                            color="blue"
+                            variant="subtle"
+                            onClick={() => setIsEditingNotes(true)}
+                            size="sm"
+                            disabled={beatmap?.beatmapId === 0 || beatmap?.beatmapId == null}>
+                            <FontAwesomeIcon icon="pen-to-square" size="sm" />
+                        </ActionIcon>
+                    </Group>
+                )}
             </Table.Td>
             {/* Duplicate Status */}
             <Table.Td style={{ textAlign: "center" }}>{duplicateStatus}</Table.Td>
