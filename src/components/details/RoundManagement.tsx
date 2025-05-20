@@ -4,6 +4,8 @@ import { IRound } from "@interfaces/Round";
 import useStaff from "@hooks/useUsers";
 import { useUpdateRound } from "@hooks/useRounds";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import utils from "@utils/index";
+import useSettings from "@hooks/useSettings";
 
 interface IProps {
     round: IRound;
@@ -14,6 +16,7 @@ export default function RoundManagement({ round }: IProps) {
     const updateRound = useUpdateRound(round?._id || "");
     const [theme, setTheme] = useState(round?.theme || "");
     const [isEditingTheme, setIsEditingTheme] = useState(false);
+    const { data: settings } = useSettings();
 
     // sync theme with prop changes
     useEffect(() => {
@@ -97,6 +100,13 @@ export default function RoundManagement({ round }: IProps) {
                     onClick={handleUpdateIsPublished}
                     loading={updateRound.isPending}>
                     {round?.isPublished ? "Mark as hidden" : "Mark as public"}
+                </Button>
+                <Button
+                    variant="light"
+                    color="success"
+                    leftSection={<FontAwesomeIcon icon="copy" />}
+                    onClick={() => utils.copyToClipboard(settings?.mods?.osu.join(",") || "")}>
+                    Copy osu! mods string
                 </Button>
             </Group>
         </Stack>
