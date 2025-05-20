@@ -3,6 +3,7 @@ import axios from "axios";
 import { loadJson } from "@utils/config";
 import Settings from "@models/settingsModel";
 import { IModsExternalApiResponse, type SettingsMods } from "@interfaces/Settings";
+import LogService from "@services/LogService";
 
 import { IConfig } from "@interfaces/Config";
 const config = loadJson<IConfig>("../config.json");
@@ -19,6 +20,8 @@ class SettingsController {
     /** Sync osu! mods */
     public async syncMods(_: Request, res: Response) {
         try {
+            const loggedInUser = res.locals!.user!;
+
             const response = await axios.get<IModsExternalApiResponse[]>(config.modsSource);
             const modsApiResponse = response.data;
 
@@ -41,6 +44,9 @@ class SettingsController {
             await settings.save();
 
             res.json({ message: "Mods synced successfully!" });
+
+            // logging
+            LogService.generate(loggedInUser._id, `Synced osu! mods`);
         } catch (error) {
             return res.status(500).json({ error: "Error fetching mods from GitHub" });
         }

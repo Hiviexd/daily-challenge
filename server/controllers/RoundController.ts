@@ -103,7 +103,7 @@ class RoundController {
 
         await round.save();
 
-        res.status(201).json({ message: "Round created successfully!", round });
+        res.status(201).json({ message: "Round created successfully!" });
 
         // logging
         LogService.generate(loggedInUser._id, `Created round: ${round.title}`);
@@ -113,6 +113,8 @@ class RoundController {
     public async update(req: Request, res: Response) {
         const { roundId } = req.params;
         const { theme, assignedUserId, isPublished } = req.body;
+
+        const loggedInUser = res.locals!.user!;
 
         const round = await Round.findById(roundId);
 
@@ -125,13 +127,18 @@ class RoundController {
         if (isPublished !== undefined) round.isPublished = isPublished;
         await round.save();
 
-        return res.status(200).json({ message: "Round updated successfully!", round });
+        res.status(200).json({ message: "Round updated successfully!" });
+
+        // logging
+        LogService.generate(loggedInUser._id, `Updated round: ${round.title}`);
     }
 
     /* PUT update beatmapId for a round */
     public async updateBeatmapId(req: Request, res: Response) {
         const { roundId } = req.params;
         const { index, beatmapId } = req.body;
+
+        const loggedInUser = res.locals!.user!;
 
         const round = await Round.findById(roundId).populate(DEFAULT_POPULATE);
         if (!round) {
@@ -161,7 +168,7 @@ class RoundController {
                     await round.save();
                 }
             }
-            return res.status(200).json({ message: "Beatmap deleted from round!", round });
+            return res.status(200).json({ message: "Beatmap deleted from round!" });
         }
 
         // Replace/set beatmap at index
@@ -185,7 +192,10 @@ class RoundController {
             round.markModified("beatmaps");
             round.markModified("beatmapOrder");
             await round.save();
-            return res.status(200).json({ message: "Beatmap updated successfully!", round });
+            res.status(200).json({ message: "Beatmap updated successfully!" });
+
+            // logging
+            LogService.generate(loggedInUser._id, `Updated beatmapId for round: ${round.title}`);
         }
 
         return res.status(400).json({ message: "Invalid request for updateBeatmapId" });
@@ -195,6 +205,8 @@ class RoundController {
     public async updateBeatmapNote(req: Request, res: Response) {
         const { roundId } = req.params;
         const { index, notes } = req.body;
+
+        const loggedInUser = res.locals!.user!;
 
         const round = await Round.findById(roundId).populate(DEFAULT_POPULATE);
         if (!round) {
@@ -213,7 +225,10 @@ class RoundController {
                 }
             }
             await round.save();
-            return res.status(200).json({ message: "Beatmap notes updated successfully!", round });
+            res.status(200).json({ message: "Beatmap notes updated successfully!" });
+
+            // logging
+            LogService.generate(loggedInUser._id, `Updated beatmap notes for round: ${round.title}`);
         }
         return res.status(400).json({ message: "Invalid request for updateBeatmapNote" });
     }
