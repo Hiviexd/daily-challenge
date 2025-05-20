@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAtom } from "jotai";
 import { roundDuplicateWarningsAtom } from "@store/atoms";
 import { loggedInUserAtom } from "@store/atoms";
+import RoundDetailsSkeleton from "./RoundDetailsSkeleton";
 
 interface IProps {
     round: IRound | null;
@@ -15,6 +16,8 @@ interface IProps {
 
 export default function RoundDetails({ round }: IProps) {
     const [loggedInUser] = useAtom(loggedInUserAtom);
+    const isStaff = loggedInUser?.isStaff;
+    const isLoading = !round;
 
     // Build a map from beatmapId to beatmap object
     const beatmapMap = new Map<string, IBeatmap>();
@@ -72,6 +75,10 @@ export default function RoundDetails({ round }: IProps) {
         });
     };
 
+    if (isLoading) {
+        return <RoundDetailsSkeleton isStaff={!!isStaff} />;
+    }
+
     return (
         <Stack gap="md">
             <Card
@@ -79,21 +86,27 @@ export default function RoundDetails({ round }: IProps) {
                 p="md"
                 bg="primary.11"
                 radius="md"
-                style={{ borderTop: `4px solid ${getColors(round!).cssColor}` }}>
+                style={{
+                    borderTop: `4px solid ${round ? getColors(round).cssColor : "var(--mantine-color-primary-6)"}`,
+                }}>
                 <Stack gap="md">
                     <Group gap="xs">
                         <Text fw={700} size="xl">
                             {round?.title}
                         </Text>
-                        <Badge color={getColors(round!).color} variant="light">
-                            {getColors(round!).title}
-                        </Badge>
-                        <Badge color={round?.isPublished ? "info" : "gray"} variant="light">
-                            <FontAwesomeIcon icon={round?.isPublished ? "eye" : "eye-slash"} />
-                        </Badge>
+                        {!isLoading && (
+                            <Badge color={getColors(round!).color} variant="light">
+                                {getColors(round!).title}
+                            </Badge>
+                        )}
+                        {!isLoading && (
+                            <Badge color={round?.isPublished ? "info" : "gray"} variant="light">
+                                <FontAwesomeIcon icon={round?.isPublished ? "eye" : "eye-slash"} />
+                            </Badge>
+                        )}
                     </Group>
-                    {/* round management */}
-                    {loggedInUser?.isStaff ? (
+                    {/* round management or theme */}
+                    {isStaff ? (
                         <>
                             <Divider />
                             <RoundManagement round={round!} />
@@ -128,7 +141,7 @@ export default function RoundDetails({ round }: IProps) {
                                 <Table.Th>Mapper</Table.Th>
                                 <Table.Th>Date Ranked</Table.Th>
                                 <Table.Th>Notes/Mods</Table.Th>
-                                {loggedInUser?.isStaff && (
+                                {isStaff && (
                                     <Table.Th style={{ textAlign: "center" }}>
                                         {!hasCheckedDuplicates ? (
                                             <Button
