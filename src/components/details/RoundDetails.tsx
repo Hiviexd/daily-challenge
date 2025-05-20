@@ -130,8 +130,8 @@ export default function RoundDetails({ round }: IProps) {
                 </Stack>
             </Card>
             <Card shadow="sm" p="md" bg="primary.11">
-                <ScrollArea w="100%" type="auto" style={{ minWidth: 1200 }}>
-                    <Table>
+                <ScrollArea>
+                    <Table miw={{ base: 1200 }}>
                         <Table.Thead>
                             <Table.Tr>
                                 <Table.Th style={{ minWidth: 80, maxWidth: 100, width: 100 }}>Beatmap ID</Table.Th>

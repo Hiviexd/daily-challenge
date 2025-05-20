@@ -5,6 +5,10 @@ import { useInfiniteRounds } from "@hooks/useRounds";
 import RoundCard from "@components/listing/RoundCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+interface IProps {
+    closeMobileNavbar: () => void;
+}
+
 function EmptyState({ hasError }: { hasError: boolean }) {
     return (
         <Stack align="center" justify="center" h={200}>
@@ -19,7 +23,7 @@ function EmptyState({ hasError }: { hasError: boolean }) {
     );
 }
 
-export default function RoundsList() {
+export default function RoundsList({ closeMobileNavbar }: IProps) {
     const [rounds] = useAtom(roundsAtom);
     const [selectedRoundId, setSelectedRoundId] = useAtom(selectedRoundIdAtom);
     const { fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } = useInfiniteRounds();
@@ -57,7 +61,10 @@ export default function RoundsList() {
                                 <RoundCard
                                     round={round}
                                     selected={selectedRoundId === round.id}
-                                    onClick={() => setSelectedRoundId(round.id)}
+                                    onClick={() => {
+                                        setSelectedRoundId(round.id);
+                                        closeMobileNavbar();
+                                    }}
                                 />
                             </div>
                         ))}

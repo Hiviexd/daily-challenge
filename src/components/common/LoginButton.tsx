@@ -8,7 +8,7 @@ interface IProps extends Omit<ButtonProps, "onClick" | "loading" | "leftSection"
     text?: string;
 }
 
-export default function LoginButton({ size = "md", text = "Sign in with osu!", ...props }: IProps) {
+export default function LoginButton({ size = "md", text = "Sign In", ...props }: IProps) {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [user] = useAtom(loggedInUserAtom);
 

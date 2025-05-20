@@ -28,6 +28,8 @@ export default function ListingPage() {
         }
     }, [rounds, selectedRoundId, setSelectedRoundId]);
 
+    const [MobileNavbarOpen, { toggle: toggleMobileNavbar, close: closeMobileNavbar }] = useDisclosure(false);
+
     const [createRoundModalOpen, { open: openCreateRoundModal, close: closeCreateRoundModal }] = useDisclosure(false);
 
     return (
@@ -37,10 +39,11 @@ export default function ListingPage() {
             navbar={{
                 width: 300,
                 breakpoint: "sm",
+                collapsed: { mobile: !MobileNavbarOpen, desktop: false },
             }}>
             <CreateRoundModal opened={createRoundModalOpen} onClose={closeCreateRoundModal} />
             <AppShell.Header>
-                <Header />
+                <Header MobileNavbarOpen={MobileNavbarOpen} toggleMobileNavbar={toggleMobileNavbar} />
             </AppShell.Header>
             <AppShell.Navbar p="md" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
                 <Stack style={{ flex: 1, minHeight: 0 }}>
@@ -59,7 +62,7 @@ export default function ListingPage() {
 
                     <Divider />
 
-                    <RoundsList />
+                    <RoundsList closeMobileNavbar={closeMobileNavbar} />
                 </Stack>
             </AppShell.Navbar>
 
