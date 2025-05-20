@@ -1,6 +1,7 @@
 import { Modal, Tabs } from "@mantine/core";
 import { useAtom } from "jotai";
 import { loggedInUserAtom } from "@store/atoms";
+import ModsSyncSettings from "@components/settings/ModsSyncSettings";
 
 interface SettingsModalProps {
     opened: boolean;
@@ -26,7 +27,7 @@ export default function SettingsModal({ opened, onClose }: SettingsModalProps) {
                     Users settings placeholder
                 </Tabs.Panel>
                 <Tabs.Panel value="mods" pt="md">
-                    Mods settings placeholder
+                    <ModsSyncSettings />
                 </Tabs.Panel>
                 <Tabs.Panel value="stats" pt="md">
                     Stats settings placeholder

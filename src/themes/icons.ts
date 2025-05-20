@@ -22,6 +22,7 @@ import {
     faTimes,
     faFloppyDisk,
     faCog,
+    faCopy,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function loadIcons() {
@@ -47,5 +48,6 @@ export default function loadIcons() {
         faTimes,
         faFloppyDisk,
         faCog,
+        faCopy,
     );
 }
