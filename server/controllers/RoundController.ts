@@ -19,10 +19,20 @@ class RoundController {
         const hasAccess = !!(loggedInUser && loggedInUser.hasAccess);
 
         const cursor = req.query.cursor as string | undefined;
+        const theme = req.query.theme as string | undefined;
+        const date = req.query.date as string | undefined;
 
         const query: any = hasAccess ? {} : { isPublished: true };
         if (cursor) {
             query.startDate = { $lt: new Date(cursor) };
+        }
+        if (theme) {
+            query.theme = { $regex: theme, $options: "i" };
+        }
+        if (date) {
+            const d = new Date(date);
+            query.startDate = { ...(query.startDate || {}), $lte: d };
+            query.endDate = { $gte: d };
         }
 
         const rounds = await Round.find(query)

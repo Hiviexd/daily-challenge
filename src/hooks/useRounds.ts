@@ -12,15 +12,20 @@ export default function useRounds() {
     });
 }
 
-export function useInfiniteRounds() {
+export interface RoundsFilterParams {
+    theme?: string;
+    date?: string;
+}
+
+export function useInfiniteRounds(params: RoundsFilterParams = {}) {
     const [rounds, setRounds] = useAtom(roundsAtom);
 
     const query = useInfiniteQuery({
-        queryKey: ["rounds"],
+        queryKey: ["rounds", params],
         queryFn: async ({ pageParam = null }) => {
-            const params: any = {};
-            if (pageParam) params.cursor = pageParam;
-            const res = await utils.apiCall({ method: "get", url: "/api/rounds", params });
+            const queryParams: any = { ...params };
+            if (pageParam) queryParams.cursor = pageParam;
+            const res = await utils.apiCall({ method: "get", url: "/api/rounds", params: queryParams });
             return res;
         },
         getNextPageParam: (lastPage) => {
