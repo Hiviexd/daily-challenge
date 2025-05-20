@@ -10,6 +10,7 @@ import DuplicateStatusCell from "./DuplicateStatusCell";
 import { loggedInUserAtom } from "@store/atoms";
 import { useAtom } from "jotai";
 import StarRatingBadge from "@components/common/StarRatingBadge";
+import utils from "@utils/index";
 
 interface IProps {
     beatmap: IBeatmap | null;
@@ -89,6 +90,15 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
                     </Group>
                 ) : (
                     <Group gap={4}>
+                        {loggedInUser?.isAdmin &&beatmapId && (
+                            <ActionIcon
+                                color="success"
+                                variant="subtle"
+                                onClick={() => utils.copyToClipboard(beatmapId)}
+                                size="sm">
+                                <FontAwesomeIcon icon="copy" size="sm" />
+                            </ActionIcon>
+                        )}
                         <Text size="sm" fw={500}>
                             {beatmapId || ""}
                         </Text>
