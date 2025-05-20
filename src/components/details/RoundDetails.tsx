@@ -99,6 +99,7 @@ export default function RoundDetails({ round }: IProps) {
                                 <Table.Th style={{ minWidth: 80, maxWidth: 100, width: 100 }}>Beatmap ID</Table.Th>
                                 <Table.Th style={{ textAlign: "center" }}>Star Rating</Table.Th>
                                 <Table.Th>Artist - Title</Table.Th>
+                                <Table.Th>Difficulty</Table.Th>
                                 <Table.Th>Mapper</Table.Th>
                                 <Table.Th>Date Ranked</Table.Th>
                                 <Table.Th>Notes/Mods</Table.Th>
@@ -106,7 +107,6 @@ export default function RoundDetails({ round }: IProps) {
                                     {!hasCheckedDuplicates ? (
                                         <Button
                                             size="xs"
-                                            color="yellow"
                                             variant="light"
                                             onClick={handleCheckDuplicates}
                                             loading={checkDuplicatesMutation.isPending}
