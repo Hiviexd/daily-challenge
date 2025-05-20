@@ -15,7 +15,12 @@ export default function StarRatingBadge({ rating }: IProps) {
         <Badge
             variant="light"
             size="sm"
-            style={{ fontSize: 12, backgroundColor: utils.getDifficultyColor(rating), color: getTextColor() }}>
+            style={{
+                fontFamily: "Torus, sans-serif",
+                fontSize: 12,
+                backgroundColor: utils.getDifficultyColor(rating),
+                color: getTextColor(),
+            }}>
             ★ {rating}
         </Badge>
     );
