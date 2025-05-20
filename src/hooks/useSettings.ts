@@ -15,7 +15,7 @@ export function useSyncMods() {
 
     return useMutation({
         mutationFn: async () => {
-            const response = await utils.apiCall({ method: "post", url: "/api/settings/sync-mods" });
+            const response = await utils.apiCall({ method: "post", url: "/api/settings/syncMods" });
             return utils.handleMutationResponse(response);
         },
         onSuccess: () => {
