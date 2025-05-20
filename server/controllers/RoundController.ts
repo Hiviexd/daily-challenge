@@ -16,17 +16,17 @@ class RoundController {
     /** GET all rounds */
     public async index(req: Request, res: Response) {
         const loggedInUser = res.locals!.user;
-        const isStaff = !!(loggedInUser && loggedInUser.isStaff);
+        const hasAccess = !!(loggedInUser && loggedInUser.hasAccess);
 
         const cursor = req.query.cursor as string | undefined;
 
-        const query: any = isStaff ? {} : { isPublished: true };
+        const query: any = hasAccess ? {} : { isPublished: true };
         if (cursor) {
             query.startDate = { $lt: new Date(cursor) };
         }
 
         const rounds = await Round.find(query)
-            .select(selectFields(isStaff))
+            .select(selectFields(hasAccess))
             .populate(DEFAULT_POPULATE)
             .sort({ startDate: -1 })
             .limit(DEFAULT_LIMIT);
