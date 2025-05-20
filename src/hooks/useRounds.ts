@@ -58,7 +58,7 @@ export function useUpdateRound(roundId: string) {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (round: Partial<IRound>) => {
+        mutationFn: async (round: { theme?: string; assignedUserId?: string }) => {
             const response = await utils.apiCall({ method: "put", url: `/api/rounds/${roundId}/update`, data: round });
             return utils.handleMutationResponse(response);
         },
@@ -68,12 +68,32 @@ export function useUpdateRound(roundId: string) {
     });
 }
 
-export function useUpdateRoundBeatmap(roundId: string) {
+export function useUpdateRoundBeatmapId(roundId: string) {
     const queryClient = useQueryClient();
-
     return useMutation({
-        mutationFn: async (round: { index: number; beatmapId?: number; notes?: string }) => {
-            const response = await utils.apiCall({ method: "put", url: `/api/rounds/${roundId}/updateBeatmap`, data: round });
+        mutationFn: async (data: { index: number; beatmapId: number | string | null }) => {
+            const response = await utils.apiCall({
+                method: "put",
+                url: `/api/rounds/${roundId}/updateBeatmapId`,
+                data,
+            });
+            return utils.handleMutationResponse(response);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["rounds"] });
+        },
+    });
+}
+
+export function useUpdateRoundBeatmapNote(roundId: string) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (data: { index: number; notes: string }) => {
+            const response = await utils.apiCall({
+                method: "put",
+                url: `/api/rounds/${roundId}/updateBeatmapNote`,
+                data,
+            });
             return utils.handleMutationResponse(response);
         },
         onSuccess: () => {

@@ -14,6 +14,7 @@ class RoundService {
     }
 
     // Cached version of checkDuplicates
+    // TODO: remove caching and replace with a method that takes a round and checks its duplicates on-demand
     public checkDuplicatesWithCache(roundsToCheck: IRound[], allRounds: IRound[]) {
         const key = this.getRoundsCacheKey(allRounds);
 

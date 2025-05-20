@@ -33,7 +33,7 @@ class RoundController {
 
         const nextCursor = rounds.length === DEFAULT_LIMIT ? rounds[rounds.length - 1].startDate.toISOString() : null;
 
-        rounds = RoundService.checkDuplicatesWithCache(rounds, rounds);
+        rounds = RoundService.checkDuplicates(rounds, rounds);
 
         res.status(200).json({ rounds, nextCursor });
     }
@@ -95,45 +95,54 @@ class RoundController {
             return res.status(404).json({ message: "Round not found" });
         }
 
-        round.theme = theme;
-        round.assignedUser = assignedUserId;
+        if (theme) round.theme = theme;
+        if (assignedUserId) round.assignedUser = assignedUserId;
         await round.save();
 
         return res.status(200).json({ message: "Round updated successfully!", round });
     }
 
-    public async updateBeatmap(req: Request, res: Response) {
+    public async updateBeatmapId(req: Request, res: Response) {
         const { roundId } = req.params;
-        const { index, beatmapId, notes } = req.body;
+        const { index, beatmapId } = req.body;
 
         const round = await Round.findById(roundId).populate(DEFAULT_POPULATE);
-
         if (!round) {
             return res.status(404).json({ message: "Round not found" });
         }
 
-        // if notes, update the notes only
-        if (notes) {
+        // Delete beatmap if beatmapId is empty or null
+        if ((beatmapId === "" || beatmapId === null) && index !== undefined) {
             if (Array.isArray(round.beatmapOrder)) {
-                const entry = round.beatmapOrder.find((e: any) => e.order === index);
-                if (entry) {
-                    const bm = round.beatmaps.find((bm: any) => bm._id.toString() === entry.beatmapId.toString());
-                    if (bm) bm.notes = notes;
+                // Find the entry for this index
+                const entryIdx = round.beatmapOrder.findIndex((e: any) => e.order === index);
+                if (entryIdx !== -1) {
+                    const removed = round.beatmapOrder.splice(entryIdx, 1)[0];
+                    // Remove from beatmaps if not used elsewhere
+                    if (removed && removed.beatmapId) {
+                        const stillUsed = round.beatmapOrder.some(
+                            (e: any) => e.beatmapId.toString() === removed.beatmapId.toString()
+                        );
+                        if (!stillUsed) {
+                            round.beatmaps = round.beatmaps.filter(
+                                (bm: any) => bm._id.toString() !== removed.beatmapId.toString()
+                            );
+                        }
+                    }
+                    round.markModified("beatmaps");
+                    round.markModified("beatmapOrder");
+                    await round.save();
                 }
             }
-            await round.save();
-            // No need to reconstruct or sort beatmaps for display
-            return res.status(200).json({ message: "Beatmap notes updated successfully!", round });
+            return res.status(200).json({ message: "Beatmap deleted from round", round });
         }
 
-        // if beatmapId, create a new beatmap to replace the one in the index
-        if (beatmapId !== undefined && index !== undefined) {
+        // Replace/set beatmap at index
+        if (beatmapId !== undefined && beatmapId !== "" && beatmapId !== null && index !== undefined) {
             const beatmap = await BeatmapService.getOrCreateBeatmap(beatmapId, req.session!.accessToken!);
-
             if (!beatmap) {
                 return res.status(404).json({ message: "Beatmap not found" });
             }
-
             // Add beatmap to beatmaps if not already present
             if (!round.beatmaps.some((bm: any) => bm._id.toString() === beatmap._id.toString())) {
                 round.beatmaps.push(beatmap._id);
@@ -149,13 +158,36 @@ class RoundController {
             round.markModified("beatmaps");
             round.markModified("beatmapOrder");
             await round.save();
-            // No need to reconstruct or sort beatmaps for display
-            if (round) {
-                return res.status(200).json({ message: "Beatmap updated successfully!", round });
-            } else {
-                return res.status(500).json({ message: "Unexpected error: round not found after save." });
-            }
+            return res.status(200).json({ message: "Beatmap updated successfully!", round });
         }
+
+        return res.status(400).json({ message: "Invalid request for updateBeatmapId" });
+    }
+
+    public async updateBeatmapNote(req: Request, res: Response) {
+        const { roundId } = req.params;
+        const { index, notes } = req.body;
+
+        const round = await Round.findById(roundId).populate(DEFAULT_POPULATE);
+        if (!round) {
+            return res.status(404).json({ message: "Round not found" });
+        }
+
+        if (typeof notes === "string" && index !== undefined) {
+            if (Array.isArray(round.beatmapOrder)) {
+                const entry = round.beatmapOrder.find((e: any) => e.order === index);
+                if (entry) {
+                    const bm = round.beatmaps.find((bm: any) => bm._id.toString() === entry.beatmapId.toString());
+                    if (bm) {
+                        bm.notes = notes;
+                        await bm.save();
+                    }
+                }
+            }
+            await round.save();
+            return res.status(200).json({ message: "Beatmap notes updated successfully!", round });
+        }
+        return res.status(400).json({ message: "Invalid request for updateBeatmapNote" });
     }
 }
 

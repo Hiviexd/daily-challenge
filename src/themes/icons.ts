@@ -12,6 +12,9 @@ import {
     faUser,
     faComment,
     faSearch,
+    faCheckCircle,
+    faTimesCircle,
+    faExclamationTriangle,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function loadIcons() {
@@ -26,6 +29,9 @@ export default function loadIcons() {
         faCalendar,
         faUser,
         faComment,
-        faSearch
+        faSearch,
+        faCheckCircle,
+        faTimesCircle,
+        faExclamationTriangle
     );
 }

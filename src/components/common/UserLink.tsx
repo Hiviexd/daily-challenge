@@ -4,10 +4,11 @@ import { IUser } from "@interfaces/User";
 interface IPropTypes extends Omit<AnchorProps, "href"> {
     user?: IUser;
     username?: string;
+    osuId?: number;
     asText?: boolean;
 }
 
-export default function UserLink({ user, username, asText, ...props }: IPropTypes) {
+export default function UserLink({ user, username, osuId, asText, ...props }: IPropTypes) {
     const handleLinkClick = (e: React.MouseEvent) => {
         e.stopPropagation();
     };
@@ -25,9 +26,9 @@ export default function UserLink({ user, username, asText, ...props }: IPropType
             {...props}
             fw={props.fw ?? 700}
             onClick={handleLinkClick}
-            href={`https://osu.ppy.sh/users/${user?.osuId}`}
+            href={`https://osu.ppy.sh/users/${osuId ?? user?.osuId}`}
             target="_blank">
-            {user?.username ?? "Unknown"}
+            {username ?? user?.username ?? "Unknown"}
         </Anchor>
     );
 }
