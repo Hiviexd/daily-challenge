@@ -2,7 +2,7 @@ import { Modal, TextInput, Stack, Select, Button, Group } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useCreateRound } from "@hooks/useRounds";
-import useStaff from "@hooks/useUsers";
+import { useStaff } from "@hooks/useUsers";
 import { IUser } from "@interfaces/User";
 import utils from "@utils/index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

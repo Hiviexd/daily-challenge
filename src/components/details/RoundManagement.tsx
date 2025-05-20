@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Select, TextInput, Group, ActionIcon, Text, Loader, Stack, Button } from "@mantine/core";
 import { IRound } from "@interfaces/Round";
-import useStaff from "@hooks/useUsers";
+import { useStaff } from "@hooks/useUsers";
 import { useUpdateRound } from "@hooks/useRounds";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import utils from "@utils/index";
