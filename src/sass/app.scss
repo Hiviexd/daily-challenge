@@ -1,6 +1,7 @@
 /* Components */
 @import "Header.scss";
 @import "RoundCard.scss";
+@import "UserCard.scss";
 
 /* Fonts */
 
@@ -60,6 +61,8 @@
     --mantine-color-text: var(--mantine-color-white) !important;
     --mantine-color-primary-filled: var(--mantine-color-primary-9) !important;
     --mantine-color-primary-filled-hover: darken(var(--mantine-color-primary-9), 10%) !important;
+    --mantine-color-default: var(--mantine-color-primary-10) !important;
+    --mantine-color-default-hover: darken(var(--mantine-color-primary-10), 10%) !important;
 
     .mantine-Menu-dropdown {
         background-color: var(--mantine-color-primary-11) !important;

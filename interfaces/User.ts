@@ -2,6 +2,8 @@ import { Document, Model, DocumentQuery } from "mongoose";
 
 export type UserGroup = "user" | "staff" | "spectator" | "admin";
 
+export type UserGroupAction = "add" | "remove";
+
 export interface IUser extends Document {
     osuId: number;
     username: string;
