@@ -34,6 +34,7 @@ export default function RoundManagement({ round }: IProps) {
     };
 
     const handleUpdateIsPublished = async () => {
+        if (!confirm("Are you sure? This will affect the public visibility of this round.")) return;
         await updateRound.mutateAsync({ isPublished: !round?.isPublished });
     };
 
