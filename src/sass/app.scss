@@ -155,10 +155,19 @@ a {
     text-decoration: none;
 }
 
-
-
-/* Triangles background */
+/* Background */
 
 body {
     background-color: var(--mantine-color-primary-11);
+}
+
+/* Selection */
+::selection {
+    background-color: var(--mantine-color-primary-9);
+    color: var(--mantine-color-text);
+}
+
+::moz-selection {
+    background-color: var(--mantine-color-primary-9);
+    color: var(--mantine-color-text);
 }
