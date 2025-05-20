@@ -1,4 +1,4 @@
-import { AppShell, TextInput, Stack, Paper, Divider, Button, Card } from "@mantine/core";
+import { AppShell, TextInput, Stack, Divider, Button, Card } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { selectedRoundIdAtom, roundsAtom, loggedInUserAtom } from "@store/atoms";
@@ -65,7 +65,7 @@ export default function ListingPage() {
 
             <AppShell.Main>
                 <Card shadow="sm" p="xl">
-                    <RoundDetails selectedRound={selectedRound} />
+                    <RoundDetails round={selectedRound} />
                 </Card>
             </AppShell.Main>
         </AppShell>

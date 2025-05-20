@@ -53,3 +53,31 @@ export function useCreateRound() {
         },
     });
 }
+
+export function useUpdateRound(roundId: string) {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (round: Partial<IRound>) => {
+            const response = await utils.apiCall({ method: "put", url: `/api/rounds/${roundId}/update`, data: round });
+            return utils.handleMutationResponse(response);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["rounds"] });
+        },
+    });
+}
+
+export function useUpdateRoundBeatmap(roundId: string) {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (round: { index: number; beatmapId?: number; notes?: string }) => {
+            const response = await utils.apiCall({ method: "put", url: `/api/rounds/${roundId}/updateBeatmap`, data: round });
+            return utils.handleMutationResponse(response);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["rounds"] });
+        },
+    });
+}

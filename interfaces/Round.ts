@@ -2,6 +2,14 @@ import { Document } from "mongoose";
 import { IUser } from "./User";
 import { IBeatmap } from "./Beatmap";
 
+export type WarningType = "duplicate_set" | "duplicate_difficulty";
+
+export interface IWarning {
+    index: number;
+    type: WarningType;
+    duplicates: string[];
+}
+
 export interface IRound extends Document {
     assignedUser: IUser;
     beatmaps: IBeatmap[];
@@ -9,6 +17,8 @@ export interface IRound extends Document {
     endDate: Date;
     theme?: string;
     isPublished: boolean;
+    warnings?: IWarning[];
+    beatmapOrder?: { beatmapId: string; order: number }[];
 
     // Virtuals
     isActive: boolean;

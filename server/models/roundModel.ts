@@ -5,7 +5,13 @@ import moment from "moment";
 const RoundSchema = new mongoose.Schema<IRound>(
     {
         assignedUser: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-        beatmaps: [{ type: mongoose.Schema.Types.ObjectId, ref: "Beatmap", required: true }],
+        beatmaps: [{ type: mongoose.Schema.Types.ObjectId, ref: "Beatmap" }],
+        beatmapOrder: [
+            {
+                beatmapId: { type: mongoose.Schema.Types.ObjectId, ref: "Beatmap", required: true },
+                order: { type: Number, required: true },
+            },
+        ],
         startDate: { type: Date, required: true },
         endDate: { type: Date, required: true },
         theme: { type: String },
@@ -14,19 +20,19 @@ const RoundSchema = new mongoose.Schema<IRound>(
     { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-RoundSchema.virtual("isActive").get(function(this: IRound) {
+RoundSchema.virtual("isActive").get(function (this: IRound) {
     return this.startDate <= new Date() && this.endDate >= new Date();
 });
 
-RoundSchema.virtual("isUpcoming").get(function(this: IRound) {
+RoundSchema.virtual("isUpcoming").get(function (this: IRound) {
     return this.startDate > new Date();
 });
 
-RoundSchema.virtual("isPast").get(function(this: IRound) {
+RoundSchema.virtual("isPast").get(function (this: IRound) {
     return this.endDate < new Date();
 });
 
-RoundSchema.virtual("title").get(function(this: IRound) {
+RoundSchema.virtual("title").get(function (this: IRound) {
     return moment(this.startDate).format("MMM D") + " — " + moment(this.endDate).format("MMM D YYYY");
 });
 

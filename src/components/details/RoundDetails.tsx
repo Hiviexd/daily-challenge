@@ -1,101 +1,87 @@
-import { useState } from "react";
-import { Table, Select, TextInput, Image, ScrollArea, Group, Box, Stack, Card } from "@mantine/core";
+import { Table, Select, TextInput, Image, ScrollArea, Group, Box, Stack, Card, Text, Divider } from "@mantine/core";
+import { useDebouncedCallback } from "@mantine/hooks";
 import { IconCheck } from "@tabler/icons-react";
+import { IRound } from "@interfaces/Round";
+import { IBeatmap } from "@interfaces/Beatmap";
+import { useUpdateRoundBeatmap, useUpdateRound } from "@hooks/useRounds";
+import useStaff from "@hooks/useUsers";
+import { IUser } from "@interfaces/User";
 
-interface BeatmapRow {
-    beatmapId: number | "";
-    beatmapsetId?: number;
-    starRating?: number;
-    artist?: string;
-    title?: string;
-    version?: string;
-    cover?: string;
-    rankedDate?: Date;
-    creator?: { osuId: number; username: string };
-    notes?: string;
+interface IProps {
+    round: IRound | null;
 }
 
-// No props needed for now
+type UpdateRoundBeatmapArg = { index: number } & { [key: string]: string | number };
 
-const staffOptions = [
-    { value: "1", label: "TheMagicAnim" },
-    { value: "2", label: "AnotherStaff" },
-    { value: "3", label: "TestUser" },
-];
+export default function RoundDetails({ round }: IProps) {
+    const updateRoundBeatmap = useUpdateRoundBeatmap(round?._id || "");
+    const updateRound = useUpdateRound(round?._id || "");
 
-const initialBeatmaps: BeatmapRow[] = [
-    {
-        beatmapId: 1863290,
-        beatmapsetId: 1,
-        starRating: 3.22,
-        artist: "HyuN",
-        title: "Illusion of Inflict",
-        version: "Hard",
-        cover: "https://assets.ppy.sh/beatmaps/1863290/covers/cover@2x.jpg",
-        rankedDate: new Date("2018-12-28"),
-        creator: { osuId: 1, username: "schoolboy" },
-        notes: "",
-    },
-    null,
-    {
-        beatmapId: 1863290,
-        beatmapsetId: 1,
-        starRating: 3.22,
-        artist: "HyuN",
-        title: "Illusion of Inflict",
-        version: "Hard",
-        cover: "https://assets.ppy.sh/beatmaps/1863290/covers/cover@2x.jpg",
-        rankedDate: new Date("2018-12-28"),
-        creator: { osuId: 1, username: "schoolboy" },
-        notes: "",
-    },
-    // Add more beatmaps here if needed
-];
+    const { data: staff } = useStaff();
 
-export default function RoundDetails() {
-    // Editable fields for the round
-    const [assignedUser, setAssignedUser] = useState(staffOptions[0].value);
-    const [theme, setTheme] = useState("");
+    const getAssignedUserOptions = () => {
+        if (!staff) return [];
+        return staff.map((user: IUser) => ({ value: user._id, label: user.username }));
+    };
 
-    // Beatmaps state (always 7 rows)
-    const [beatmaps, setBeatmaps] = useState<BeatmapRow[]>(() => {
-        const arr = Array(7)
-            .fill(null)
-            .map((_, i) => initialBeatmaps[i] || { beatmapId: "" });
-        return arr;
+    // Build a map from beatmapId to beatmap object
+    const beatmapMap = new Map<string, IBeatmap>();
+    (round?.beatmaps ?? []).forEach((bm) => {
+        if (bm && bm._id) beatmapMap.set(bm._id.toString(), bm);
     });
 
+    // Build the display array using beatmapOrder (length 7, null for empty slots)
+    const displayBeatmaps: (IBeatmap | null)[] = Array(7).fill(null);
+    (round?.beatmapOrder ?? []).forEach((entry) => {
+        if (typeof entry.order === "number" && entry.order >= 0 && entry.order < 7) {
+            const bm = beatmapMap.get(entry.beatmapId.toString()) ?? null;
+            displayBeatmaps[entry.order] = bm;
+        }
+    });
+
+    const debouncedUpdateRoundBeatmap = useDebouncedCallback(async (updatedRound: UpdateRoundBeatmapArg) => {
+        await updateRoundBeatmap.mutateAsync(updatedRound);
+    }, 1000);
+
+    const debouncedUpdateRound = useDebouncedCallback(async (updatedRound: Record<string, string>) => {
+        await updateRound.mutateAsync(updatedRound);
+    }, 1000);
+
     // Handler for editing fields
-    const handleEdit = (rowIdx: number, field: string, value: any) => {
-        // For now, just log the change
-        console.log(`Edit row ${rowIdx}: ${field} ->`, value);
-        setBeatmaps((prev) => prev.map((bm, idx) => (idx === rowIdx ? { ...bm, [field]: value } : bm)));
+    const handleEditBeatmap = (rowIdx: number, field: string, value: string) => {
+        const updatedRound: UpdateRoundBeatmapArg = { index: rowIdx, [field]: value };
+        debouncedUpdateRoundBeatmap(updatedRound);
+    };
+
+    const handleEditRound = (field: string, value: string) => {
+        const updatedRound = { [field]: value };
+        debouncedUpdateRound(updatedRound);
     };
 
     // Render a single row (for reuse)
-    const renderRow = (bm: BeatmapRow, idx: number) => (
+    const renderRow = (bm: IBeatmap | null, idx: number) => (
         <Table.Tr key={idx}>
             {/* Beatmap ID Input (for empty rows, this is how you add a beatmap) */}
             <Table.Td style={{ minWidth: 80, maxWidth: 100, width: 100 }}>
                 <TextInput
-                    value={bm.beatmapId === "" ? "" : bm.beatmapId.toString()}
-                    onChange={(e) => handleEdit(idx, "beatmapId", e.currentTarget.value)}
+                    value={bm?.beatmapId === 0 ? "" : bm?.beatmapId?.toString()}
+                    onChange={(e) => handleEditBeatmap(idx, "beatmapId", e.currentTarget.value)}
                     size="xs"
                     placeholder="..."
                 />
             </Table.Td>
             {/* Star Range (predefined) */}
             <Table.Td style={{ textAlign: "center" }}>
-                {typeof bm.starRating === "number" ? `${bm.starRating}★` : "-"}
+                {typeof bm?.starRating === "number" ? `${bm?.starRating}★` : "-"}
             </Table.Td>
             {/* Artist - Title with Banner */}
             <Table.Td>
-                {bm.artist ? (
+                {bm?.artist ? (
                     <Group gap="sm" wrap="nowrap">
                         <Image src={bm.cover} width={48} height={32} radius="sm" alt="cover" />
                         <Box>
                             <div style={{ fontWeight: 500 }}>
-                                {bm.artist} - {bm.title} [{bm.version}]
+                                {bm?.artist} - {bm?.title} [{bm?.version}]
                             </div>
                         </Box>
                     </Group>
@@ -104,16 +90,16 @@ export default function RoundDetails() {
                 )}
             </Table.Td>
             {/* Mapper */}
-            <Table.Td>{bm.creator?.username || "-"}</Table.Td>
+            <Table.Td>{bm?.creator?.username || "-"}</Table.Td>
             {/* Date Ranked */}
             <Table.Td>
-                {bm.rankedDate instanceof Date ? bm.rankedDate.toLocaleDateString() : bm.rankedDate || "-"}
+                {bm?.rankedDate instanceof Date ? bm?.rankedDate.toLocaleDateString() : bm?.rankedDate || "-"}
             </Table.Td>
             {/* Notes Input */}
             <Table.Td>
                 <TextInput
-                    value={bm.notes || ""}
-                    onChange={(e) => handleEdit(idx, "notes", e.currentTarget.value)}
+                    value={bm?.notes || ""}
+                    onChange={(e) => handleEditBeatmap(idx, "notes", e.currentTarget.value)}
                     size="xs"
                     placeholder="..."
                 />
@@ -128,27 +114,31 @@ export default function RoundDetails() {
     return (
         <Stack gap="md">
             <Card shadow="sm" p="md" bg="primary.11">
-                <Group align="flex-end" gap="md">
-                    <Select
-                        label="Assigned User"
-                        data={staffOptions}
-                        value={assignedUser}
-                        onChange={(val) => {
-                            setAssignedUser(val!);
-                            handleEdit(-1, "assignedUser", val);
-                        }}
-                        style={{ maxWidth: 220 }}
-                    />
-                    <TextInput
-                        label="Theme"
-                        value={theme}
-                        onChange={(e) => {
-                            setTheme(e.currentTarget.value);
-                            handleEdit(-1, "theme", e.currentTarget.value);
-                        }}
-                        style={{ minWidth: 300 }}
-                    />
-                </Group>
+                <Stack gap="md">
+                    <Text fw={500} size="lg">
+                        {round?.title}
+                    </Text>
+                    <Divider />
+                    <Group align="flex-end" gap="md">
+                        <Select
+                            label="Assigned User"
+                            data={getAssignedUserOptions()}
+                            value={round?.assignedUser?._id}
+                            onChange={(val) => {
+                                handleEditRound("assignedUser", val!);
+                            }}
+                            style={{ maxWidth: 220 }}
+                        />
+                        <TextInput
+                            label="Theme"
+                            value={round?.theme}
+                            onChange={(e) => {
+                                handleEditRound("theme", e.currentTarget.value);
+                            }}
+                            style={{ minWidth: 300 }}
+                        />
+                    </Group>
+                </Stack>
             </Card>
             <Card shadow="sm" p="md" bg="primary.11">
                 <ScrollArea w="100%" type="auto" style={{ minWidth: 1200 }}>
@@ -164,7 +154,7 @@ export default function RoundDetails() {
                                 <Table.Th>Duplicate status</Table.Th>
                             </Table.Tr>
                         </Table.Thead>
-                        <Table.Tbody>{beatmaps.map((bm, idx) => renderRow(bm, idx))}</Table.Tbody>
+                        <Table.Tbody>{displayBeatmaps.map((bm, idx) => renderRow(bm, idx))}</Table.Tbody>
                     </Table>
                 </ScrollArea>
             </Card>
