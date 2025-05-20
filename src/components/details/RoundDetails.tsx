@@ -1,8 +1,12 @@
-import { Table, ScrollArea, Stack, Card, Text, Divider, Badge, Group } from "@mantine/core";
-import { IRound } from "@interfaces/Round";
+import { Table, ScrollArea, Stack, Card, Text, Divider, Badge, Group, Button } from "@mantine/core";
+import { IRound, IWarning } from "@interfaces/Round";
 import { IBeatmap } from "@interfaces/Beatmap";
 import BeatmapRow from "./BeatmapRow";
 import RoundManagement from "./RoundManagement";
+import { useCheckRoundDuplicates } from "@hooks/useRounds";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useAtom } from "jotai";
+import { roundDuplicateWarningsAtom } from "@store/atoms";
 
 interface IProps {
     round: IRound | null;
@@ -29,6 +33,40 @@ export default function RoundDetails({ round }: IProps) {
         if (round?.isPast) return { title: "Past", color: "danger", cssColor: "var(--mantine-color-danger-6)" };
         if (round?.isUpcoming) return { title: "Upcoming", color: "gray", cssColor: "var(--mantine-color-gray-6)" };
         return { title: "Unknown", color: "primary", cssColor: "var(--mantine-color-primary-6)" };
+    };
+
+    // Atom for duplicate warnings per round
+    const [roundDuplicateWarnings, setRoundDuplicateWarnings] = useAtom(roundDuplicateWarningsAtom);
+    const roundId = round?._id || "";
+    const roundWarnings = roundDuplicateWarnings[roundId]?.warnings || [];
+    const hasCheckedDuplicates = !!roundDuplicateWarnings[roundId]?.checked;
+
+    // Map warnings by targetBeatmapId for quick lookup
+    const warningMap = new Map<string, IWarning>();
+    roundWarnings.forEach((w) => {
+        warningMap.set(w.targetBeatmapId, w);
+    });
+
+    // React Query mutation for checking duplicates
+    const checkDuplicatesMutation = useCheckRoundDuplicates(roundId);
+
+    // Handler for checking duplicates
+    const handleCheckDuplicates = () => {
+        if (!roundId) return;
+        checkDuplicatesMutation.mutate(undefined, {
+            onSuccess: (data) => {
+                setRoundDuplicateWarnings((prev) => ({
+                    ...prev,
+                    [roundId]: { warnings: data, checked: true },
+                }));
+            },
+            onError: () => {
+                setRoundDuplicateWarnings((prev) => ({
+                    ...prev,
+                    [roundId]: { warnings: [], checked: true },
+                }));
+            },
+        });
     };
 
     return (
@@ -64,12 +102,33 @@ export default function RoundDetails({ round }: IProps) {
                                 <Table.Th>Mapper</Table.Th>
                                 <Table.Th>Date Ranked</Table.Th>
                                 <Table.Th>Notes/Mods</Table.Th>
-                                <Table.Th style={{ textAlign: "center" }}>Duplicate status</Table.Th>
+                                <Table.Th style={{ textAlign: "center" }}>
+                                    {!hasCheckedDuplicates ? (
+                                        <Button
+                                            size="xs"
+                                            color="yellow"
+                                            variant="light"
+                                            onClick={handleCheckDuplicates}
+                                            loading={checkDuplicatesMutation.isPending}
+                                            leftSection={<FontAwesomeIcon icon="clone" />}>
+                                            Check Duplicates
+                                        </Button>
+                                    ) : (
+                                        "Duplicate Status"
+                                    )}
+                                </Table.Th>
                             </Table.Tr>
                         </Table.Thead>
                         <Table.Tbody>
                             {displayBeatmaps.map((bm, idx) => (
-                                <BeatmapRow key={idx} beatmap={bm} index={idx} roundId={round?._id || ""} />
+                                <BeatmapRow
+                                    key={idx}
+                                    beatmap={bm}
+                                    index={idx}
+                                    roundId={roundId}
+                                    warning={bm && bm.beatmapId ? warningMap.get(bm.beatmapId.toString()) : undefined}
+                                    hasCheckedDuplicates={hasCheckedDuplicates}
+                                />
                             ))}
                         </Table.Tbody>
                     </Table>

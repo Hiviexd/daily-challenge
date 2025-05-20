@@ -1,4 +1,4 @@
-import { Table, TextInput, Image, Group, Loader, Anchor } from "@mantine/core";
+import { Table, TextInput, Image, Group, Loader, Anchor, Popover, Text, ActionIcon } from "@mantine/core";
 import { IBeatmap } from "@interfaces/Beatmap";
 import { useUpdateRoundBeatmapId, useUpdateRoundBeatmapNote } from "@hooks/useRounds";
 import { useDebouncedValue } from "@mantine/hooks";
@@ -6,14 +6,17 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import UserLink from "@components/common/UserLink";
+import { IWarning } from "@interfaces/Round";
 
 interface IProps {
     beatmap: IBeatmap | null;
     index: number;
     roundId: string;
+    warning?: IWarning;
+    hasCheckedDuplicates: boolean;
 }
 
-export default function BeatmapRow({ beatmap, index, roundId }: IProps) {
+export default function BeatmapRow({ beatmap, index, roundId, warning, hasCheckedDuplicates }: IProps) {
     const updateRoundBeatmapId = useUpdateRoundBeatmapId(roundId);
     const updateRoundBeatmapNote = useUpdateRoundBeatmapNote(roundId);
 
@@ -62,6 +65,56 @@ export default function BeatmapRow({ beatmap, index, roundId }: IProps) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [beatmap?.beatmapId, beatmap?.notes]);
 
+    // Duplicate status cell
+    let duplicateStatus;
+    if (!hasCheckedDuplicates) {
+        duplicateStatus = <FontAwesomeIcon icon="question-circle" color="var(--mantine-color-gray-6)" />;
+    } else if (warning) {
+        if (warning.type === "duplicate_difficulty") {
+            duplicateStatus = (
+                <Popover width={260} position="bottom" withArrow shadow="md">
+                    <Popover.Target>
+                        <ActionIcon color="red" variant="subtle">
+                            <FontAwesomeIcon icon="times-circle" color="var(--mantine-color-red-6)" />
+                        </ActionIcon>
+                    </Popover.Target>
+                    <Popover.Dropdown>
+                        <Text fw={500} color="red" mb={4}>
+                            Duplicate difficulty in:
+                        </Text>
+                        {warning.duplicates.map((title, i) => (
+                            <Text key={i} size="sm">
+                                {title}
+                            </Text>
+                        ))}
+                    </Popover.Dropdown>
+                </Popover>
+            );
+        } else if (warning.type === "duplicate_set") {
+            duplicateStatus = (
+                <Popover width={260} position="bottom" withArrow shadow="md">
+                    <Popover.Target>
+                        <ActionIcon color="yellow" variant="subtle">
+                            <FontAwesomeIcon icon="exclamation-triangle" color="var(--mantine-color-warning-6)" />
+                        </ActionIcon>
+                    </Popover.Target>
+                    <Popover.Dropdown>
+                        <Text fw={500} color="yellow.7" mb={4}>
+                            Duplicate set in:
+                        </Text>
+                        {warning.duplicates.map((title, i) => (
+                            <Text key={i} size="sm">
+                                {title}
+                            </Text>
+                        ))}
+                    </Popover.Dropdown>
+                </Popover>
+            );
+        }
+    } else {
+        duplicateStatus = <FontAwesomeIcon icon="check-circle" color="var(--mantine-color-success-6)" />;
+    }
+
     return (
         <Table.Tr key={index}>
             {/* Beatmap ID Input (for empty rows, this is how you add a beatmap) */}
@@ -98,7 +151,12 @@ export default function BeatmapRow({ beatmap, index, roundId }: IProps) {
             {/* Mapper */}
             <Table.Td>
                 {beatmap?.creator?.osuId ? (
-                    <UserLink size="sm" fw={500} osuId={beatmap?.creator?.osuId} username={beatmap?.creator?.username} />
+                    <UserLink
+                        size="sm"
+                        fw={500}
+                        osuId={beatmap?.creator?.osuId}
+                        username={beatmap?.creator?.username}
+                    />
                 ) : (
                     "-"
                 )}
@@ -116,10 +174,8 @@ export default function BeatmapRow({ beatmap, index, roundId }: IProps) {
                     disabled={beatmap?.beatmapId === 0 || beatmap?.beatmapId == null}
                 />
             </Table.Td>
-            {/* Duplicate Status Placeholder */}
-            <Table.Td style={{ textAlign: "center" }}>
-                <FontAwesomeIcon icon="check-circle" color="var(--mantine-color-success-6)" />
-            </Table.Td>
+            {/* Duplicate Status */}
+            <Table.Td style={{ textAlign: "center" }}>{duplicateStatus}</Table.Td>
         </Table.Tr>
     );
 }

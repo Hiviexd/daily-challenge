@@ -101,3 +101,12 @@ export function useUpdateRoundBeatmapNote(roundId: string) {
         },
     });
 }
+
+export function useCheckRoundDuplicates(roundId: string) {
+    return useMutation({
+        mutationFn: async () => {
+            const response = await utils.apiCall({ method: "get", url: `/api/rounds/${roundId}/checkDuplicates` });
+            return response.warnings || [];
+        },
+    });
+}

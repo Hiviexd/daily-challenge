@@ -9,5 +9,6 @@ roundRouter.post("/create", auth.isLoggedIn, auth.isStaff, RoundController.creat
 roundRouter.put("/:roundId/update", auth.isLoggedIn, auth.isStaff, RoundController.update);
 roundRouter.put("/:roundId/updateBeatmapId", auth.isLoggedIn, auth.isStaff, RoundController.updateBeatmapId);
 roundRouter.put("/:roundId/updateBeatmapNote", auth.isLoggedIn, auth.isStaff, RoundController.updateBeatmapNote);
+roundRouter.get("/:id/checkDuplicates", auth.isLoggedIn, auth.isStaff, RoundController.checkDuplicates);
 
 export default roundRouter;

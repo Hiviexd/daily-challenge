@@ -25,7 +25,7 @@ class RoundController {
             query.startDate = { $lt: new Date(cursor) };
         }
 
-        let rounds = await Round.find(query)
+        const rounds = await Round.find(query)
             .select(selectFields(isStaff))
             .populate(DEFAULT_POPULATE)
             .sort({ startDate: -1 })
@@ -33,9 +33,23 @@ class RoundController {
 
         const nextCursor = rounds.length === DEFAULT_LIMIT ? rounds[rounds.length - 1].startDate.toISOString() : null;
 
-        rounds = RoundService.checkDuplicates(rounds, rounds);
-
         res.status(200).json({ rounds, nextCursor });
+    }
+
+    /** GET duplicate warnings for a round */
+    public async checkDuplicates(req: Request, res: Response) {
+        const { id } = req.params;
+
+        const round = await Round.findById(id).populate(DEFAULT_POPULATE);
+
+        if (!round) {
+            return res.status(404).json({ message: "Round not found" });
+        }
+
+        const allRounds = await Round.find({}).populate(DEFAULT_POPULATE);
+        const warnings = RoundService.checkDuplicates(round, allRounds);
+
+        res.status(200).json({ warnings });
     }
 
     /* POST create round */
@@ -85,6 +99,7 @@ class RoundController {
         LogService.generate(loggedInUser._id, `Created round: ${round.title}`);
     }
 
+    /* PUT update round */
     public async update(req: Request, res: Response) {
         const { roundId } = req.params;
         const { theme, assignedUserId } = req.body;
@@ -102,6 +117,7 @@ class RoundController {
         return res.status(200).json({ message: "Round updated successfully!", round });
     }
 
+    /* PUT update beatmapId for a round */
     public async updateBeatmapId(req: Request, res: Response) {
         const { roundId } = req.params;
         const { index, beatmapId } = req.body;
@@ -164,6 +180,7 @@ class RoundController {
         return res.status(400).json({ message: "Invalid request for updateBeatmapId" });
     }
 
+    /* PUT update beatmap note for a round */
     public async updateBeatmapNote(req: Request, res: Response) {
         const { roundId } = req.params;
         const { index, notes } = req.body;
