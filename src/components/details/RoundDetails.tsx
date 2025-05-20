@@ -87,7 +87,13 @@ export default function RoundDetails({ round }: IProps) {
                 bg="primary.11"
                 radius="md"
                 style={{
-                    borderTop: `4px solid ${round ? getColors(round).cssColor : "var(--mantine-color-primary-6)"}`,
+                    borderTop: `4px solid ${
+                        round
+                            ? loggedInUser?.hasAccess
+                                ? getColors(round).cssColor
+                                : "var(--mantine-color-primary-6)"
+                            : "var(--mantine-color-primary-6)"
+                    }`,
                 }}>
                 <Stack gap="md">
                     <Group gap="xs">

@@ -18,9 +18,9 @@ export default function RoundCard({ round, selected = false, onClick }: IProps) 
         <Card
             radius="md"
             p="md"
-            className={`round-card ${round.isActive ? "active" : round.isPast ? "past" : ""}${
-                selected ? " selected" : ""
-            }`}
+            className={`round-card ${
+                loggedInUser?.hasAccess ? (round.isActive ? "active" : round.isPast ? "past" : "") : "primary"
+            }${selected ? " selected" : ""}`}
             onClick={onClick}
             style={{ cursor: onClick ? "pointer" : undefined }}>
             <Group gap="xs" align="center" mb={4}>

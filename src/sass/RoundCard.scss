@@ -30,6 +30,10 @@
         border-left: 4px solid var(--mantine-color-danger-6);
     }
 
+    &.primary {
+        border-left: 4px solid var(--mantine-color-primary-6);
+    }
+
     &.selected,
     &.selected:hover {
         background: rgba(var(--mantine-primary-color-rgb), 0.08);

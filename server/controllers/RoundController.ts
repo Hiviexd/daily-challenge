@@ -151,7 +151,7 @@ class RoundController {
                     await round.save();
                 }
             }
-            return res.status(200).json({ message: "Beatmap deleted from round", round });
+            return res.status(200).json({ message: "Beatmap deleted from round!", round });
         }
 
         // Replace/set beatmap at index
