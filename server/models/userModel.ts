@@ -35,16 +35,19 @@ UserSchema.virtual("isAdmin").get(function (this: IUser) {
     return this.groups.includes("admin");
 });
 
-UserSchema.statics.findByUsernameOrOsuId = function (this: IUserStatics, user: string | number) {
-    const osuId = parseInt(user as string, 10);
+UserSchema.statics.findByUsernameOrOsuId = async function (this: IUserStatics, user: string | number) {
+    // Attempt username lookup first
+    const usernameResult = await this.findOne({
+        username: new RegExp("^" + utils.escapeUsername(user as string) + "$", "i"),
+    });
+    if (usernameResult) return usernameResult;
 
-    if (isNaN(osuId)) {
-        return this.findOne({
-            username: new RegExp("^" + utils.escapeUsername(user as string) + "$", "i"),
-        });
-    } else {
+    // If not found, try osuId lookup
+    const osuId = parseInt(user as string, 10);
+    if (!isNaN(osuId)) {
         return this.findOne({ osuId });
     }
+    return null;
 };
 
 const User = mongoose.model<IUser, IUserStatics>("User", UserSchema);
