@@ -78,12 +78,15 @@ export default function RoundDetails({ round }: IProps) {
                 radius="md"
                 style={{ borderTop: `4px solid ${getColors(round!).cssColor}` }}>
                 <Stack gap="md">
-                    <Group>
+                    <Group gap="xs">
                         <Text fw={700} size="xl">
                             {round?.title}
                         </Text>
                         <Badge color={getColors(round!).color} variant="light">
                             {getColors(round!).title}
+                        </Badge>
+                        <Badge color={round?.isPublished ? "info" : "gray"} variant="light">
+                            <FontAwesomeIcon icon={round?.isPublished ? "eye" : "eye-slash"} />
                         </Badge>
                     </Group>
                     {/* round management */}

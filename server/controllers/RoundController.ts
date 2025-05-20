@@ -102,7 +102,7 @@ class RoundController {
     /* PUT update round */
     public async update(req: Request, res: Response) {
         const { roundId } = req.params;
-        const { theme, assignedUserId } = req.body;
+        const { theme, assignedUserId, isPublished } = req.body;
 
         const round = await Round.findById(roundId);
 
@@ -112,6 +112,7 @@ class RoundController {
 
         if (theme) round.theme = theme;
         if (assignedUserId) round.assignedUser = assignedUserId;
+        if (isPublished !== undefined) round.isPublished = isPublished;
         await round.save();
 
         return res.status(200).json({ message: "Round updated successfully!", round });
