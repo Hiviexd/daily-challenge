@@ -6,6 +6,7 @@ import { useAtom } from "jotai";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useInfiniteRounds } from "@hooks/useRounds";
 import { useDebouncedValue } from "@mantine/hooks";
+import utils from "@utils/index";
 
 // components
 import Header from "@components/common/Header";
@@ -25,7 +26,7 @@ export default function ListingPage() {
 
     const { rounds } = useInfiniteRounds({
         theme: debouncedSearch.trim() || undefined,
-        date: selectedDate ? selectedDate.toISOString() : undefined,
+        date: selectedDate ? utils.toUTCDateOnly(selectedDate).toISOString() : undefined,
     });
 
     const selectedRound = rounds.find((r) => r.id === selectedRoundId) ?? null;
