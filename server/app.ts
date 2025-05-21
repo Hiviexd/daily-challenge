@@ -140,14 +140,16 @@ const environmentStyled = process.env.NODE_ENV
     ? utils.consoleStyles(process.env.NODE_ENV, ["yellow", "underline"])
     : utils.consoleStyles("⚠ Unknown", ["orange", "underline"]);
 
-const mode =
-    process.env.AUTOMATION_DEBUG === "true"
-        ? "Auto-start Automation Jobs"
-        : process.env.MIGRATION === "true"
-            ? "Run Migrations"
-            : null;
+const mode = () => {
+    if (process.env.AUTOMATION_DEBUG === "true") return "Auto-start Automation Jobs";
+    if (process.env.MIGRATION === "true") return "Run Migrations";
+    return "";
+};
 
 app.set("port", port);
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import MigrationService from "./services/MigrationService";
 
 app.listen(port, () => {
     console.log("┌──────────────────────────────────────────────────────────┐");
@@ -162,13 +164,16 @@ app.listen(port, () => {
             42 - environmentString.length
         )}│`
     );
-    if (mode)
+    if (mode().length)
         console.log(
-            `│   ${utils.consoleStyles("Mode:", ["dim"])} ${utils.consoleStyles(mode, ["orange", "bold"])}${" ".repeat(
-                49 - mode.length
+            `│   ${utils.consoleStyles("Mode:", ["dim"])} ${utils.consoleStyles(mode(), ["orange", "bold"])}${" ".repeat(
+                49 - mode().length
             )}│`
         );
     console.log("└──────────────────────────────────────────────────────────┘");
+
+    // Run migrations by adding/uncommenting the needed migration and running `yarn dev-migration`
+    // MigrationService.migrateRounds();
 });
 
 export default app;
