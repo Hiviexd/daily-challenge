@@ -54,7 +54,7 @@ export default function RoundsList({ closeMobileNavbar }: IProps) {
                                 key={round.id}
                                 style={{
                                     animation: "roundCardPop 0.4s cubic-bezier(0.4,0,0.2,1) both",
-                                    animationDelay: `${idx * 60}ms`,
+                                    animationDelay: `${120 + (idx % 10) * 60}ms`,
                                     overflow: "visible",
                                 }}
                                 className="round-card-animate">
