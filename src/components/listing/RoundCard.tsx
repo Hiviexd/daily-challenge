@@ -38,7 +38,7 @@ export default function RoundCard({ round, selected = false, onClick }: IProps) 
                     by <UserLink user={round.assignedUser} />
                 </Text>
             )}
-            <Text size="sm" fs="italic">
+            <Text size="xs" c={!round.theme ? "dimmed" : undefined}>
                 {round.theme || "No Theme"}
             </Text>
         </Card>
