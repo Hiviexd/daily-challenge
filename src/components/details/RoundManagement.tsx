@@ -17,11 +17,18 @@ export default function RoundManagement({ round }: IProps) {
     const [theme, setTheme] = useState(round?.theme || "");
     const [isEditingTheme, setIsEditingTheme] = useState(false);
     const { data: settings } = useSettings();
+    const [isEditingAssignedUser, setIsEditingAssignedUser] = useState(false);
+    const [assignedUserId, setAssignedUserId] = useState(round?.assignedUser?._id || "");
 
     // sync theme with prop changes
     useEffect(() => {
         setTheme(round?.theme || "");
     }, [round?.theme]);
+
+    // sync assigned user with prop changes
+    useEffect(() => {
+        setAssignedUserId(round?.assignedUser?._id || "");
+    }, [round?.assignedUser?._id]);
 
     // Save handler for theme
     const handleSaveTheme = async () => {
@@ -29,11 +36,22 @@ export default function RoundManagement({ round }: IProps) {
         setIsEditingTheme(false);
     };
 
-    // Handler for assigned user change
-    const handleAssignedUserChange = async (val: string | null) => {
-        if (typeof val === "string" && val !== (round?.assignedUser?._id || "")) {
-            await updateRound.mutateAsync({ assignedUserId: val });
+    // Save handler for assigned user
+    const handleSaveAssignedUser = async () => {
+        if (assignedUserId !== (round?.assignedUser?._id || "")) {
+            await updateRound.mutateAsync({ assignedUserId });
         }
+        setIsEditingAssignedUser(false);
+    };
+
+    const handleCancelAssignedUser = () => {
+        setAssignedUserId(round?.assignedUser?._id || "");
+        setIsEditingAssignedUser(false);
+    };
+
+    const handleCancelTheme = () => {
+        setTheme(round?.theme || "");
+        setIsEditingTheme(false);
     };
 
     const handleUpdateIsPublished = async () => {
@@ -44,15 +62,55 @@ export default function RoundManagement({ round }: IProps) {
     return (
         <Stack>
             <Group align="flex-end" gap="xl">
-                <Select
-                    label="Assigned User"
-                    data={staff.map((user) => ({ value: user._id, label: user.username }))}
-                    value={round?.assignedUser?._id || null}
-                    onChange={handleAssignedUserChange}
-                    style={{ maxWidth: 220 }}
-                    rightSection={updateRound.isPending ? <Loader size="xs" /> : null}
-                    disabled={updateRound.isPending}
-                />
+                <div style={{ minWidth: 220 }}>
+                    <label style={{ fontSize: 14, fontWeight: 500, display: "block", marginBottom: 4 }}>
+                        Assigned User
+                    </label>
+                    {isEditingAssignedUser ? (
+                        <Group gap={4} wrap="nowrap">
+                            <Select
+                                data={staff.map((user) => ({ value: user._id, label: user.username }))}
+                                value={assignedUserId}
+                                onChange={(val) => setAssignedUserId(val || "")}
+                                style={{ maxWidth: 160 }}
+                                rightSection={updateRound.isPending ? <Loader size="xs" /> : null}
+                                disabled={updateRound.isPending}
+                                size="sm"
+                            />
+                            <ActionIcon
+                                color="green"
+                                variant="subtle"
+                                onClick={handleSaveAssignedUser}
+                                loading={updateRound.isPending}
+                                aria-label="Save Assigned User">
+                                <FontAwesomeIcon icon="floppy-disk" size="sm" />
+                            </ActionIcon>
+                            <ActionIcon
+                                color="red"
+                                variant="subtle"
+                                onClick={handleCancelAssignedUser}
+                                disabled={updateRound.isPending}
+                                aria-label="Cancel Assigned User Edit">
+                                <FontAwesomeIcon icon="xmark" size="sm" />
+                            </ActionIcon>
+                        </Group>
+                    ) : (
+                        <Group gap={4} wrap="nowrap">
+                            {round?.assignedUser ? (
+                                <Text size="sm" fw={500}>
+                                    {round.assignedUser.username}
+                                </Text>
+                            ) : (
+                                <Text size="sm" c="dimmed" fs="italic">
+                                    No Assigned User
+                                </Text>
+                            )}
+                            <ActionIcon color="blue" variant="subtle" onClick={() => setIsEditingAssignedUser(true)}>
+                                <FontAwesomeIcon icon="pen-to-square" size="sm" />
+                            </ActionIcon>
+                        </Group>
+                    )}
+                </div>
                 <div style={{ minWidth: 300 }}>
                     <label style={{ fontSize: 14, fontWeight: 500, display: "block", marginBottom: 4 }}>Theme</label>
                     {isEditingTheme ? (
@@ -66,10 +124,19 @@ export default function RoundManagement({ round }: IProps) {
                             />
                             <ActionIcon
                                 color="green"
-                                variant="light"
+                                variant="subtle"
                                 onClick={handleSaveTheme}
                                 loading={updateRound.isPending}>
                                 <FontAwesomeIcon icon="floppy-disk" size="sm" />
+                            </ActionIcon>
+
+                            <ActionIcon
+                                color="red"
+                                variant="subtle"
+                                onClick={handleCancelTheme}
+                                disabled={updateRound.isPending}
+                                aria-label="Cancel Theme Edit">
+                                <FontAwesomeIcon icon="xmark" size="sm" />
                             </ActionIcon>
                         </Group>
                     ) : (
