@@ -12,12 +12,16 @@ class UsersController {
 
     /** GET staff list */
     public async getStaff(_: Request, res: Response): Promise<void> {
-        const users = await User.find({ groups: { $in: ["staff"] } });
+        const users = await User.find({ groups: { $in: ["staff"] } })
+            .collation({ locale: "en", strength: 2 })
+            .sort({ username: 1 });
         res.json(users);
     }
 
     public async getSpectators(_: Request, res: Response): Promise<void> {
-        const users = await User.find({ groups: { $in: ["spectator"] } });
+        const users = await User.find({ groups: { $in: ["spectator"] } })
+            .collation({ locale: "en", strength: 2 })
+            .sort({ username: 1 });
         res.json(users);
     }
 
