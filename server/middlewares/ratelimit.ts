@@ -26,8 +26,8 @@ const guestLimiter = rateLimit({
 });
 
 export function dynamicRateLimit(req: Request, res: Response, next: NextFunction) {
-    const user = res.locals && (res.locals as any).user._id;
-    if (user) {
+    const user = res.locals && (res.locals as any).user;
+    if (user && user._id) {
         return loggedInLimiter(req, res as any, next);
     } else {
         return guestLimiter(req, res as any, next);
