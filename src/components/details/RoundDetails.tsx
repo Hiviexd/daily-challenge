@@ -172,7 +172,7 @@ export default function RoundDetails({ round }: IProps) {
                                                 variant="light"
                                                 onClick={handleCheckDuplicates}
                                                 loading={checkDuplicatesMutation.isPending}
-                                                leftSection={<FontAwesomeIcon icon="clone" />}>
+                                                leftSection={<FontAwesomeIcon icon="search" />}>
                                                 Check Duplicates
                                             </Button>
                                         ) : (
