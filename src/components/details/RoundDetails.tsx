@@ -105,7 +105,7 @@ export default function RoundDetails({ round }: IProps) {
                                 {getColors(round!).title}
                             </Badge>
                         )}
-                        {!isLoading && (
+                        {!isLoading && loggedInUser?.hasAccess && (
                             <Badge color={round?.isPublished ? "info" : "gray"} variant="light">
                                 <FontAwesomeIcon icon={round?.isPublished ? "eye" : "eye-slash"} />
                             </Badge>
