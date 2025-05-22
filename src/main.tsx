@@ -10,6 +10,7 @@ const queryClient = new QueryClient();
 import { MantineProvider } from "@mantine/core";
 import { theme } from "@themes/main";
 import { Notifications } from "@mantine/notifications";
+import { DatesProvider } from '@mantine/dates';
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/dates/styles.css";
@@ -26,10 +27,12 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <StateProvider>
         <QueryClientProvider client={queryClient}>
             <MantineProvider defaultColorScheme="dark" theme={theme}>
-                <Notifications />
-                <Router>
-                    <AuthRouter />
-                </Router>
+                <DatesProvider settings={{ locale: "en", consistentWeeks: true, weekendDays: [0] }}>
+                    <Notifications />
+                    <Router>
+                        <AuthRouter />
+                    </Router>
+                </DatesProvider>
             </MantineProvider>
         </QueryClientProvider>
     </StateProvider>
