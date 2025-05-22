@@ -4,6 +4,16 @@ import RoundsList from "@components/listing/RoundsList";
 import UserMenuDesktop from "@components/navigation/UserMenuDesktop";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+interface IProps {
+    search: string;
+    setSearch: (search: string) => void;
+    selectedDate: Date | null;
+    setSelectedDate: (selectedDate: Date | null) => void;
+    loggedInUser: any;
+    openCreateRoundModal: () => void;
+    openCurationGuideModal: () => void;
+}
+
 export default function ListingDesktopNavbar({
     search,
     setSearch,
@@ -11,7 +21,8 @@ export default function ListingDesktopNavbar({
     setSelectedDate,
     loggedInUser,
     openCreateRoundModal,
-}: any) {
+    openCurationGuideModal,
+}: IProps) {
     return (
         <AppShell.Navbar p="md" visibleFrom="sm" style={{ height: "100%" }}>
             <AppShell.Section>
@@ -41,9 +52,17 @@ export default function ListingDesktopNavbar({
                         setSelectedDate={setSelectedDate}
                     />
                     {loggedInUser?.isStaff && (
-                        <Button onClick={openCreateRoundModal} leftSection={<FontAwesomeIcon icon="plus" />}>
-                            Create Round
-                        </Button>
+                        <>
+                            <Button onClick={openCreateRoundModal} leftSection={<FontAwesomeIcon icon="plus" />}>
+                                Create Round
+                            </Button>
+                            <Button
+                                onClick={openCurationGuideModal}
+                                leftSection={<FontAwesomeIcon icon="book" />}
+                                variant="outline">
+                                Curation Guide
+                            </Button>
+                        </>
                     )}
                     <Divider />
                 </Stack>

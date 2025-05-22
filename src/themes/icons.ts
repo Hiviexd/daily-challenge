@@ -27,6 +27,7 @@ import {
     faUserMinus,
     faBars,
     faClock,
+    faBook,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function loadIcons() {
@@ -56,6 +57,7 @@ export default function loadIcons() {
         faUserPlus,
         faUserMinus,
         faBars,
-        faClock
+        faClock,
+        faBook,
     );
 }

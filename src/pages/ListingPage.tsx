@@ -13,6 +13,7 @@ import CreateRoundModal from "@components/listing/CreateRoundModal";
 import ListingDesktopNavbar from "@components/navigation/ListingDesktopNavbar";
 import ListingMobileNavbar from "@components/navigation/ListingMobileNavbar";
 import RoundDetails from "@components/details/RoundDetails";
+import CurationGuideModal from "@components/listing/CurationGuideModal";
 
 export default function ListingPage() {
     const [loggedInUser] = useAtom(loggedInUserAtom);
@@ -49,6 +50,9 @@ export default function ListingPage() {
 
     const [createRoundModalOpen, { open: openCreateRoundModal, close: closeCreateRoundModal }] = useDisclosure(false);
 
+    const [curationGuideModalOpen, { open: openCurationGuideModal, close: closeCurationGuideModal }] =
+        useDisclosure(false);
+
     return (
         <AppShell
             padding="md"
@@ -59,6 +63,7 @@ export default function ListingPage() {
                 collapsed: { mobile: !MobileNavbarOpen, desktop: false },
             }}>
             <CreateRoundModal opened={createRoundModalOpen} onClose={closeCreateRoundModal} />
+            <CurationGuideModal opened={curationGuideModalOpen} onClose={closeCurationGuideModal} />
 
             <ListingDesktopNavbar
                 search={search}
@@ -67,6 +72,7 @@ export default function ListingPage() {
                 setSelectedDate={setSelectedDate}
                 loggedInUser={loggedInUser}
                 openCreateRoundModal={openCreateRoundModal}
+                openCurationGuideModal={openCurationGuideModal}
             />
 
             <AppShell.Header hiddenFrom="sm">
@@ -81,6 +87,7 @@ export default function ListingPage() {
                 loggedInUser={loggedInUser}
                 openCreateRoundModal={openCreateRoundModal}
                 closeMobileNavbar={closeMobileNavbar}
+                openCurationGuideModal={openCurationGuideModal}
             />
 
             <AppShell.Main>
