@@ -37,19 +37,23 @@ export default function RoundDetails({ round }: IProps) {
 
     const roundId = round?._id || "";
 
-    // Track loading state for all images
-    const [imagesLoaded, setImagesLoaded] = useState(Array(displayBeatmaps.length).fill(false));
+    // Only track image loading for non-null beatmaps
+    const imageBeatmapIndices = displayBeatmaps
+        .map((bm, idx) => (bm ? idx : null))
+        .filter((idx) => idx !== null) as number[];
+    const [imagesLoaded, setImagesLoaded] = useState<boolean[]>(imageBeatmapIndices.map(() => false));
     const allImagesLoaded = imagesLoaded.every(Boolean);
 
     useEffect(() => {
-        setImagesLoaded(Array(displayBeatmaps.length).fill(false));
-    }, [roundId, displayBeatmaps.length]);
+        setImagesLoaded(displayBeatmaps.filter(Boolean).map(() => false));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [roundId]);
 
-    const handleImageLoad = (idx: number) => {
+    const handleImageLoad = (imgIdx: number) => {
         setImagesLoaded((prev) => {
-            if (prev[idx]) return prev;
+            if (prev[imgIdx]) return prev;
             const next = [...prev];
-            next[idx] = true;
+            next[imgIdx] = true;
             return next;
         });
     };
@@ -106,13 +110,7 @@ export default function RoundDetails({ round }: IProps) {
                 bg="primary.11"
                 radius="md"
                 style={{
-                    borderTop: `4px solid ${
-                        round
-                            ? loggedInUser?.hasAccess
-                                ? getColors(round).cssColor
-                                : "var(--mantine-color-primary-6)"
-                            : "var(--mantine-color-primary-6)"
-                    }`,
+                    borderTop: `4px solid ${round ? getColors(round).cssColor : "var(--mantine-color-primary-6)"}`,
                 }}>
                 <Stack gap="md">
                     <Group gap="xs">
@@ -125,8 +123,8 @@ export default function RoundDetails({ round }: IProps) {
                             </Badge>
                         )}
                         {!isLoading && loggedInUser?.hasAccess && (
-                            <Badge color={round?.isPublished ? "info" : "gray"} variant="light">
-                                <FontAwesomeIcon icon={round?.isPublished ? "eye" : "eye-slash"} />
+                            <Badge color={!round?.isUpcoming ? "info" : "gray"} variant="light">
+                                <FontAwesomeIcon icon={!round?.isUpcoming ? "eye" : "eye-slash"} />
                             </Badge>
                         )}
                     </Group>
@@ -185,18 +183,24 @@ export default function RoundDetails({ round }: IProps) {
                             </Table.Tr>
                         </Table.Thead>
                         <Table.Tbody>
-                            {displayBeatmaps.map((bm, idx) => (
-                                <BeatmapRow
-                                    key={idx}
-                                    beatmap={bm}
-                                    index={idx}
-                                    roundId={roundId}
-                                    warning={bm && bm.beatmapId ? warningMap.get(bm.beatmapId.toString()) : undefined}
-                                    hasCheckedDuplicates={hasCheckedDuplicates}
-                                    showSkeleton={!allImagesLoaded}
-                                    onImageLoad={() => handleImageLoad(idx)}
-                                />
-                            ))}
+                            {displayBeatmaps.map((bm, idx) => {
+                                // Only show skeleton logic for non-null beatmaps
+                                const imgIdx = imageBeatmapIndices.indexOf(idx);
+                                return (
+                                    <BeatmapRow
+                                        key={idx}
+                                        beatmap={bm}
+                                        index={idx}
+                                        roundId={roundId}
+                                        warning={
+                                            bm && bm.beatmapId ? warningMap.get(bm.beatmapId.toString()) : undefined
+                                        }
+                                        hasCheckedDuplicates={hasCheckedDuplicates}
+                                        showSkeleton={!!bm && !allImagesLoaded}
+                                        onImageLoad={bm ? () => handleImageLoad(imgIdx) : undefined}
+                                    />
+                                );
+                            })}
                         </Table.Tbody>
                     </Table>
                 </ScrollArea>
