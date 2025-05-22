@@ -90,7 +90,7 @@ export default function BeatmapRow({
     return (
         <Table.Tr key={index}>
             {/* Beatmap ID Input (for empty rows, this is how you add a beatmap) */}
-            <Table.Td style={{ width: 140, minWidth: 120, maxWidth: 180 }}>
+            <Table.Td style={{ width: loggedInUser?.isStaff ? 140 : 120, minWidth: 120, maxWidth: 180 }}>
                 {isEditingBeatmapId ? (
                     <Group gap={4} wrap="nowrap">
                         <TextInput
@@ -120,7 +120,7 @@ export default function BeatmapRow({
                     </Group>
                 ) : (
                     <Group gap={4}>
-                        {loggedInUser?.isStaff && beatmapId && (
+                        {beatmapId && (
                             <ActionIcon
                                 color="success"
                                 variant="subtle"
@@ -163,7 +163,7 @@ export default function BeatmapRow({
                             )}
                             <Image
                                 src={beatmap.cover}
-                                width={48}
+                                width={120}
                                 height={32}
                                 radius="sm"
                                 alt="cover"
@@ -172,6 +172,8 @@ export default function BeatmapRow({
                                     position: "absolute",
                                     top: 0,
                                     left: 0,
+                                    width: 120,
+                                    height: 32,
                                 }}
                                 onLoad={onImageLoad}
                             />

@@ -238,7 +238,7 @@ export default function RoundManagement({ round }: IProps) {
                     color="success"
                     leftSection={<FontAwesomeIcon icon="copy" />}
                     onClick={() => utils.copyToClipboard(settings?.mods?.osu.join(",") || "")}>
-                    Copy osu! mods string
+                    Copy default free mods
                 </Button>
                 {loggedInUser?.isAdmin && (
                     <Button
