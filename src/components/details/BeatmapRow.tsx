@@ -75,6 +75,16 @@ export default function BeatmapRow({
         setIsEditingNotes(false);
     };
 
+    const handleCancelNotes = () => {
+        setNotes(beatmap?.notes || "");
+        setIsEditingNotes(false);
+    };
+
+    const handleCancelBeatmapId = () => {
+        setBeatmapId(beatmap?.beatmapId === 0 || beatmap?.beatmapId == null ? "" : beatmap?.beatmapId?.toString());
+        setIsEditingBeatmapId(false);
+    };
+
     return (
         <Table.Tr key={index}>
             {/* Beatmap ID Input (for empty rows, this is how you add a beatmap) */}
@@ -91,11 +101,19 @@ export default function BeatmapRow({
                         />
                         <ActionIcon
                             color="green"
-                            variant="light"
+                            variant="subtle"
                             onClick={handleSaveBeatmapId}
                             loading={updateRoundBeatmapId.isPending}
                             size="sm">
                             <FontAwesomeIcon icon="floppy-disk" size="sm" />
+                        </ActionIcon>
+                        <ActionIcon
+                            color="red"
+                            variant="subtle"
+                            aria-label="Cancel Beatmap ID Edit"
+                            onClick={handleCancelBeatmapId}
+                            size="sm">
+                            <FontAwesomeIcon icon="times" size="sm" />
                         </ActionIcon>
                     </Group>
                 ) : (
@@ -206,11 +224,19 @@ export default function BeatmapRow({
                         />
                         <ActionIcon
                             color="green"
-                            variant="light"
+                            variant="subtle"
                             onClick={handleSaveNotes}
                             loading={updateRoundBeatmapNote.isPending}
                             size="sm">
                             <FontAwesomeIcon icon="floppy-disk" size="sm" />
+                        </ActionIcon>
+                        <ActionIcon
+                            color="red"
+                            variant="subtle"
+                            aria-label="Cancel Notes Edit"
+                            onClick={handleCancelNotes}
+                            size="sm">
+                            <FontAwesomeIcon icon="times" size="sm" />
                         </ActionIcon>
                     </Group>
                 ) : (
