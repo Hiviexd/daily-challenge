@@ -61,6 +61,42 @@ class RoundService {
                     type: "duplicate_set",
                     duplicates: duplicateRounds,
                 });
+                return; // Only one warning per beatmap, skip song check
+            }
+
+            // Check for duplicate songs (same lowercase artist and title)
+            if (beatmap.artist && beatmap.title) {
+                const beatmapArtist = beatmap.artist.toLowerCase();
+                const beatmapTitle = beatmap.title.toLowerCase();
+                const duplicateSongs = otherBeatmaps.filter(
+                    (b) =>
+                        b.artist &&
+                        b.title &&
+                        b.artist.toLowerCase() === beatmapArtist &&
+                        b.title.toLowerCase() === beatmapTitle
+                );
+                if (duplicateSongs.length > 0) {
+                    // Find the rounds where these duplicates are found
+                    const duplicateRounds = allRounds
+                        .filter(
+                            (r) =>
+                                r._id.toString() !== round._id.toString() &&
+                                r.beatmaps.some(
+                                    (b) =>
+                                        b &&
+                                        b.artist &&
+                                        b.title &&
+                                        b.artist.toLowerCase() === beatmapArtist &&
+                                        b.title.toLowerCase() === beatmapTitle
+                                )
+                        )
+                        .map((r) => r.title);
+                    warnings.push({
+                        targetBeatmapId: beatmap.beatmapId?.toString(),
+                        type: "duplicate_song",
+                        duplicates: duplicateRounds,
+                    });
+                }
             }
         });
         return warnings;

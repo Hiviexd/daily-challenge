@@ -15,17 +15,24 @@ export default function DuplicateStatusCell({ warning, hasCheckedDuplicates }: I
     const getMetadata = (warning: IWarning) => {
         if (warning.type === "duplicate_difficulty") {
             return {
-                icon: "times-circle" as IconProp,
+                icon: "clone" as IconProp,
                 iconColor: "var(--mantine-color-red-6)",
                 textColor: "danger",
                 label: "Duplicate difficulty in:",
             };
         } else if (warning.type === "duplicate_set") {
             return {
-                icon: "exclamation-triangle" as IconProp,
+                icon: "file-circle-exclamation" as IconProp,
                 iconColor: "var(--mantine-color-warning-6)",
                 textColor: "warning",
                 label: "Duplicate beatmapset in:",
+            };
+        } else if (warning.type === "duplicate_song") {
+            return {
+                icon: "music" as IconProp,
+                iconColor: "var(--mantine-color-warning-6)",
+                textColor: "warning",
+                label: "Duplicate song in:",
             };
         }
         return {
