@@ -82,6 +82,26 @@ class RoundService {
             return roundStart <= newEnd && roundEnd >= newStart;
         });
     }
+
+    /**
+     * Censor the active round by removing beatmaps that fall under future date slots
+     * @param rounds - The list of rounds
+     * @returns The rounds with the active round censored
+     */
+    public censorActiveRound(rounds: IRound[]): IRound[] {
+        const now = new Date();
+        rounds.forEach((round) => {
+            if (!round.isActive) return;
+            const start = new Date(round.startDate);
+            const dayOffset = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+            // Only keep beatmaps/beatmapOrder whose order <= dayOffset
+            round.beatmapOrder = round.beatmapOrder.filter((entry) => entry.order <= dayOffset);
+            round.beatmaps = round.beatmaps.filter((bm) =>
+                round.beatmapOrder.some((entry) => bm._id?.toString() === entry.beatmapId?.toString())
+            );
+        });
+        return rounds;
+    }
 }
 
 export default new RoundService();
