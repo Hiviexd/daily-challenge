@@ -163,7 +163,7 @@ export default function RoundDetails({ round }: IProps) {
                                 <Table.Th style={{ textAlign: "center" }}>Star Rating</Table.Th>
                                 <Table.Th>Artist - Title</Table.Th>
                                 <Table.Th>Difficulty</Table.Th>
-                                <Table.Th>Mapper</Table.Th>
+                                <Table.Th>Host</Table.Th>
                                 <Table.Th>Date Ranked</Table.Th>
                                 <Table.Th>Notes/Mods</Table.Th>
                                 {isStaff && (
