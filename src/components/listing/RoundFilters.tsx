@@ -22,12 +22,17 @@ export default function RoundFilters({ search, setSearch, selectedDate, setSelec
                 leftSection={<FontAwesomeIcon icon="search" />}
                 style={{ flex: 1 }}
             />
-            <Popover opened={calendarOpen} onChange={setCalendarOpen} position="bottom-end" shadow="md">
+            <Popover
+                opened={calendarOpen}
+                onChange={setCalendarOpen}
+                transitionProps={{ transition: "pop" }}
+                position="bottom-end"
+                shadow="md">
                 <Popover.Target>
                     <ActionIcon
-                        variant={selectedDate ? "filled" : "default"}
+                        variant={selectedDate ? "light" : "default"}
                         size="lg"
-                        color={selectedDate ? "blue" : undefined}
+                        color={selectedDate ? "primary" : undefined}
                         onClick={() => setCalendarOpen((o) => !o)}
                         aria-label="Filter by date">
                         <FontAwesomeIcon icon="calendar" />
@@ -47,8 +52,8 @@ export default function RoundFilters({ search, setSearch, selectedDate, setSelec
             </Popover>
             {selectedDate && (
                 <ActionIcon
-                    variant="light"
-                    color="red"
+                    variant="outline"
+                    color="danger"
                     size="lg"
                     onClick={() => setSelectedDate(null)}
                     aria-label="Clear date filter">
