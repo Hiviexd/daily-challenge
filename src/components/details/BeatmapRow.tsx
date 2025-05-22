@@ -1,4 +1,4 @@
-import { Table, TextInput, Image, Group, Anchor, Text, ActionIcon } from "@mantine/core";
+import { Table, TextInput, Image, Group, Anchor, Text, ActionIcon, Skeleton } from "@mantine/core";
 import { IBeatmap } from "@interfaces/Beatmap";
 import { useUpdateRoundBeatmapId, useUpdateRoundBeatmapNote } from "@hooks/useRounds";
 import { useState, useEffect } from "react";
@@ -18,9 +18,19 @@ interface IProps {
     roundId: string;
     warning?: IWarning;
     hasCheckedDuplicates: boolean;
+    showSkeleton?: boolean;
+    onImageLoad?: () => void;
 }
 
-export default function BeatmapRow({ beatmap, index, roundId, warning, hasCheckedDuplicates }: IProps) {
+export default function BeatmapRow({
+    beatmap,
+    index,
+    roundId,
+    warning,
+    hasCheckedDuplicates,
+    showSkeleton,
+    onImageLoad,
+}: IProps) {
     const updateRoundBeatmapId = useUpdateRoundBeatmapId(roundId);
     const updateRoundBeatmapNote = useUpdateRoundBeatmapNote(roundId);
     const [loggedInUser] = useAtom(loggedInUserAtom);
@@ -38,7 +48,7 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
     useEffect(() => {
         setBeatmapId(beatmap?.beatmapId === 0 || beatmap?.beatmapId == null ? "" : beatmap?.beatmapId?.toString());
         setNotes(beatmap?.notes || "");
-    }, [beatmap?.beatmapId, beatmap?.notes]);
+    }, [beatmap?.beatmapId, beatmap?.notes, beatmap?.cover]);
 
     const handleSaveBeatmapId = async () => {
         if (beatmap?.beatmapId === Number(beatmapId)) {
@@ -122,7 +132,30 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
             <Table.Td>
                 {beatmap?.artist ? (
                     <Group gap="sm" wrap="nowrap">
-                        <Image src={beatmap.cover} width={48} height={32} radius="sm" alt="cover" />
+                        <div style={{ position: "relative", width: 120, height: 32 }}>
+                            {showSkeleton && (
+                                <Skeleton
+                                    width={120}
+                                    height={32}
+                                    radius="sm"
+                                    style={{ position: "absolute", top: 0, left: 0 }}
+                                />
+                            )}
+                            <Image
+                                src={beatmap.cover}
+                                width={48}
+                                height={32}
+                                radius="sm"
+                                alt="cover"
+                                style={{
+                                    display: showSkeleton ? "none" : "block",
+                                    position: "absolute",
+                                    top: 0,
+                                    left: 0,
+                                }}
+                                onLoad={onImageLoad}
+                            />
+                        </div>
                         <Anchor
                             fw={500}
                             lineClamp={1}

@@ -9,6 +9,7 @@ import { useAtom } from "jotai";
 import { roundDuplicateWarningsAtom } from "@store/atoms";
 import { loggedInUserAtom } from "@store/atoms";
 import RoundDetailsSkeleton from "./RoundDetailsSkeleton";
+import { useState, useEffect } from "react";
 
 interface IProps {
     round: IRound | null;
@@ -34,6 +35,25 @@ export default function RoundDetails({ round }: IProps) {
         }
     });
 
+    const roundId = round?._id || "";
+
+    // Track loading state for all images
+    const [imagesLoaded, setImagesLoaded] = useState(Array(displayBeatmaps.length).fill(false));
+    const allImagesLoaded = imagesLoaded.every(Boolean);
+
+    useEffect(() => {
+        setImagesLoaded(Array(displayBeatmaps.length).fill(false));
+    }, [roundId, displayBeatmaps.length]);
+
+    const handleImageLoad = (idx: number) => {
+        setImagesLoaded((prev) => {
+            if (prev[idx]) return prev;
+            const next = [...prev];
+            next[idx] = true;
+            return next;
+        });
+    };
+
     const getColors = (round: IRound) => {
         if (round?.isActive) return { title: "Active", color: "success", cssColor: "var(--mantine-color-success-6)" };
         if (round?.isPast) return { title: "Past", color: "danger", cssColor: "var(--mantine-color-danger-6)" };
@@ -43,7 +63,6 @@ export default function RoundDetails({ round }: IProps) {
 
     // Atom for duplicate warnings per round
     const [roundDuplicateWarnings, setRoundDuplicateWarnings] = useAtom(roundDuplicateWarningsAtom);
-    const roundId = round?._id || "";
     const roundWarnings = roundDuplicateWarnings[roundId]?.warnings || [];
     const hasCheckedDuplicates = !!roundDuplicateWarnings[roundId]?.checked;
 
@@ -174,6 +193,8 @@ export default function RoundDetails({ round }: IProps) {
                                     roundId={roundId}
                                     warning={bm && bm.beatmapId ? warningMap.get(bm.beatmapId.toString()) : undefined}
                                     hasCheckedDuplicates={hasCheckedDuplicates}
+                                    showSkeleton={!allImagesLoaded}
+                                    onImageLoad={() => handleImageLoad(idx)}
                                 />
                             ))}
                         </Table.Tbody>
