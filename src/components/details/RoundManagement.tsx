@@ -6,6 +6,7 @@ import { useUpdateRound } from "@hooks/useRounds";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import utils from "@utils/index";
 import useSettings from "@hooks/useSettings";
+import UserLink from "@components/common/UserLink";
 
 interface IProps {
     round: IRound;
@@ -97,9 +98,7 @@ export default function RoundManagement({ round }: IProps) {
                     ) : (
                         <Group gap={4} wrap="nowrap">
                             {round?.assignedUser ? (
-                                <Text size="sm" fw={500}>
-                                    {round.assignedUser.username}
-                                </Text>
+                                <UserLink user={round.assignedUser} size="sm" />
                             ) : (
                                 <Text size="sm" c="dimmed" fs="italic">
                                     No Assigned User

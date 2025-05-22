@@ -10,7 +10,7 @@ interface IProps {
     user: IUser | null;
 }
 
-export default function UserMenu({ user }: IProps) {
+export default function UserMenuMobile({ user }: IProps) {
     const [menuOpened, setMenuOpened] = useState(false);
     const { hovered, ref } = useHover();
     const [settingsModalOpen, { open: openSettingsModal, close: closeSettingsModal }] = useDisclosure(false);

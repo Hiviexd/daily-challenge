@@ -6,14 +6,14 @@ import { loggedInUserAtom } from "@store/atoms";
 import { AppShell, Group, Image, Burger } from "@mantine/core";
 
 // components
-import UserMenu from "@components/common/header/UserMenu";
+import UserMenuMobile from "@components/navigation/UserMenuMobile";
 
 interface IProps {
     MobileNavbarOpen: boolean;
     toggleMobileNavbar: () => void;
 }
 
-export default function Header({ MobileNavbarOpen, toggleMobileNavbar }: IProps) {
+export default function MobileHeader({ MobileNavbarOpen, toggleMobileNavbar }: IProps) {
     const [user] = useAtom(loggedInUserAtom);
 
     return (
@@ -29,7 +29,7 @@ export default function Header({ MobileNavbarOpen, toggleMobileNavbar }: IProps)
                             </div>
                         </div>
                     </Group>
-                    <UserMenu user={user} />
+                    <UserMenuMobile user={user} />
                 </div>
             </Group>
         </AppShell.Header>

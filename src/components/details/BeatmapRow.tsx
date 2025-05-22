@@ -3,7 +3,6 @@ import { IBeatmap } from "@interfaces/Beatmap";
 import { useUpdateRoundBeatmapId, useUpdateRoundBeatmapNote } from "@hooks/useRounds";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import moment from "moment";
 import UserLink from "@components/common/UserLink";
 import { IWarning } from "@interfaces/Round";
 import DuplicateStatusCell from "./DuplicateStatusCell";
@@ -11,6 +10,7 @@ import { loggedInUserAtom } from "@store/atoms";
 import { useAtom } from "jotai";
 import StarRatingBadge from "@components/common/StarRatingBadge";
 import utils from "@utils/index";
+import DateBadge from "@components/common/DateBadge";
 
 interface IProps {
     beatmap: IBeatmap | null;
@@ -90,7 +90,7 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
                     </Group>
                 ) : (
                     <Group gap={4}>
-                        {loggedInUser?.isAdmin &&beatmapId && (
+                        {loggedInUser?.isStaff && beatmapId && (
                             <ActionIcon
                                 color="success"
                                 variant="subtle"
@@ -103,7 +103,11 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
                             {beatmapId || ""}
                         </Text>
                         {loggedInUser?.isStaff && (
-                            <ActionIcon color="blue" variant="subtle" onClick={() => setIsEditingBeatmapId(true)} size="sm">
+                            <ActionIcon
+                                color="blue"
+                                variant="subtle"
+                                onClick={() => setIsEditingBeatmapId(true)}
+                                size="sm">
                                 <FontAwesomeIcon icon="pen-to-square" size="sm" />
                             </ActionIcon>
                         )}
@@ -111,10 +115,8 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
                 )}
             </Table.Td>
             {/* Star Rating */}
-            <Table.Td style={{ textAlign: "center" }}>
-                {typeof beatmap?.starRating === "number" ? (
-                    <StarRatingBadge rating={beatmap?.starRating} />
-                ) : "-"}
+            <Table.Td style={{ textAlign: "center", width: 100, minWidth: 100, maxWidth: 120 }}>
+                {typeof beatmap?.starRating === "number" ? <StarRatingBadge rating={beatmap?.starRating} /> : "-"}
             </Table.Td>
             {/* Artist - Title with Banner */}
             <Table.Td>
@@ -123,6 +125,7 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
                         <Image src={beatmap.cover} width={48} height={32} radius="sm" alt="cover" />
                         <Anchor
                             fw={500}
+                            lineClamp={1}
                             size="sm"
                             href={`https://osu.ppy.sh/beatmapsets/${beatmap?.beatmapsetId}`}
                             target="_blank">
@@ -134,7 +137,7 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
                 )}
             </Table.Td>
             {/* Difficulty */}
-            <Table.Td>{beatmap?.version}</Table.Td>
+            <Table.Td>{beatmap?.version || "-"}</Table.Td>
             {/* Mapper */}
             <Table.Td>
                 {beatmap?.creator?.osuId ? (
@@ -149,9 +152,11 @@ export default function BeatmapRow({ beatmap, index, roundId, warning, hasChecke
                 )}
             </Table.Td>
             {/* Date Ranked */}
-            <Table.Td>{beatmap?.rankedDate ? moment(beatmap?.rankedDate).format("DD MMM YYYY") : "-"}</Table.Td>
+            <Table.Td style={{ width: 150, minWidth: 120, maxWidth: 150 }}>
+                {beatmap?.rankedDate ? <DateBadge date={beatmap?.rankedDate} /> : "-"}
+            </Table.Td>
             {/* Notes Input */}
-            <Table.Td style={{ width: 180, minWidth: 180, maxWidth: 220 }}>
+            <Table.Td style={{ width: 140, minWidth: 140, maxWidth: 220 }}>
                 {isEditingNotes ? (
                     <Group gap={4} wrap="nowrap">
                         <TextInput

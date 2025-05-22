@@ -152,5 +152,14 @@ export const theme = createTheme({
                 },
             },
         },
+        Dropdown: {
+            styles: {
+                dropdown: {
+                    border: "1px solid var(--mantine-color-primary-6)",
+                    boxShadow: "0 4px 4px rgba(0, 0, 0, 0.1)",
+                    filter: "drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1))",
+                },
+            },
+        },
     },
 });

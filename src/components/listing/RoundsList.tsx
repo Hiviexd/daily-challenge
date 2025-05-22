@@ -69,10 +69,23 @@ export default function RoundsList({ closeMobileNavbar }: IProps) {
                             </div>
                         ))}
                         {isFetchingNextPage && loadingState()}
-                        <div style={{ height: 64 }} />
                     </>
                 )}
             </Stack>
+            <div
+                style={{
+                    position: "sticky",
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: 32,
+                    marginTop: "auto",
+                    pointerEvents: "none",
+                    zIndex: 2,
+                    background:
+                        "linear-gradient(to bottom, rgba(255,255,255,0) 0%, var(--mantine-color-body, #fff) 100%)",
+                }}
+            />
         </ScrollArea>
     );
 }

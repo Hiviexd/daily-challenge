@@ -55,7 +55,7 @@ export default function CreateRoundModal({ opened, onClose }: IProps) {
         }
     };
 
-    if (!loggedInUser?.isAdmin) return null;
+    if (!loggedInUser?.isStaff) return null;
 
     return (
         <Modal opened={opened} onClose={onClose} title="Create Round">

@@ -1,6 +1,5 @@
 import { Card, Text, Group } from "@mantine/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import UserLink from "@components/common/UserLink";
 import { IRound } from "@interfaces/Round";
 import { loggedInUserAtom } from "@store/atoms";
 import { useAtom } from "jotai";
@@ -35,7 +34,7 @@ export default function RoundCard({ round, selected = false, onClick }: IProps) 
             </Group>
             {loggedInUser?.hasAccess && (
                 <Text size="sm" c="dimmed" mb={2}>
-                    by <UserLink user={round.assignedUser} />
+                    by {round.assignedUser.username}
                 </Text>
             )}
             <Text size="xs" c={!round.theme ? "dimmed" : undefined}>

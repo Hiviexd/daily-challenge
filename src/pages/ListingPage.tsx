@@ -1,19 +1,18 @@
-import { AppShell, Stack, Divider, Button, Card } from "@mantine/core";
+import { AppShell, Card } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { selectedRoundIdAtom, loggedInUserAtom } from "@store/atoms";
 import { useAtom } from "jotai";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useInfiniteRounds } from "@hooks/useRounds";
 import { useDebouncedValue } from "@mantine/hooks";
 import utils from "@utils/index";
 
 // components
-import Header from "@components/common/Header";
+import MobileHeader from "@components/navigation/MobileHeader";
 import CreateRoundModal from "@components/listing/CreateRoundModal";
-import RoundsList from "@components/listing/RoundsList";
+import ListingDesktopNavbar from "@components/navigation/ListingDesktopNavbar";
+import ListingMobileNavbar from "@components/navigation/ListingMobileNavbar";
 import RoundDetails from "@components/details/RoundDetails";
-import RoundFilters from "@components/listing/RoundFilters";
 
 export default function ListingPage() {
     const [loggedInUser] = useAtom(loggedInUserAtom);
@@ -53,36 +52,36 @@ export default function ListingPage() {
     return (
         <AppShell
             padding="md"
-            header={{ height: 70 }}
+            header={{ height: { base: 70, sm: 0 } }}
             navbar={{
                 width: 300,
                 breakpoint: "sm",
                 collapsed: { mobile: !MobileNavbarOpen, desktop: false },
             }}>
             <CreateRoundModal opened={createRoundModalOpen} onClose={closeCreateRoundModal} />
-            <AppShell.Header>
-                <Header MobileNavbarOpen={MobileNavbarOpen} toggleMobileNavbar={toggleMobileNavbar} />
+
+            <ListingDesktopNavbar
+                search={search}
+                setSearch={setSearch}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                loggedInUser={loggedInUser}
+                openCreateRoundModal={openCreateRoundModal}
+            />
+
+            <AppShell.Header hiddenFrom="sm">
+                <MobileHeader MobileNavbarOpen={MobileNavbarOpen} toggleMobileNavbar={toggleMobileNavbar} />
             </AppShell.Header>
-            <AppShell.Navbar p="md" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-                <Stack style={{ flex: 1, minHeight: 0 }}>
-                    {/* Filters */}
-                    <RoundFilters
-                        search={search}
-                        setSearch={setSearch}
-                        selectedDate={selectedDate}
-                        setSelectedDate={setSelectedDate}
-                    />
-                    {loggedInUser?.isAdmin && (
-                        <Button onClick={openCreateRoundModal} leftSection={<FontAwesomeIcon icon="plus" />}>
-                            Create Round
-                        </Button>
-                    )}
 
-                    <Divider />
-
-                    <RoundsList closeMobileNavbar={closeMobileNavbar} />
-                </Stack>
-            </AppShell.Navbar>
+            <ListingMobileNavbar
+                search={search}
+                setSearch={setSearch}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                loggedInUser={loggedInUser}
+                openCreateRoundModal={openCreateRoundModal}
+                closeMobileNavbar={closeMobileNavbar}
+            />
 
             <AppShell.Main>
                 <Card shadow="sm" p="xl">
