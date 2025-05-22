@@ -2,22 +2,29 @@ import { useState, useEffect } from "react";
 import { Select, TextInput, Group, ActionIcon, Text, Loader, Stack, Button } from "@mantine/core";
 import { IRound } from "@interfaces/Round";
 import { useStaff } from "@hooks/useUsers";
-import { useUpdateRound } from "@hooks/useRounds";
+import { useDeleteRound, useUpdateRound } from "@hooks/useRounds";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import utils from "@utils/index";
 import useSettings from "@hooks/useSettings";
 import UserLink from "@components/common/UserLink";
+import { useAtom } from "jotai";
+import { loggedInUserAtom } from "@store/atoms";
 
 interface IProps {
     round: IRound;
 }
 
 export default function RoundManagement({ round }: IProps) {
+    const [loggedInUser] = useAtom(loggedInUserAtom);
+
     const { data: staff = [] } = useStaff();
+    const { data: settings } = useSettings();
+
     const updateRound = useUpdateRound(round?._id || "");
+    const deleteRound = useDeleteRound(round?._id || "");
+
     const [theme, setTheme] = useState(round?.theme || "");
     const [isEditingTheme, setIsEditingTheme] = useState(false);
-    const { data: settings } = useSettings();
     const [isEditingAssignedUser, setIsEditingAssignedUser] = useState(false);
     const [assignedUserId, setAssignedUserId] = useState(round?.assignedUser?._id || "");
 
@@ -58,6 +65,11 @@ export default function RoundManagement({ round }: IProps) {
     const handleUpdateIsPublished = async () => {
         if (!confirm("Are you sure? This will affect the public visibility of this round.")) return;
         await updateRound.mutateAsync({ isPublished: !round?.isPublished });
+    };
+
+    const handleDeleteRound = async () => {
+        if (!confirm("Are you sure? This will delete the round and all associated data.")) return;
+        await deleteRound.mutateAsync();
     };
 
     return (
@@ -174,6 +186,16 @@ export default function RoundManagement({ round }: IProps) {
                     onClick={() => utils.copyToClipboard(settings?.mods?.osu.join(",") || "")}>
                     Copy osu! mods string
                 </Button>
+                {loggedInUser?.isAdmin && (
+                    <Button
+                        variant="light"
+                        color="red"
+                        leftSection={<FontAwesomeIcon icon="trash" />}
+                        onClick={handleDeleteRound}
+                        loading={deleteRound.isPending}>
+                        Delete Round
+                    </Button>
+                )}
             </Group>
         </Stack>
     );

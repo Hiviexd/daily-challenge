@@ -233,6 +233,25 @@ class RoundController {
             return res.status(400).json({ message: "Invalid request for updateBeatmapNote" });
         }
     }
+
+    /** DELETE round */
+    public async delete(req: Request, res: Response) {
+        const { roundId } = req.params;
+
+        const loggedInUser = res.locals!.user!;
+
+        const round = await Round.findById(roundId);
+        if (!round) {
+            return res.status(404).json({ message: "Round not found" });
+        }
+
+        await round.delete();
+
+        res.status(200).json({ message: "Round deleted successfully!" });
+
+        // logging
+        LogService.generate(loggedInUser._id, `Deleted round: ${round.title}`);
+    }
 }
 
 export default new RoundController();

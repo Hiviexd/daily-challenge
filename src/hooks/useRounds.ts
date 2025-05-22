@@ -121,3 +121,17 @@ export function useCheckRoundDuplicates(roundId: string) {
         },
     });
 }
+
+export function useDeleteRound(roundId: string) {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async () => {
+            const response = await utils.apiCall({ method: "delete", url: `/api/rounds/${roundId}/delete` });
+            return utils.handleMutationResponse(response);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["rounds"] });
+        },
+    });
+}
