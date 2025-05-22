@@ -1,4 +1,4 @@
-import { TextInput, ActionIcon, Popover } from "@mantine/core";
+import { TextInput, ActionIcon, Popover, Tooltip } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,7 +16,7 @@ export default function RoundFilters({ search, setSearch, selectedDate, setSelec
     return (
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             <TextInput
-                placeholder="Search rounds by theme..."
+                placeholder="Search by theme..."
                 value={search}
                 onChange={(e) => setSearch(e.currentTarget.value)}
                 leftSection={<FontAwesomeIcon icon="search" />}
@@ -29,14 +29,16 @@ export default function RoundFilters({ search, setSearch, selectedDate, setSelec
                 position="bottom-end"
                 shadow="md">
                 <Popover.Target>
-                    <ActionIcon
-                        variant={selectedDate ? "light" : "default"}
-                        size="lg"
-                        color={selectedDate ? "primary" : undefined}
-                        onClick={() => setCalendarOpen((o) => !o)}
-                        aria-label="Filter by date">
-                        <FontAwesomeIcon icon="calendar" />
-                    </ActionIcon>
+                    <Tooltip multiline w={170} label="Filter by round which selected date is part of" position="bottom">
+                        <ActionIcon
+                            variant={selectedDate ? "light" : "default"}
+                            size="lg"
+                            color={selectedDate ? "primary" : undefined}
+                            onClick={() => setCalendarOpen((o) => !o)}
+                            aria-label="Filter by date">
+                            <FontAwesomeIcon icon="calendar" />
+                        </ActionIcon>
+                    </Tooltip>
                 </Popover.Target>
                 <Popover.Dropdown>
                     <DatePicker
