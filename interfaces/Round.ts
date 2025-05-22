@@ -16,7 +16,6 @@ export interface IRound extends Document {
     startDate: Date;
     endDate: Date;
     theme?: string;
-    isPublished: boolean;
     beatmapOrder: { beatmapId: string; order: number }[];
 
     // Virtuals

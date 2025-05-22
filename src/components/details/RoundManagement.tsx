@@ -79,11 +79,6 @@ export default function RoundManagement({ round }: IProps) {
         setIsEditingTheme(false);
     };
 
-    const handleUpdateIsPublished = async () => {
-        if (!confirm("Are you sure? This will affect the public visibility of this round.")) return;
-        await updateRound.mutateAsync({ isPublished: !round?.isPublished });
-    };
-
     const handleDeleteRound = async () => {
         if (!confirm("Are you sure? This will delete the round and all associated data.")) return;
         await deleteRound.mutateAsync();
@@ -238,14 +233,6 @@ export default function RoundManagement({ round }: IProps) {
             </Group>
 
             <Group>
-                <Button
-                    variant="light"
-                    color={round?.isPublished ? "gray" : "info"}
-                    leftSection={<FontAwesomeIcon icon={round?.isPublished ? "eye-slash" : "eye"} />}
-                    onClick={handleUpdateIsPublished}
-                    loading={updateRound.isPending}>
-                    {round?.isPublished ? "Mark as hidden" : "Mark as public"}
-                </Button>
                 <Button
                     variant="light"
                     color="success"

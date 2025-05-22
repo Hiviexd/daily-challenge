@@ -72,7 +72,6 @@ export function useUpdateRound(roundId: string) {
         mutationFn: async (round: {
             theme?: string;
             assignedUserId?: string;
-            isPublished?: boolean;
             startDate?: Date;
         }) => {
             const response = await utils.apiCall({ method: "put", url: `/api/rounds/${roundId}/update`, data: round });

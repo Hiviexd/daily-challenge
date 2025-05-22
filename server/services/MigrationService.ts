@@ -69,7 +69,6 @@ class MigrationService {
                 assignedUser: assignedUser._id,
                 beatmaps: [],
                 beatmapOrder: [],
-                isPublished: true,
             });
 
             await roundData.save();
