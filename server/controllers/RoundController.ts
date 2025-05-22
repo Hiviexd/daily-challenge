@@ -73,16 +73,10 @@ class RoundController {
         const rounds = await Round.find({});
 
         // check if the date range is already taken
-        const isDateRangeTaken = rounds.some((round) => {
-            const roundStart = new Date(round.startDate).getTime();
-            const roundEnd = new Date(round.endDate).getTime();
-            const newStart = new Date(startDate).getTime();
-            const newEnd = new Date(endDate).getTime();
-            return roundStart <= newEnd && roundEnd >= newStart;
-        });
+        const isDateRangeTaken = RoundService.checkIsDateRangeTaken(startDate, endDate, rounds);
 
         if (isDateRangeTaken) {
-            return res.status(400).json({ message: "Date range is already taken" });
+            return res.status(403).json({ message: "Date range is already taken" });
         }
 
         const assignedUser = await User.findById(assignedUserId);
@@ -112,7 +106,7 @@ class RoundController {
     /* PUT update round */
     public async update(req: Request, res: Response) {
         const { roundId } = req.params;
-        const { theme, assignedUserId, isPublished } = req.body;
+        const { theme, assignedUserId, isPublished, startDate } = req.body;
 
         const loggedInUser = res.locals!.user!;
 
@@ -125,6 +119,22 @@ class RoundController {
         if (theme) round.theme = theme;
         if (assignedUserId) round.assignedUser = assignedUserId;
         if (isPublished !== undefined) round.isPublished = isPublished;
+
+        if (startDate) {
+            const endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + 6);
+
+            const rounds = await Round.find({});
+            const isDateRangeTaken = RoundService.checkIsDateRangeTaken(startDate, endDate, rounds);
+
+            if (isDateRangeTaken) {
+                return res.status(403).json({ message: "Date range is already taken" });
+            }
+
+            round.startDate = startDate;
+            round.endDate = endDate;
+        }
+
         await round.save();
 
         res.status(200).json({ message: "Round updated successfully!" });

@@ -65,6 +65,23 @@ class RoundService {
         });
         return warnings;
     }
+
+    /**
+     * Check if a date range is already taken by any round
+     * @param startDate - The start date to check
+     * @param endDate - The end date to check
+     * @param allRounds - All rounds to check against
+     * @returns true if the date range is taken, false otherwise
+     */
+    public checkIsDateRangeTaken(startDate: Date, endDate: Date, allRounds: IRound[]): boolean {
+        const newStart = new Date(startDate).getTime();
+        const newEnd = new Date(endDate).getTime();
+        return allRounds.some((round) => {
+            const roundStart = new Date(round.startDate).getTime();
+            const roundEnd = new Date(round.endDate).getTime();
+            return roundStart <= newEnd && roundEnd >= newStart;
+        });
+    }
 }
 
 export default new RoundService();
