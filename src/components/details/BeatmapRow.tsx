@@ -180,7 +180,7 @@ export default function BeatmapRow({
                             fw={500}
                             lineClamp={1}
                             size="sm"
-                            href={`https://osu.ppy.sh/beatmapsets/${beatmap?.beatmapsetId}`}
+                            href={`https://osu.ppy.sh/beatmaps/${beatmap?.beatmapId}`}
                             target="_blank">
                             {beatmap?.artist} - {beatmap?.title}
                         </Anchor>
