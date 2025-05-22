@@ -48,6 +48,8 @@ export default function BeatmapRow({
     useEffect(() => {
         setBeatmapId(beatmap?.beatmapId === 0 || beatmap?.beatmapId == null ? "" : beatmap?.beatmapId?.toString());
         setNotes(beatmap?.notes || "");
+        setIsEditingBeatmapId(false);
+        setIsEditingNotes(false);
     }, [beatmap?.beatmapId, beatmap?.notes, beatmap?.cover]);
 
     const handleSaveBeatmapId = async () => {
