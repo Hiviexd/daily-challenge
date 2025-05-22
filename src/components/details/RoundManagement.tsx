@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Select, TextInput, Group, ActionIcon, Text, Loader, Stack, Button } from "@mantine/core";
+import { DateInput } from "@mantine/dates";
 import { IRound } from "@interfaces/Round";
 import { useStaff } from "@hooks/useUsers";
 import { useDeleteRound, useUpdateRound } from "@hooks/useRounds";
@@ -9,6 +10,7 @@ import useSettings from "@hooks/useSettings";
 import UserLink from "@components/common/UserLink";
 import { useAtom } from "jotai";
 import { loggedInUserAtom } from "@store/atoms";
+import moment from "moment";
 
 interface IProps {
     round: IRound;
@@ -24,9 +26,11 @@ export default function RoundManagement({ round }: IProps) {
     const deleteRound = useDeleteRound(round?._id || "");
 
     const [theme, setTheme] = useState(round?.theme || "");
+    const [assignedUserId, setAssignedUserId] = useState(round?.assignedUser?._id || "");
+    const [startDate, setStartDate] = useState(round?.startDate ? new Date(round.startDate) : null);
     const [isEditingTheme, setIsEditingTheme] = useState(false);
     const [isEditingAssignedUser, setIsEditingAssignedUser] = useState(false);
-    const [assignedUserId, setAssignedUserId] = useState(round?.assignedUser?._id || "");
+    const [isEditingStartDate, setIsEditingStartDate] = useState(false);
 
     // sync theme with prop changes
     useEffect(() => {
@@ -37,6 +41,11 @@ export default function RoundManagement({ round }: IProps) {
     useEffect(() => {
         setAssignedUserId(round?.assignedUser?._id || "");
     }, [round?.assignedUser?._id]);
+
+    // sync startDate with prop changes
+    useEffect(() => {
+        setStartDate(round?.startDate ? new Date(round.startDate) : null);
+    }, [round?.startDate]);
 
     // Save handler for theme
     const handleSaveTheme = async () => {
@@ -50,6 +59,14 @@ export default function RoundManagement({ round }: IProps) {
             await updateRound.mutateAsync({ assignedUserId });
         }
         setIsEditingAssignedUser(false);
+    };
+
+    const handleSaveStartDate = async () => {
+        if (!startDate) return;
+        // Convert to UTC midnight
+        const utcStartDate = utils.toUTCDateOnly(startDate);
+        await updateRound.mutateAsync({ startDate: utcStartDate });
+        setIsEditingStartDate(false);
     };
 
     const handleCancelAssignedUser = () => {
@@ -70,6 +87,11 @@ export default function RoundManagement({ round }: IProps) {
     const handleDeleteRound = async () => {
         if (!confirm("Are you sure? This will delete the round and all associated data.")) return;
         await deleteRound.mutateAsync();
+    };
+
+    const handleCancelStartDate = () => {
+        setStartDate(round?.startDate ? new Date(round.startDate) : null);
+        setIsEditingStartDate(false);
     };
 
     return (
@@ -122,7 +144,7 @@ export default function RoundManagement({ round }: IProps) {
                         </Group>
                     )}
                 </div>
-                <div style={{ minWidth: 300 }}>
+                <div style={{ minWidth: 220 }}>
                     <label style={{ fontSize: 14, fontWeight: 500, display: "block", marginBottom: 4 }}>Theme</label>
                     {isEditingTheme ? (
                         <Group gap={4} wrap="nowrap">
@@ -163,6 +185,51 @@ export default function RoundManagement({ round }: IProps) {
                             )}
 
                             <ActionIcon color="blue" variant="subtle" onClick={() => setIsEditingTheme(true)}>
+                                <FontAwesomeIcon icon="pen-to-square" size="sm" />
+                            </ActionIcon>
+                        </Group>
+                    )}
+                </div>
+                <div style={{ minWidth: 220 }}>
+                    <label style={{ fontSize: 14, fontWeight: 500, display: "block", marginBottom: 4 }}>
+                        Start Date
+                    </label>
+                    {isEditingStartDate ? (
+                        <Group gap={4} wrap="nowrap">
+                            <DateInput
+                                value={startDate}
+                                onChange={setStartDate}
+                                label={undefined}
+                                placeholder="Select start date"
+                                clearable
+                                withAsterisk
+                                excludeDate={(date) => date.getDay() !== 4}
+                                style={{ maxWidth: 160 }}
+                                disabled={updateRound.isPending}
+                            />
+                            <ActionIcon
+                                color="green"
+                                variant="subtle"
+                                onClick={handleSaveStartDate}
+                                loading={updateRound.isPending}
+                                aria-label="Save Start Date">
+                                <FontAwesomeIcon icon="floppy-disk" size="sm" />
+                            </ActionIcon>
+                            <ActionIcon
+                                color="red"
+                                variant="subtle"
+                                onClick={handleCancelStartDate}
+                                disabled={updateRound.isPending}
+                                aria-label="Cancel Start Date Edit">
+                                <FontAwesomeIcon icon="xmark" size="sm" />
+                            </ActionIcon>
+                        </Group>
+                    ) : (
+                        <Group gap={4} wrap="nowrap">
+                            <Text size="sm" fw={500}>
+                                {round?.startDate ? moment(round.startDate).format("MMM D, YYYY") : "No Start Date"}
+                            </Text>
+                            <ActionIcon color="blue" variant="subtle" onClick={() => setIsEditingStartDate(true)}>
                                 <FontAwesomeIcon icon="pen-to-square" size="sm" />
                             </ActionIcon>
                         </Group>
