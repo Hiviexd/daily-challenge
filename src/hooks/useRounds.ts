@@ -24,8 +24,14 @@ export function useInfiniteRounds(params: RoundsFilterParams = {}) {
         queryKey: ["rounds", params],
         queryFn: async ({ pageParam = null }) => {
             const queryParams: any = { ...params };
+
             if (pageParam) queryParams.cursor = pageParam;
+
             const res = await utils.apiCall({ method: "get", url: "/api/rounds", params: queryParams });
+
+            if (res.error) {
+                utils.handleMutationResponse(res);
+            }
             return res;
         },
         getNextPageParam: (lastPage) => {
