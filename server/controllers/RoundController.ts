@@ -196,9 +196,9 @@ class RoundController {
 
             // logging
             LogService.generate(loggedInUser._id, `Updated beatmapId for round: ${round.title}`);
+        } else {
+            return res.status(400).json({ message: "Invalid request for updateBeatmapId" });
         }
-
-        return res.status(400).json({ message: "Invalid request for updateBeatmapId" });
     }
 
     /* PUT update beatmap note for a round */
@@ -229,8 +229,9 @@ class RoundController {
 
             // logging
             LogService.generate(loggedInUser._id, `Updated beatmap notes for round: ${round.title}`);
+        } else {
+            return res.status(400).json({ message: "Invalid request for updateBeatmapNote" });
         }
-        return res.status(400).json({ message: "Invalid request for updateBeatmapNote" });
     }
 }
 
