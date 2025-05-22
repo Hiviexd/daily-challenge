@@ -22,9 +22,10 @@ class RoundController {
         const theme = req.query.theme as string | undefined;
         const date = req.query.date as string | undefined;
 
-        const query: any = hasAccess ? {} : { isPublished: true };
+        const now = new Date();
+        const query: any = hasAccess ? {} : { startDate: { $lte: now } };
         if (cursor) {
-            query.startDate = { $lt: new Date(cursor) };
+            query.startDate = { ...(query.startDate || {}), $lt: new Date(cursor) };
         }
         if (theme) {
             query.theme = { $regex: theme, $options: "i" };
@@ -35,11 +36,15 @@ class RoundController {
             query.endDate = { $gte: d };
         }
 
-        const rounds = await Round.find(query)
+        let rounds = await Round.find(query)
             .select(selectFields(hasAccess))
             .populate(DEFAULT_POPULATE)
             .sort({ startDate: -1 })
             .limit(DEFAULT_LIMIT);
+
+        if (!hasAccess) {
+            rounds = RoundService.censorActiveRound(rounds);
+        }
 
         const nextCursor = rounds.length === DEFAULT_LIMIT ? rounds[rounds.length - 1].startDate.toISOString() : null;
 
@@ -92,7 +97,6 @@ class RoundController {
             startDate,
             endDate,
             theme,
-            isPublished: false,
         });
 
         await round.save();
@@ -106,7 +110,7 @@ class RoundController {
     /* PUT update round */
     public async update(req: Request, res: Response) {
         const { roundId } = req.params;
-        const { theme, assignedUserId, isPublished, startDate } = req.body;
+        const { theme, assignedUserId, startDate } = req.body;
 
         const loggedInUser = res.locals!.user!;
 
@@ -118,7 +122,6 @@ class RoundController {
 
         if (theme) round.theme = theme;
         if (assignedUserId) round.assignedUser = assignedUserId;
-        if (isPublished !== undefined) round.isPublished = isPublished;
 
         if (startDate) {
             const endDate = new Date(startDate);
