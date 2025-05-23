@@ -12,8 +12,8 @@ export default function UsersSettings() {
     const [submittedInput, setSubmittedInput] = useState<string | null>(null);
     const { data: user, isLoading, isError } = useUser(submittedInput || "");
     const groupMoveMutation = useGroupMove(submittedInput || "");
-    const { data: staff } = useStaff();
-    const { data: spectators } = useSpectators();
+    const { data: staff, isLoading: isLoadingStaff } = useStaff();
+    const { data: spectators, isLoading: isLoadingSpectators } = useSpectators();
 
     const handleLoadUser = () => {
         setSubmittedInput(userInput.trim());
@@ -23,7 +23,48 @@ export default function UsersSettings() {
         groupMoveMutation.mutate({ group, action });
     };
 
-    const LoadingSkeleton = () => {
+    const handleUserCardClick = (user: IUser) => {
+        setUserInput(user.username || user.osuId.toString());
+        setSubmittedInput(user.username || user.osuId.toString());
+    };
+
+    const userList = (users: IUser[]) => {
+        return (
+            <Group gap="md">
+                {users.map((user) => (
+                    <Card
+                        className="user-card"
+                        key={user._id}
+                        radius="md"
+                        p="sm"
+                        onClick={() => handleUserCardClick(user)}
+                        style={{ cursor: "pointer" }}>
+                        <Group gap="xs">
+                            <Avatar src={user.avatarUrl} size={32} radius="xl" />
+                            <UserLink fw={500} size="sm" user={user} c="white" asText />
+                        </Group>
+                    </Card>
+                ))}
+            </Group>
+        );
+    };
+
+    const UserListSkeleton = () => {
+        return (
+            <Group gap="md">
+                {Array.from({ length: 3 }).map((_, i) => (
+                    <Card key={i} radius="md" p="sm">
+                        <Group gap="xs">
+                            <Skeleton height={32} width={32} circle />
+                            <Skeleton height={16} width={80} radius="sm" />
+                        </Group>
+                    </Card>
+                ))}
+            </Group>
+        );
+    };
+
+    const UserManagementSkeleton = () => {
         return (
             <Card radius="md">
                 <Stack gap="sm">
@@ -48,40 +89,39 @@ export default function UsersSettings() {
         );
     };
 
-    const userList = (users: IUser[]) => {
-        return (
-            <Group gap="md">
-                {users.map((user) => (
-                    <Card className="user-card" key={user._id} radius="md" p="sm" component="a" href={user.osuProfileUrl}>
-                        <Group gap="xs">
-                            <Avatar src={user.avatarUrl} size={32} radius="xl" />
-                            <UserLink fw={500} size="sm" user={user} c="white" asText />
-                        </Group>
-                    </Card>
-                ))}
-            </Group>
-        );
-    };
-
     return (
         <Stack gap="md">
             {/* Staff List */}
-            {Array.isArray(staff) && staff.length > 0 && (
-                <Stack gap="xs">
-                    <Text fw={600} size="sm">
-                        Staff List
+            <Stack gap="xs">
+                <Text fw={600} size="sm">
+                    Staff List
+                </Text>
+                {isLoadingStaff ? (
+                    <UserListSkeleton />
+                ) : Array.isArray(staff) && staff.length > 0 ? (
+                    userList(staff)
+                ) : (
+                    <Text size="sm" c="dimmed">
+                        No staff members found
                     </Text>
-                    {userList(staff)}
-                </Stack>
-            )}
-            {Array.isArray(spectators) && spectators.length > 0 && (
-                <Stack gap="xs">
-                    <Text fw={600} size="sm">
-                        Spectators List
+                )}
+            </Stack>
+
+            {/* Spectators List */}
+            <Stack gap="xs">
+                <Text fw={600} size="sm">
+                    Spectators List
+                </Text>
+                {isLoadingSpectators ? (
+                    <UserListSkeleton />
+                ) : Array.isArray(spectators) && spectators.length > 0 ? (
+                    userList(spectators)
+                ) : (
+                    <Text size="sm" c="dimmed">
+                        No spectators found
                     </Text>
-                    {userList(spectators)}
-                </Stack>
-            )}
+                )}
+            </Stack>
             <Group align="flex-end" gap="sm">
                 <TextInput
                     label="User Input"
@@ -97,7 +137,7 @@ export default function UsersSettings() {
                     Load User
                 </Button>
             </Group>
-            {isLoading && <LoadingSkeleton />}
+            {isLoading && <UserManagementSkeleton />}
             {isError && submittedInput && <Alert color="red">User not found or error loading user.</Alert>}
             {user && !isLoading && !isError && (
                 <Card radius="md">
