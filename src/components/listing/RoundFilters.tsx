@@ -78,7 +78,7 @@ export default function RoundFilters({
                 )}
             </div>
             <TextInput
-                placeholder="Search by artist title..."
+                placeholder="Search by artist or title..."
                 value={artistTitleSearch}
                 onChange={(e) => setArtistTitleSearch(e.currentTarget.value)}
                 leftSection={<FontAwesomeIcon icon="search" />}
