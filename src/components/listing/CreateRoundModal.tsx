@@ -64,7 +64,7 @@ export default function CreateRoundModal({ opened, onClose }: IProps) {
                     <DateInput
                         label="Start Date"
                         placeholder="Select start date"
-                        description="End date will be 7 days after start date"
+                        description="End date will be 6 days after start date"
                         leftSection={<FontAwesomeIcon icon="calendar" />}
                         clearable
                         withAsterisk
