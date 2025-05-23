@@ -152,10 +152,10 @@ export default function BeatmapRow({
             <Table.Td>
                 {beatmap?.artist ? (
                     <Group gap="sm" wrap="nowrap">
-                        <div style={{ position: "relative", width: 120, height: 32 }}>
+                        <div style={{ position: "relative", maxWidth: 120, width: "100%", height: 32, minWidth: 60 }}>
                             {showSkeleton && (
                                 <Skeleton
-                                    width={120}
+                                    width="100%"
                                     height={32}
                                     radius="sm"
                                     style={{ position: "absolute", top: 0, left: 0 }}
@@ -163,8 +163,6 @@ export default function BeatmapRow({
                             )}
                             <Image
                                 src={beatmap.cover}
-                                width={120}
-                                height={32}
                                 radius="sm"
                                 alt="cover"
                                 style={{
@@ -172,8 +170,9 @@ export default function BeatmapRow({
                                     position: "absolute",
                                     top: 0,
                                     left: 0,
-                                    width: 120,
+                                    width: "100%",
                                     height: 32,
+                                    objectFit: "cover",
                                 }}
                                 onLoad={onImageLoad}
                             />
