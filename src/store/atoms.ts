@@ -12,6 +12,12 @@ export const loggedInUserAtom = atom<IUser | null>(null);
 
 /* Rounds */
 export const roundsAtom = atom<IRound[]>([]);
+export const roundsQueryStateAtom = atom({
+    isLoading: false,
+    isError: false,
+    hasNextPage: false,
+    isFetchingNextPage: false,
+});
 export const selectedRoundIdAtom = atom<string | null>(null);
 
 export const roundDuplicateWarningsAtom = atom<{ [roundId: string]: { warnings: IWarning[]; checked: boolean } }>({});

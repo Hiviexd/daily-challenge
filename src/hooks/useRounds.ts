@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
-import { roundsAtom } from "@store/atoms";
+import { roundsAtom, roundsQueryStateAtom } from "@store/atoms";
 import utils from "@utils/index";
 import { IRound } from "@interfaces/Round";
 import { useEffect } from "react";
@@ -14,19 +14,24 @@ export default function useRounds() {
 
 export interface RoundsFilterParams {
     theme?: string;
+    artistTitle?: string;
     date?: string;
 }
 
 export function useInfiniteRounds(params: RoundsFilterParams = {}) {
     const [rounds, setRounds] = useAtom(roundsAtom);
+    const [, setQueryState] = useAtom(roundsQueryStateAtom);
 
     const query = useInfiniteQuery({
-        queryKey: ["rounds", params],
+        queryKey: ["rounds", JSON.stringify(params)],
         queryFn: async ({ pageParam = null }) => {
-            const queryParams: any = { ...params };
-
+            const cleanParams = Object.fromEntries(
+                Object.entries(params).filter((entry) => entry[1] !== undefined && entry[1] !== "")
+            );
+            const queryParams: any = { ...cleanParams };
             if (pageParam) queryParams.cursor = pageParam;
 
+            console.log("[useInfiniteRounds] Fetching with queryParams:", queryParams);
             const res = await utils.apiCall({ method: "get", url: "/api/rounds", params: queryParams });
 
             if (res.error) {
@@ -40,13 +45,27 @@ export function useInfiniteRounds(params: RoundsFilterParams = {}) {
         initialPageParam: null,
     });
 
-    // Sync atom when query.data changes
+    // Sync atoms when query.data changes
     useEffect(() => {
         if (query.data) {
             const newRounds = query.data.pages.flatMap((page: any) => (Array.isArray(page.rounds) ? page.rounds : []));
             setRounds(newRounds);
         }
-    }, [query.data, setRounds]);
+        setQueryState({
+            isLoading: query.isLoading,
+            isError: query.isError,
+            hasNextPage: query.hasNextPage || false,
+            isFetchingNextPage: query.isFetchingNextPage,
+        });
+    }, [
+        query.data,
+        query.isLoading,
+        query.isError,
+        query.hasNextPage,
+        query.isFetchingNextPage,
+        setRounds,
+        setQueryState,
+    ]);
 
     return { ...query, rounds, setRounds };
 }
@@ -69,11 +88,7 @@ export function useUpdateRound(roundId: string) {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (round: {
-            theme?: string;
-            assignedUserId?: string;
-            startDate?: Date;
-        }) => {
+        mutationFn: async (round: { theme?: string; assignedUserId?: string; startDate?: Date }) => {
             const response = await utils.apiCall({ method: "put", url: `/api/rounds/${roundId}/update`, data: round });
             return utils.handleMutationResponse(response);
         },
@@ -138,4 +153,12 @@ export function useDeleteRound(roundId: string) {
             queryClient.invalidateQueries({ queryKey: ["rounds"] });
         },
     });
+}
+
+// Custom hook for managing rounds query from ListingPage
+export function useRoundsQuery(params: RoundsFilterParams) {
+    const infiniteQuery = useInfiniteRounds(params);
+    return {
+        fetchNextPage: infiniteQuery.fetchNextPage,
+    };
 }

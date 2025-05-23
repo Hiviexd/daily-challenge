@@ -4,32 +4,40 @@ import RoundsList from "@components/listing/RoundsList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface IProps {
-    search: string;
-    setSearch: (search: string) => void;
+    themeSearch: string;
+    setThemeSearch: (search: string) => void;
+    artistTitleSearch: string;
+    setArtistTitleSearch: (search: string) => void;
     selectedDate: Date | null;
     setSelectedDate: (selectedDate: Date | null) => void;
     loggedInUser: any;
     openCreateRoundModal: () => void;
     closeMobileNavbar: () => void;
     openCurationGuideModal: () => void;
+    fetchNextPage: (...args: any[]) => void;
 }
 
 export default function ListingMobileNavbar({
-    search,
-    setSearch,
+    themeSearch,
+    setThemeSearch,
+    artistTitleSearch,
+    setArtistTitleSearch,
     selectedDate,
     setSelectedDate,
     loggedInUser,
     openCreateRoundModal,
     closeMobileNavbar,
     openCurationGuideModal,
+    fetchNextPage,
 }: IProps) {
     return (
         <AppShell.Navbar p="md" hiddenFrom="sm" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
             <Stack style={{ flex: 1, minHeight: 0 }}>
                 <RoundFilters
-                    search={search}
-                    setSearch={setSearch}
+                    themeSearch={themeSearch}
+                    setThemeSearch={setThemeSearch}
+                    artistTitleSearch={artistTitleSearch}
+                    setArtistTitleSearch={setArtistTitleSearch}
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
                 />
@@ -47,7 +55,7 @@ export default function ListingMobileNavbar({
                     </>
                 )}
                 <Divider />
-                <RoundsList closeMobileNavbar={closeMobileNavbar} />
+                <RoundsList closeMobileNavbar={closeMobileNavbar} fetchNextPage={fetchNextPage} />
             </Stack>
         </AppShell.Navbar>
     );

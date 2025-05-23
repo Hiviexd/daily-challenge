@@ -1,9 +1,9 @@
 import { AppShell, Card } from "@mantine/core";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useDisclosure } from "@mantine/hooks";
-import { selectedRoundIdAtom, loggedInUserAtom } from "@store/atoms";
+import { selectedRoundIdAtom, loggedInUserAtom, roundsAtom } from "@store/atoms";
 import { useAtom } from "jotai";
-import { useInfiniteRounds } from "@hooks/useRounds";
+import { useRoundsQuery } from "@hooks/useRounds";
 import { useDebouncedValue } from "@mantine/hooks";
 import utils from "@utils/index";
 
@@ -17,17 +17,26 @@ import CurationGuideModal from "@components/listing/CurationGuideModal";
 
 export default function ListingPage() {
     const [loggedInUser] = useAtom(loggedInUserAtom);
-    const [search, setSearch] = useState("");
+    const [themeSearch, setThemeSearch] = useState("");
+    const [artistTitleSearch, setArtistTitleSearch] = useState("");
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
-    const [debouncedSearch] = useDebouncedValue(search, 500);
+    const [debouncedThemeSearch] = useDebouncedValue(themeSearch, 500);
+    const [debouncedArtistTitleSearch] = useDebouncedValue(artistTitleSearch, 500);
 
     const [selectedRoundId, setSelectedRoundId] = useAtom(selectedRoundIdAtom);
 
-    const { rounds } = useInfiniteRounds({
-        theme: debouncedSearch.trim() || undefined,
-        date: selectedDate ? utils.toUTCDateOnly(selectedDate).toISOString() : undefined,
-    });
+    const filterParams = useMemo(
+        () => ({
+            theme: debouncedThemeSearch.trim() || undefined,
+            artistTitle: debouncedArtistTitleSearch.trim() || undefined,
+            date: selectedDate ? utils.toUTCDateOnly(selectedDate).toISOString() : undefined,
+        }),
+        [debouncedThemeSearch, debouncedArtistTitleSearch, selectedDate]
+    );
+
+    const { fetchNextPage } = useRoundsQuery(filterParams);
+    const [rounds] = useAtom(roundsAtom);
 
     const selectedRound = rounds.find((r) => r.id === selectedRoundId) ?? null;
 
@@ -66,13 +75,16 @@ export default function ListingPage() {
             <CurationGuideModal opened={curationGuideModalOpen} onClose={closeCurationGuideModal} />
 
             <ListingDesktopNavbar
-                search={search}
-                setSearch={setSearch}
+                themeSearch={themeSearch}
+                setThemeSearch={setThemeSearch}
+                artistTitleSearch={artistTitleSearch}
+                setArtistTitleSearch={setArtistTitleSearch}
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
                 loggedInUser={loggedInUser}
                 openCreateRoundModal={openCreateRoundModal}
                 openCurationGuideModal={openCurationGuideModal}
+                fetchNextPage={fetchNextPage}
             />
 
             <AppShell.Header hiddenFrom="sm">
@@ -80,14 +92,17 @@ export default function ListingPage() {
             </AppShell.Header>
 
             <ListingMobileNavbar
-                search={search}
-                setSearch={setSearch}
+                themeSearch={themeSearch}
+                setThemeSearch={setThemeSearch}
+                artistTitleSearch={artistTitleSearch}
+                setArtistTitleSearch={setArtistTitleSearch}
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
                 loggedInUser={loggedInUser}
                 openCreateRoundModal={openCreateRoundModal}
                 closeMobileNavbar={closeMobileNavbar}
                 openCurationGuideModal={openCurationGuideModal}
+                fetchNextPage={fetchNextPage}
             />
 
             <AppShell.Main>

@@ -4,6 +4,7 @@ import LogService from "@services/LogService";
 import User from "@models/userModel";
 import RoundService from "@services/RoundService";
 import BeatmapService from "@services/BeatmapService";
+import Beatmap from "@models/beatmapModel";
 
 const DEFAULT_POPULATE = [{ path: "assignedUser", select: "username osuId groups" }, { path: "beatmaps" }];
 const DEFAULT_LIMIT = 10;
@@ -21,19 +22,36 @@ class RoundController {
         const cursor = req.query.cursor as string | undefined;
         const theme = req.query.theme as string | undefined;
         const date = req.query.date as string | undefined;
+        const artistTitle = req.query.artistTitle as string | undefined;
 
         const now = new Date();
         const query: any = hasAccess ? {} : { startDate: { $lte: now } };
+
         if (cursor) {
             query.startDate = { ...(query.startDate || {}), $lt: new Date(cursor) };
         }
+
         if (theme) {
             query.theme = { $regex: theme, $options: "i" };
         }
+
         if (date) {
             const d = new Date(date);
             query.startDate = { ...(query.startDate || {}), $lte: d };
             query.endDate = { $gte: d };
+        }
+
+        if (artistTitle) {
+            // Step 1: Find matching beatmaps by artist or title
+            const matchingBeatmaps = await Beatmap.find({
+                $or: [
+                    { artist: { $regex: artistTitle, $options: "i" } },
+                    { title: { $regex: artistTitle, $options: "i" } },
+                ],
+            }).select("_id");
+            const matchingIds = matchingBeatmaps.map((bm) => bm._id);
+            // Step 2: Filter rounds by those beatmap IDs
+            query.beatmaps = { $in: matchingIds.length > 0 ? matchingIds : [null] };
         }
 
         let rounds = await Round.find(query)
@@ -120,7 +138,7 @@ class RoundController {
             return res.status(404).json({ message: "Round not found" });
         }
 
-        if (theme) round.theme = theme;
+        if (typeof theme === "string") round.theme = theme;
         if (assignedUserId) round.assignedUser = assignedUserId;
 
         if (startDate) {

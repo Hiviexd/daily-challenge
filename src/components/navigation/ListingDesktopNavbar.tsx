@@ -5,23 +5,29 @@ import UserMenuDesktop from "@components/navigation/UserMenuDesktop";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface IProps {
-    search: string;
-    setSearch: (search: string) => void;
+    themeSearch: string;
+    setThemeSearch: (search: string) => void;
+    artistTitleSearch: string;
+    setArtistTitleSearch: (search: string) => void;
     selectedDate: Date | null;
     setSelectedDate: (selectedDate: Date | null) => void;
     loggedInUser: any;
     openCreateRoundModal: () => void;
     openCurationGuideModal: () => void;
+    fetchNextPage: (...args: any[]) => void;
 }
 
 export default function ListingDesktopNavbar({
-    search,
-    setSearch,
+    themeSearch,
+    setThemeSearch,
+    artistTitleSearch,
+    setArtistTitleSearch,
     selectedDate,
     setSelectedDate,
     loggedInUser,
     openCreateRoundModal,
     openCurationGuideModal,
+    fetchNextPage,
 }: IProps) {
     return (
         <AppShell.Navbar p="md" visibleFrom="sm" style={{ height: "100%" }}>
@@ -46,8 +52,10 @@ export default function ListingDesktopNavbar({
             <AppShell.Section mb="md">
                 <Stack style={{ flex: 1, minHeight: 0 }}>
                     <RoundFilters
-                        search={search}
-                        setSearch={setSearch}
+                        themeSearch={themeSearch}
+                        setThemeSearch={setThemeSearch}
+                        artistTitleSearch={artistTitleSearch}
+                        setArtistTitleSearch={setArtistTitleSearch}
                         selectedDate={selectedDate}
                         setSelectedDate={setSelectedDate}
                     />
@@ -67,7 +75,7 @@ export default function ListingDesktopNavbar({
                     <Divider />
                 </Stack>
             </AppShell.Section>
-            <RoundsList closeMobileNavbar={() => {}} />
+            <RoundsList closeMobileNavbar={() => {}} fetchNextPage={fetchNextPage} />
             <AppShell.Section>
                 <UserMenuDesktop user={loggedInUser} />
             </AppShell.Section>

@@ -1,12 +1,12 @@
 import { ScrollArea, Stack, Skeleton, Text } from "@mantine/core";
 import { useAtom } from "jotai";
-import { roundsAtom, selectedRoundIdAtom } from "@store/atoms";
-import { useInfiniteRounds } from "@hooks/useRounds";
+import { selectedRoundIdAtom, roundsAtom, roundsQueryStateAtom } from "@store/atoms";
 import RoundCard from "@components/listing/RoundCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface IProps {
     closeMobileNavbar: () => void;
+    fetchNextPage: (...args: any[]) => void;
 }
 
 function EmptyState({ hasError }: { hasError: boolean }) {
@@ -23,10 +23,11 @@ function EmptyState({ hasError }: { hasError: boolean }) {
     );
 }
 
-export default function RoundsList({ closeMobileNavbar }: IProps) {
+export default function RoundsList({ closeMobileNavbar, fetchNextPage }: IProps) {
     const [rounds] = useAtom(roundsAtom);
+    const [queryState] = useAtom(roundsQueryStateAtom);
+    const { isLoading, isError, hasNextPage, isFetchingNextPage } = queryState;
     const [selectedRoundId, setSelectedRoundId] = useAtom(selectedRoundIdAtom);
-    const { fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } = useInfiniteRounds();
 
     const loadingState = () => {
         return Array.from({ length: 8 }).map((_, index) => (
