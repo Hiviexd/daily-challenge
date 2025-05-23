@@ -38,7 +38,7 @@ export default function UserMenuDesktop({ user }: IProps) {
                         <Tooltip label="Sign Out">
                             <ActionIcon
                                 variant="subtle"
-                                color="danger"
+                                color="danger.4"
                                 onClick={() => {
                                     window.location.href = "/api/auth/logout";
                                 }}
