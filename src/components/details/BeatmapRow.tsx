@@ -1,4 +1,4 @@
-import { Table, TextInput, Image, Group, Anchor, Text, ActionIcon, Skeleton } from "@mantine/core";
+import { Table, TextInput, Image, Group, Anchor, Text, ActionIcon, Skeleton, CopyButton, Tooltip } from "@mantine/core";
 import { IBeatmap } from "@interfaces/Beatmap";
 import { useUpdateRoundBeatmapId, useUpdateRoundBeatmapNote } from "@hooks/useRounds";
 import { useState, useEffect } from "react";
@@ -9,7 +9,6 @@ import DuplicateStatusCell from "./DuplicateStatusCell";
 import { loggedInUserAtom } from "@store/atoms";
 import { useAtom } from "jotai";
 import StarRatingBadge from "@components/common/StarRatingBadge";
-import utils from "@utils/index";
 import DateBadge from "@components/common/DateBadge";
 
 interface IProps {
@@ -121,13 +120,19 @@ export default function BeatmapRow({
                 ) : (
                     <Group gap={4}>
                         {beatmapId && (
-                            <ActionIcon
-                                color="success"
-                                variant="subtle"
-                                onClick={() => utils.copyToClipboard(beatmapId)}
-                                size="sm">
-                                <FontAwesomeIcon icon="copy" size="sm" />
-                            </ActionIcon>
+                            <CopyButton value={beatmapId} timeout={1000}>
+                                {({ copied, copy }) => (
+                                    <Tooltip label={copied ? "Copied!" : "Copy"}>
+                                        <ActionIcon
+                                            color="success"
+                                            variant={copied ? "light" : "subtle"}
+                                            onClick={copy}
+                                            size="sm">
+                                            <FontAwesomeIcon icon={copied ? "check" : "copy"} size="sm" />
+                                        </ActionIcon>
+                                    </Tooltip>
+                                )}
+                            </CopyButton>
                         )}
                         <Text size="sm" fw={500}>
                             {beatmapId || ""}

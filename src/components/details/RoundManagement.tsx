@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Select, TextInput, Group, ActionIcon, Text, Loader, Stack, Button } from "@mantine/core";
+import { Select, TextInput, Group, ActionIcon, Text, Loader, Stack, Button, CopyButton } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { IRound } from "@interfaces/Round";
 import { useStaff } from "@hooks/useUsers";
@@ -31,6 +31,8 @@ export default function RoundManagement({ round }: IProps) {
     const [isEditingTheme, setIsEditingTheme] = useState(false);
     const [isEditingAssignedUser, setIsEditingAssignedUser] = useState(false);
     const [isEditingStartDate, setIsEditingStartDate] = useState(false);
+
+    const [isCopied, setIsCopied] = useState(false);
 
     // sync theme with prop changes
     useEffect(() => {
@@ -87,6 +89,14 @@ export default function RoundManagement({ round }: IProps) {
     const handleCancelStartDate = () => {
         setStartDate(round?.startDate ? new Date(round.startDate) : null);
         setIsEditingStartDate(false);
+    };
+
+    const handleCopyDefaultFreeMods = (copy: () => void) => {
+        setIsCopied(true);
+        copy();
+        setTimeout(() => {
+            setIsCopied(false);
+        }, 1000);
     };
 
     return (
@@ -233,13 +243,28 @@ export default function RoundManagement({ round }: IProps) {
             </Group>
 
             <Group>
-                <Button
-                    variant="light"
-                    color="success"
-                    leftSection={<FontAwesomeIcon icon="copy" />}
-                    onClick={() => utils.copyToClipboard(settings?.mods?.osu.join(",") || "")}>
-                    Copy default free mods
-                </Button>
+                <CopyButton value={settings?.mods?.osu.join(",") || ""} timeout={1000}>
+                    {({ copied, copy }) => (
+                        <Button
+                            variant="light"
+                            color="success"
+                            leftSection={<FontAwesomeIcon icon="copy" />}
+                            loading={isCopied ?? copied}
+                            loaderProps={{
+                                children: (
+                                    <Group gap={4}>
+                                        <FontAwesomeIcon icon="check" />
+                                        <Text size="sm" fw={700}>
+                                            Copied!
+                                        </Text>
+                                    </Group>
+                                ),
+                            }}
+                            onClick={() => handleCopyDefaultFreeMods(copy)}>
+                            Copy default free mods
+                        </Button>
+                    )}
+                </CopyButton>
                 {loggedInUser?.isAdmin && (
                     <Button
                         variant="light"
