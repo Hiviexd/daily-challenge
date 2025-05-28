@@ -20,15 +20,22 @@ const RoundSchema = new mongoose.Schema<IRound>(
 );
 
 RoundSchema.virtual("isActive").get(function (this: IRound) {
-    return this.startDate <= new Date() && this.endDate >= new Date();
+    const today = moment().startOf("day");
+    const startDay = moment(this.startDate).startOf("day");
+    const endDay = moment(this.endDate).startOf("day");
+    return today.isSameOrAfter(startDay) && today.isSameOrBefore(endDay);
 });
 
 RoundSchema.virtual("isUpcoming").get(function (this: IRound) {
-    return this.startDate > new Date();
+    const today = moment().startOf("day");
+    const startDay = moment(this.startDate).startOf("day");
+    return today.isBefore(startDay);
 });
 
 RoundSchema.virtual("isPast").get(function (this: IRound) {
-    return this.endDate < new Date();
+    const today = moment().startOf("day");
+    const endDay = moment(this.endDate).startOf("day");
+    return today.isAfter(endDay);
 });
 
 RoundSchema.virtual("title").get(function (this: IRound) {
