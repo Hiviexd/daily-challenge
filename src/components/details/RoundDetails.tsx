@@ -18,6 +18,7 @@ interface IProps {
 export default function RoundDetails({ round }: IProps) {
     const [loggedInUser] = useAtom(loggedInUserAtom);
     const isStaff = loggedInUser?.isStaff;
+    const isAdmin = loggedInUser?.isAdmin;
     const isLoading = !round;
 
     // Build a map from beatmapId to beatmap object
@@ -126,6 +127,11 @@ export default function RoundDetails({ round }: IProps) {
                             <Badge color={!round?.isUpcoming ? "info" : "gray"} variant="light">
                                 <FontAwesomeIcon icon={!round?.isUpcoming ? "eye" : "eye-slash"} />
                             </Badge>
+                        )}
+                        {isAdmin && (
+                            <Text size="sm" c="dimmed" ml="auto">
+                                id: {roundId}
+                            </Text>
                         )}
                     </Group>
                     {/* round management or theme */}
