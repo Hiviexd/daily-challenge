@@ -1,4 +1,4 @@
-import { Table, TextInput, Image, Group, Anchor, Text, ActionIcon, Skeleton, CopyButton, Tooltip } from "@mantine/core";
+import { Table, TextInput, Image, Group, Anchor, Text, ActionIcon, Skeleton } from "@mantine/core";
 import { IBeatmap } from "@interfaces/Beatmap";
 import { useUpdateRoundBeatmapId, useUpdateRoundBeatmapNote } from "@hooks/useRounds";
 import { useState, useEffect } from "react";
@@ -10,6 +10,7 @@ import { loggedInUserAtom } from "@store/atoms";
 import { useAtom } from "jotai";
 import StarRatingBadge from "@components/common/StarRatingBadge";
 import DateBadge from "@components/common/DateBadge";
+import CopyActionIcon from "@components/common/CopyActionIcon";
 
 interface IProps {
     beatmap: IBeatmap | null;
@@ -119,21 +120,7 @@ export default function BeatmapRow({
                     </Group>
                 ) : (
                     <Group gap={4}>
-                        {beatmapId && (
-                            <CopyButton value={beatmapId} timeout={1000}>
-                                {({ copied, copy }) => (
-                                    <Tooltip label={copied ? "Copied!" : "Copy"}>
-                                        <ActionIcon
-                                            color="success"
-                                            variant={copied ? "light" : "subtle"}
-                                            onClick={copy}
-                                            size="sm">
-                                            <FontAwesomeIcon icon={copied ? "check" : "copy"} size="sm" />
-                                        </ActionIcon>
-                                    </Tooltip>
-                                )}
-                            </CopyButton>
-                        )}
+                        {beatmapId && <CopyActionIcon value={beatmapId} />}
                         <Text size="sm" fw={500}>
                             {beatmapId || ""}
                         </Text>
