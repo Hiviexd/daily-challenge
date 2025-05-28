@@ -208,18 +208,38 @@ class RoundController {
             if (!beatmap) {
                 return res.status(404).json({ message: "Beatmap not found" });
             }
+
             // Add beatmap to beatmaps if not already present
             if (!round.beatmaps.some((bm: any) => bm._id.toString() === beatmap._id.toString())) {
                 round.beatmaps.push(beatmap._id);
             }
+
             // Update or add to beatmapOrder
             if (!Array.isArray(round.beatmapOrder)) round.beatmapOrder = [];
             const existingEntry = round.beatmapOrder.find((e: any) => e.order === index);
+
             if (existingEntry) {
+                // Store the old beatmap ID before replacing
+                const oldBeatmapId = existingEntry.beatmapId;
+
+                // Replace with new beatmap
                 existingEntry.beatmapId = beatmap._id;
+
+                // Clean up old beatmap if it's no longer used
+                if (oldBeatmapId) {
+                    const stillUsed = round.beatmapOrder.some(
+                        (e: any) => e.beatmapId.toString() === oldBeatmapId.toString()
+                    );
+                    if (!stillUsed) {
+                        round.beatmaps = round.beatmaps.filter(
+                            (bm: any) => bm._id.toString() !== oldBeatmapId.toString()
+                        );
+                    }
+                }
             } else {
                 round.beatmapOrder.push({ beatmapId: beatmap._id, order: index });
             }
+
             round.markModified("beatmaps");
             round.markModified("beatmapOrder");
             await round.save();
