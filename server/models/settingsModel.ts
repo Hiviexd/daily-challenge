@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 const SettingsSchema = new mongoose.Schema({
     mods: { type: Object, required: true },
+    modsUpdatedAt: { type: Date },
 });
 
 SettingsSchema.statics.getSettingsConfig = async function () {

@@ -2,6 +2,7 @@ import { Button, Stack, Text, Loader, Alert } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
 import useSettings, { useSyncMods } from "@hooks/useSettings";
 import { OsuGameMode } from "@interfaces/OsuApi";
+import DateBadge from "@components/common/DateBadge";
 
 const GAME_MODE_LABELS: Record<OsuGameMode, string> = {
     osu: "osu!",
@@ -36,6 +37,9 @@ export default function ModsSyncSettings() {
                     ))}
                 </Stack>
             )}
+            <Text size="sm" c="dimmed">
+                Last updated: {settings?.modsUpdatedAt ? <DateBadge date={settings.modsUpdatedAt} size="sm" /> : "Never"}
+            </Text>
             <Button
                 leftSection={<IconRefresh size={18} />}
                 onClick={handleSyncMods}

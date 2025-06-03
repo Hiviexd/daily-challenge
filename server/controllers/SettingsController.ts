@@ -41,6 +41,7 @@ class SettingsController {
             const settings = await Settings.getSettingsConfig();
 
             settings.mods = settingsMods;
+            settings.modsUpdatedAt = new Date();
             await settings.save();
 
             res.json({ message: "Mods synced successfully!" });

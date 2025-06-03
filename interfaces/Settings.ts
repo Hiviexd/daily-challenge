@@ -22,9 +22,9 @@ export interface IModsExternalApiResponse {
 
 export interface ISettings extends Document {
     mods: SettingsMods;
+    modsUpdatedAt: Date;
 }
 
 export interface ISettingsStatics extends Model<ISettings> {
     getSettingsConfig: () => DocumentQuery<ISettings, ISettings>;
 }
-
