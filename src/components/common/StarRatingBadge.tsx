@@ -21,7 +21,7 @@ export default function StarRatingBadge({ rating }: IProps) {
                 backgroundColor: utils.getDifficultyColor(rating),
                 color: getTextColor(),
             }}>
-            ★ {rating}
+            ★ {rating.toFixed(2)}
         </Badge>
     );
 }
