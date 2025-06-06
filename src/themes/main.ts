@@ -140,16 +140,7 @@ export const theme = createTheme({
         },
         Select: {
             defaultProps: {
-                withScrollArea: false,
                 comboboxProps: { transitionProps: { transition: "scale-y", duration: 150 } },
-            },
-            styles: {
-                dropdown: {
-                    maxHeight: 200,
-                    overflowY: "auto",
-                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-
-                },
             },
         },
         Dropdown: {
