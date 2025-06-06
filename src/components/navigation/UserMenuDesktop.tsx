@@ -18,7 +18,7 @@ export default function UserMenuDesktop({ user }: IProps) {
     return (
         <>
             <SettingsModal opened={settingsModalOpen} onClose={closeSettingsModal} />
-            <Card withBorder shadow="sm" p="md" radius="md" style={{ width: "100%" }}>
+            <Card withBorder shadow="sm" p="sm" radius="md" style={{ width: "100%" }}>
                 <Group style={{ width: "100%" }} gap="sm">
                     <Avatar src={user.avatarUrl} size="2.5rem" radius="xl" />
                     <UserLink user={user} c="white" />
