@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import User from "@models/userModel";
+import Round from "@models/roundModel";
 import UserService from "@services/UserService";
 import { type UserGroup, type UserGroupAction } from "@interfaces/User";
 
@@ -59,6 +60,55 @@ class UsersController {
         await user.save();
 
         res.json({ message: "Group move handled successfully!" });
+    }
+
+    /** GET staff stats */
+    public async getStaffStats(_: Request, res: Response): Promise<void> {
+        const staff = await User.find({ groups: { $in: ["staff"] } })
+            .collation({ locale: "en", strength: 2 })
+            .sort({ username: 1 });
+
+        const statsPromises = staff.map(async (user) => {
+            // Find the most recent round assigned to this user
+            const lastRound = await Round.findOne({ assignedUser: user._id }).sort({ startDate: -1 });
+
+            let weeksSinceLastAssignment: number | null = null;
+            let lastRoundTitle: string | null = null;
+
+            if (lastRound) {
+                lastRoundTitle = lastRound.title;
+                const now = new Date();
+                const roundStartDate = new Date(lastRound.startDate);
+                const diffTime = now.getTime() - roundStartDate.getTime();
+                const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
+                weeksSinceLastAssignment = diffWeeks;
+            }
+
+            return {
+                user,
+                weeksSinceLastAssignment,
+                lastRoundTitle,
+            };
+        });
+
+        const stats = await Promise.all(statsPromises);
+
+        // Sort by weeksSinceLastAssignment (biggest to smallest), with null values at the end
+        // Negative values (future assignments) should come after positive values (past assignments)
+        stats.sort((a, b) => {
+            if (a.weeksSinceLastAssignment === null && b.weeksSinceLastAssignment === null) return 0;
+            if (a.weeksSinceLastAssignment === null) return 1;
+            if (b.weeksSinceLastAssignment === null) return -1;
+
+            // If one is negative and one is positive, positive comes first
+            if (a.weeksSinceLastAssignment! < 0 && b.weeksSinceLastAssignment! >= 0) return 1;
+            if (a.weeksSinceLastAssignment! >= 0 && b.weeksSinceLastAssignment! < 0) return -1;
+
+            // Both are same sign, sort normally (biggest to smallest)
+            return b.weeksSinceLastAssignment! - a.weeksSinceLastAssignment!;
+        });
+
+        res.json(stats);
     }
 }
 

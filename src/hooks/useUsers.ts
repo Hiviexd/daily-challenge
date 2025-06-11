@@ -44,3 +44,10 @@ export function useGroupMove(userInput: string) {
         },
     });
 }
+
+export function useStaffStats() {
+    return useQuery({
+        queryKey: ["staffStats"],
+        queryFn: () => utils.apiCall({ method: "get", url: "/api/users/staffStats" }),
+    });
+}

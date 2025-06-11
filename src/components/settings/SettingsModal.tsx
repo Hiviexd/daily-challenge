@@ -3,6 +3,7 @@ import { useAtom } from "jotai";
 import { loggedInUserAtom } from "@store/atoms";
 import ModsSyncSettings from "@components/settings/ModsSyncSettings";
 import UsersSettings from "@components/settings/UsersSettings";
+import UserStats from "@components/settings/UserStats";
 
 interface SettingsModalProps {
     opened: boolean;
@@ -20,8 +21,10 @@ export default function SettingsModal({ opened, onClose }: SettingsModalProps) {
                 <Tabs.List grow>
                     <Tabs.Tab value="users">Users</Tabs.Tab>
                     <Tabs.Tab value="mods">Mods</Tabs.Tab>
-                    <Tabs.Tab value="stats" disabled>Stats</Tabs.Tab>
-                    <Tabs.Tab value="logs" disabled>Logs</Tabs.Tab>
+                    <Tabs.Tab value="stats">Stats</Tabs.Tab>
+                    <Tabs.Tab value="logs" disabled>
+                        Logs
+                    </Tabs.Tab>
                 </Tabs.List>
 
                 <Tabs.Panel value="users" pt="md">
@@ -31,7 +34,7 @@ export default function SettingsModal({ opened, onClose }: SettingsModalProps) {
                     <ModsSyncSettings />
                 </Tabs.Panel>
                 <Tabs.Panel value="stats" pt="md">
-                    Stats settings placeholder
+                    <UserStats />
                 </Tabs.Panel>
                 <Tabs.Panel value="logs" pt="md">
                     Logs settings placeholder
