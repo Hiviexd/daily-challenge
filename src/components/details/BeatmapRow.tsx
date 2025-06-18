@@ -44,6 +44,9 @@ export default function BeatmapRow({
     const [isEditingBeatmapId, setIsEditingBeatmapId] = useState(false);
     const [isEditingNotes, setIsEditingNotes] = useState(false);
 
+    // copy id string
+    const copyIdString = loggedInUser?.isAdmin ? `add ${beatmapId}` : beatmapId;
+
     // Sync state with prop changes if parent updates beatmap
     useEffect(() => {
         setBeatmapId(beatmap?.beatmapId === 0 || beatmap?.beatmapId == null ? "" : beatmap?.beatmapId?.toString());
@@ -120,7 +123,7 @@ export default function BeatmapRow({
                     </Group>
                 ) : (
                     <Group gap={4}>
-                        {beatmapId && <CopyActionIcon value={beatmapId} />}
+                        {beatmapId && <CopyActionIcon value={copyIdString} />}
                         <Text size="sm" fw={500}>
                             {beatmapId || ""}
                         </Text>
