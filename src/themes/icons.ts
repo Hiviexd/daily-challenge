@@ -31,6 +31,7 @@ import {
     faTrash,
     faFileCircleExclamation,
     faMusic,
+    faStar,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function loadIcons() {
@@ -65,5 +66,6 @@ export default function loadIcons() {
         faTrash,
         faFileCircleExclamation,
         faMusic,
+        faStar,
     );
 }

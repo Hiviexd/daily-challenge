@@ -67,3 +67,12 @@ export function formatGameMode(mode: string) {
 export function toUTCDateOnly(date: Date) {
     return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
 }
+
+/**
+ * Gets the current day index with Thursday as day 0 (UTC-based)
+ * @returns Day index where Thursday = 0, Friday = 1, Saturday = 2, Sunday = 3, Monday = 4, Tuesday = 5, Wednesday = 6
+ */
+export function getCurrentDayIndex(): number {
+    const currentDay = new Date().getUTCDay();
+    return (currentDay + 3) % 7; // shift from sunday to thursday
+}

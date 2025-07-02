@@ -165,6 +165,7 @@ export default function RoundDetails({ round }: IProps) {
                             <Table.Tr>
                                 <Table.Th style={{ minWidth: 80, maxWidth: 100, width: 100 }}>Beatmap ID</Table.Th>
                                 <Table.Th style={{ textAlign: "center" }}>Star Rating</Table.Th>
+                                <Table.Th style={{ width: 140 }} />
                                 <Table.Th>Artist - Title</Table.Th>
                                 <Table.Th>Difficulty</Table.Th>
                                 <Table.Th>Host</Table.Th>
@@ -172,18 +173,14 @@ export default function RoundDetails({ round }: IProps) {
                                 <Table.Th>Notes/Mods</Table.Th>
                                 {isStaff && (
                                     <Table.Th style={{ textAlign: "center" }}>
-                                        {!hasCheckedDuplicates ? (
-                                            <Button
-                                                size="xs"
-                                                variant="light"
-                                                onClick={handleCheckDuplicates}
-                                                loading={checkDuplicatesMutation.isPending}
-                                                leftSection={<FontAwesomeIcon icon="search" />}>
-                                                Check Duplicates
-                                            </Button>
-                                        ) : (
-                                            "Duplicate Status"
-                                        )}
+                                        <Button
+                                            size="xs"
+                                            variant="light"
+                                            onClick={handleCheckDuplicates}
+                                            loading={checkDuplicatesMutation.isPending}
+                                            leftSection={<FontAwesomeIcon icon="search" />}>
+                                            Check Duplicates
+                                        </Button>
                                     </Table.Th>
                                 )}
                             </Table.Tr>
@@ -198,6 +195,7 @@ export default function RoundDetails({ round }: IProps) {
                                         beatmap={bm}
                                         index={idx}
                                         roundId={roundId}
+                                        isActiveRound={round?.isActive}
                                         warning={
                                             bm && bm.beatmapId ? warningMap.get(bm.beatmapId.toString()) : undefined
                                         }

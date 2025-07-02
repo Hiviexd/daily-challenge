@@ -1,4 +1,4 @@
-import { Table, TextInput, Image, Group, Anchor, Text, ActionIcon, Skeleton } from "@mantine/core";
+import { Table, TextInput, Image, Group, Anchor, Text, ActionIcon, Skeleton, Tooltip } from "@mantine/core";
 import { IBeatmap } from "@interfaces/Beatmap";
 import { useUpdateRoundBeatmapId, useUpdateRoundBeatmapNote } from "@hooks/useRounds";
 import { useState, useEffect } from "react";
@@ -11,11 +11,13 @@ import { useAtom } from "jotai";
 import StarRatingBadge from "@components/common/StarRatingBadge";
 import DateBadge from "@components/common/DateBadge";
 import CopyActionIcon from "@components/common/CopyActionIcon";
+import utils from "@utils/index";
 
 interface IProps {
     beatmap: IBeatmap | null;
     index: number;
     roundId: string;
+    isActiveRound: boolean;
     warning?: IWarning;
     hasCheckedDuplicates: boolean;
     showSkeleton?: boolean;
@@ -26,6 +28,7 @@ export default function BeatmapRow({
     beatmap,
     index,
     roundId,
+    isActiveRound,
     warning,
     hasCheckedDuplicates,
     showSkeleton,
@@ -46,6 +49,9 @@ export default function BeatmapRow({
 
     // copy id string
     const copyIdString = loggedInUser?.isAdmin ? `add ${beatmapId}` : beatmapId;
+
+    // Check if this is the active beatmap of the day (using UTC time, Thursday = 0)
+    const isActiveBeatmapOfDay = isActiveRound && index === utils.getCurrentDayIndex();
 
     // Sync state with prop changes if parent updates beatmap
     useEffect(() => {
@@ -145,33 +151,42 @@ export default function BeatmapRow({
             </Table.Td>
             {/* Artist - Title with Banner */}
             <Table.Td>
+                {beatmap?.artist && (
+                    <div style={{ position: "relative", maxWidth: 120, width: "100%", height: 32, minWidth: 60 }}>
+                        {showSkeleton && (
+                            <Skeleton
+                                width="100%"
+                                height={32}
+                                radius="sm"
+                                style={{ position: "absolute", top: 0, left: 0 }}
+                            />
+                        )}
+                        <Image
+                            src={beatmap.cover}
+                            radius="sm"
+                            alt="cover"
+                            style={{
+                                display: showSkeleton ? "none" : "block",
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: 32,
+                                objectFit: "cover",
+                            }}
+                            onLoad={onImageLoad}
+                        />
+                    </div>
+                )}
+            </Table.Td>
+            <Table.Td>
                 {beatmap?.artist ? (
                     <Group gap="sm" wrap="nowrap">
-                        <div style={{ position: "relative", maxWidth: 120, width: "100%", height: 32, minWidth: 60 }}>
-                            {showSkeleton && (
-                                <Skeleton
-                                    width="100%"
-                                    height={32}
-                                    radius="sm"
-                                    style={{ position: "absolute", top: 0, left: 0 }}
-                                />
-                            )}
-                            <Image
-                                src={beatmap.cover}
-                                radius="sm"
-                                alt="cover"
-                                style={{
-                                    display: showSkeleton ? "none" : "block",
-                                    position: "absolute",
-                                    top: 0,
-                                    left: 0,
-                                    width: "100%",
-                                    height: 32,
-                                    objectFit: "cover",
-                                }}
-                                onLoad={onImageLoad}
-                            />
-                        </div>
+                        {isActiveBeatmapOfDay && (
+                            <Tooltip label="Today's Daily Challenge">
+                                <FontAwesomeIcon icon="star" size="sm" color="gold" />
+                            </Tooltip>
+                        )}
                         <Anchor
                             fw={500}
                             lineClamp={1}
