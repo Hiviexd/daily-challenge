@@ -149,7 +149,7 @@ export default function BeatmapRow({
             <Table.Td style={{ textAlign: "center", width: 100, minWidth: 100, maxWidth: 120 }}>
                 {typeof beatmap?.starRating === "number" ? <StarRatingBadge rating={beatmap?.starRating} /> : "-"}
             </Table.Td>
-            {/* Artist - Title with Banner */}
+            {/* Banner */}
             <Table.Td>
                 {beatmap?.artist && (
                     <div style={{ position: "relative", maxWidth: 120, width: "100%", height: 32, minWidth: 60 }}>
@@ -179,6 +179,7 @@ export default function BeatmapRow({
                     </div>
                 )}
             </Table.Td>
+            {/* Artist - Title */}
             <Table.Td>
                 {beatmap?.artist ? (
                     <Group gap="sm" wrap="nowrap">

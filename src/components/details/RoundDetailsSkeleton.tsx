@@ -30,6 +30,7 @@ export default function RoundDetailsSkeleton({ isStaff }: { isStaff: boolean }) 
                             <Table.Tr>
                                 <Table.Th style={{ minWidth: 80, maxWidth: 100, width: 100 }}>Beatmap ID</Table.Th>
                                 <Table.Th style={{ textAlign: "center" }}>Star Rating</Table.Th>
+                                <Table.Th style={{ width: 140 }} />
                                 <Table.Th>Artist - Title</Table.Th>
                                 <Table.Th>Difficulty</Table.Th>
                                 <Table.Th>Host</Table.Th>
@@ -50,6 +51,9 @@ export default function RoundDetailsSkeleton({ isStaff }: { isStaff: boolean }) 
                                     </Table.Td>
                                     <Table.Td>
                                         <Skeleton height={18} width={50} radius="sm" />
+                                    </Table.Td>
+                                    <Table.Td>
+                                        <Skeleton height={32} width={120} radius="sm" />
                                     </Table.Td>
                                     <Table.Td>
                                         <Skeleton height={18} width={180} radius="sm" />
