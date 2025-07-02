@@ -50,8 +50,8 @@ export default function BeatmapRow({
     // copy id string
     const copyIdString = loggedInUser?.isAdmin ? `add ${beatmapId}` : beatmapId;
 
-    // Check if this is the active beatmap of the day (using UTC time, Thursday = 0)
-    const isActiveBeatmapOfDay = isActiveRound && index === utils.getCurrentDayIndex();
+    // Check if this is the current daily challenge (using UTC time, Thursday = 0)
+    const isCurrentDailyChallenge = isActiveRound && index === utils.getCurrentDayIndex();
 
     // Sync state with prop changes if parent updates beatmap
     useEffect(() => {
@@ -182,8 +182,8 @@ export default function BeatmapRow({
             {/* Artist - Title */}
             <Table.Td>
                 {beatmap?.artist ? (
-                    <Group gap="sm" wrap="nowrap">
-                        {isActiveBeatmapOfDay && (
+                    <Group gap="xs" wrap="nowrap">
+                        {isCurrentDailyChallenge && (
                             <Tooltip label="Today's Daily Challenge">
                                 <FontAwesomeIcon icon="star" size="sm" color="gold" />
                             </Tooltip>
