@@ -1,8 +1,9 @@
-import { AppShell, Group, Image, Stack, Button, Divider, Anchor } from "@mantine/core";
+import { AppShell, Group, Image, Stack, Button, Divider, Anchor, Text } from "@mantine/core";
 import RoundFilters from "@components/listing/RoundFilters";
 import RoundsList from "@components/listing/RoundsList";
 import UserMenuDesktop from "@components/navigation/UserMenuDesktop";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import useTimer from "@hooks/useTimer";
 
 interface IProps {
     themeSearch: string;
@@ -29,6 +30,8 @@ export default function ListingDesktopNavbar({
     openCurationGuideModal,
     fetchNextPage,
 }: IProps) {
+    const timeLeft = useTimer();
+
     return (
         <AppShell.Navbar p="md" visibleFrom="sm" style={{ height: "100%" }}>
             <AppShell.Section>
@@ -72,6 +75,11 @@ export default function ListingDesktopNavbar({
                             </Button>
                         </>
                     )}
+                    <Group justify="center">
+                        <Text c="dimmed" size="xs" fw={500}>
+                            Next daily is in: {timeLeft}
+                        </Text>
+                    </Group>
                     <Divider />
                 </Stack>
             </AppShell.Section>
