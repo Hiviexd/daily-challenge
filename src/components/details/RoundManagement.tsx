@@ -234,11 +234,29 @@ export default function RoundManagement({ round }: IProps) {
             </Group>
 
             <Group>
+                {loggedInUser?.isAdmin && (
+                    <Group>
+                        <CopyButton
+                            color="info"
+                            value="osu"
+                            leftSection={<FontAwesomeIcon icon="copy" />}
+                            text={`Copy "osu"`}
+                        />
+                        <CopyButton
+                            color="info"
+                            value="none"
+                            leftSection={<FontAwesomeIcon icon="copy" />}
+                            text={`Copy "none"`}
+                        />
+                    </Group>
+                )}
+
                 <CopyButton
                     value={settings?.mods?.osu.join(",") || ""}
                     leftSection={<FontAwesomeIcon icon="copy" />}
                     text="Copy default free mods"
                 />
+
                 {loggedInUser?.isAdmin && (
                     <Button
                         variant="light"
