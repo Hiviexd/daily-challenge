@@ -45,9 +45,16 @@ export function useGroupMove(userInput: string) {
     });
 }
 
-export function useStaffStats() {
+export function useUserActivity() {
     return useQuery({
-        queryKey: ["staffStats"],
-        queryFn: () => utils.apiCall({ method: "get", url: "/api/users/staffStats" }),
+        queryKey: ["userActivity"],
+        queryFn: () => utils.apiCall({ method: "get", url: "/api/users/userActivity" }),
+    });
+}
+
+export function useUserStats() {
+    return useQuery({
+        queryKey: ["userStats"],
+        queryFn: () => utils.apiCall({ method: "get", url: "/api/users/userStats" }),
     });
 }

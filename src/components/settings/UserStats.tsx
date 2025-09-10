@@ -1,21 +1,21 @@
 import { Stack, Group, Avatar, Text, Card, Skeleton, Alert, Badge } from "@mantine/core";
-import { useStaffStats } from "@hooks/useUsers";
+import { useUserStats } from "@hooks/useUsers";
 
-interface StaffStat {
+interface UserStat {
     user: {
         _id: string;
         username: string;
         osuId: number;
         avatarUrl: string;
+        groups?: string[];
     };
-    weeksSinceLastAssignment: number | null;
-    lastRoundTitle: string | null;
+    assignedRoundsCount: number;
 }
 
 export default function UserStats() {
-    const { data: staffStats, isLoading, isError } = useStaffStats();
+    const { data: userStats, isLoading, isError } = useUserStats();
 
-    const StaffStatsSkeleton = () => {
+    const UserStatsSkeleton = () => {
         return (
             <Stack gap="sm">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -28,10 +28,7 @@ export default function UserStats() {
                                     <Skeleton height={14} width={80} radius="sm" />
                                 </Stack>
                             </Group>
-                            <Stack gap={2} align="flex-end">
-                                <Skeleton height={20} width={100} radius="sm" />
-                                <Skeleton height={14} width={150} radius="sm" />
-                            </Stack>
+                            <Skeleton height={24} width={60} radius="sm" />
                         </Group>
                     </Card>
                 ))}
@@ -39,36 +36,48 @@ export default function UserStats() {
         );
     };
 
-    const formatWeeksText = (weeks: number | null) => {
-        if (weeks === null) return "Never assigned";
-        if (weeks === 0) return "This week";
-        if (weeks < 0) {
-            const absWeeks = Math.abs(weeks);
-            if (absWeeks === 1) return "Next week";
-            return `In ${absWeeks} weeks`;
-        }
-        if (weeks === 1) return "1 week ago";
-        return `${weeks} weeks ago`;
+    const getCountBadgeColor = (count: number) => {
+        if (count === 0) return "gray";
+        if (count <= 2) return "blue";
+        if (count <= 5) return "green";
+        if (count <= 10) return "yellow";
+        if (count <= 15) return "orange";
+        return "red";
     };
 
-    const getWeeksBadgeColor = (weeks: number | null) => {
-        if (weeks === null) return "gray";
-        if (weeks <= -2) return "primary"; // Future assignments
-        if (weeks <= -1) return "cyan"; // Next week
-        if (weeks === 0) return "green"; // This week
-        if (weeks <= 3) return "blue"; // 1–3 weeks ago
-        if (weeks <= 6) return "yellow"; // 4–6 weeks ago
-        if (weeks <= 8) return "orange"; // 7–8 weeks ago
-        return "red"; // 9+ weeks ago
+    const getUserStatusBadge = (groups?: string[]) => {
+        if (!groups || groups.length === 0) return null;
+
+        if (groups.includes("staff")) {
+            return (
+                <Badge variant="light" color="primary" size="xs">
+                    Staff
+                </Badge>
+            );
+        }
+
+        if (groups.includes("spectator")) {
+            return (
+                <Badge variant="light" color="cyan" size="xs">
+                    Spectator
+                </Badge>
+            );
+        }
+
+        return (
+            <Badge variant="light" color="gray" size="xs">
+                User
+            </Badge>
+        );
     };
 
     if (isLoading) {
         return (
             <Stack gap="md">
                 <Text fw={600} size="lg">
-                    Staff Assignment Statistics
+                    User Statistics
                 </Text>
-                <StaffStatsSkeleton />
+                <UserStatsSkeleton />
             </Stack>
         );
     }
@@ -77,21 +86,21 @@ export default function UserStats() {
         return (
             <Stack gap="md">
                 <Text fw={600} size="lg">
-                    Staff Assignment Statistics
+                    User Statistics
                 </Text>
-                <Alert color="red">Failed to load staff statistics</Alert>
+                <Alert color="red">Failed to load user statistics</Alert>
             </Stack>
         );
     }
 
-    if (!Array.isArray(staffStats) || staffStats.length === 0) {
+    if (!Array.isArray(userStats) || userStats.length === 0) {
         return (
             <Stack gap="md">
                 <Text fw={600} size="lg">
-                    Staff Assignment Statistics
+                    User Statistics
                 </Text>
                 <Text size="sm" c="dimmed">
-                    No staff members found
+                    No users with assigned rounds found
                 </Text>
             </Stack>
         );
@@ -100,45 +109,31 @@ export default function UserStats() {
     return (
         <Stack gap="md">
             <Text fw={600} size="lg">
-                Staff Assignment Statistics
+                User Statistics
             </Text>
             <Text size="sm" c="dimmed">
-                Shows staff members ordered by time since their last round assignment
+                All users who have been assigned rounds, sorted by assignment count
             </Text>
 
             <Stack gap="sm">
-                {staffStats.map((stat: StaffStat) => (
+                {userStats.map((stat: UserStat) => (
                     <Card key={stat.user._id} radius="md" p="md">
-                        <Group justify="space-between" align="flex-start">
+                        <Group justify="space-between" align="center">
                             <Group gap="sm">
                                 <Avatar src={stat.user.avatarUrl} size={40} radius="xl" />
                                 <Stack gap={2}>
-                                    <Text fw={500} c="white">
-                                        {stat.user.username || `User ${stat.user.osuId}`}
-                                    </Text>
-                                    {stat.lastRoundTitle && (
-                                        <Text size="xs" c="dimmed">
-                                            Last: {stat.lastRoundTitle}
+                                    <Group gap="xs" align="center">
+                                        <Text fw={500} c="white">
+                                            {stat.user.username || `User ${stat.user.osuId}`}
                                         </Text>
-                                    )}
+                                        {getUserStatusBadge(stat.user.groups)}
+                                    </Group>
                                 </Stack>
                             </Group>
 
-                            <Stack gap={4} align="flex-end">
-                                <Badge
-                                    variant="light"
-                                    color={getWeeksBadgeColor(stat.weeksSinceLastAssignment)}
-                                    size="md">
-                                    {formatWeeksText(stat.weeksSinceLastAssignment)}
-                                </Badge>
-                                {stat.weeksSinceLastAssignment !== null && stat.weeksSinceLastAssignment !== 0 && (
-                                    <Text size="xs" c="dimmed" ta="right">
-                                        {Math.abs(stat.weeksSinceLastAssignment)} week
-                                        {Math.abs(stat.weeksSinceLastAssignment) !== 1 ? "s" : ""}
-                                        {stat.weeksSinceLastAssignment < 0 ? " (upcoming)" : " (past)"}
-                                    </Text>
-                                )}
-                            </Stack>
+                            <Badge variant="light" color={getCountBadgeColor(stat.assignedRoundsCount)}>
+                                {stat.assignedRoundsCount} round{stat.assignedRoundsCount !== 1 ? "s" : ""}
+                            </Badge>
                         </Group>
                     </Card>
                 ))}

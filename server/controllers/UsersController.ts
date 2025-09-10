@@ -62,8 +62,8 @@ class UsersController {
         res.json({ message: "Group move handled successfully!" });
     }
 
-    /** GET staff stats */
-    public async getStaffStats(_: Request, res: Response): Promise<void> {
+    /** GET user activity */
+    public async getUserActivity(_: Request, res: Response): Promise<void> {
         const staff = await User.find({ groups: { $in: ["staff"] } })
             .collation({ locale: "en", strength: 2 })
             .sort({ username: 1 });
@@ -107,6 +107,34 @@ class UsersController {
             // Both are same sign, sort normally (biggest to smallest)
             return b.weeksSinceLastAssignment! - a.weeksSinceLastAssignment!;
         });
+
+        res.json(stats);
+    }
+
+    /** GET user stats */
+    public async getUserStats(_: Request, res: Response): Promise<void> {
+        // Get all unique user IDs who have been assigned rounds
+        const assignedUserIds = await Round.distinct("assignedUser");
+
+        // Get all users who have been assigned rounds (including past staff)
+        const users = await User.find({ _id: { $in: assignedUserIds } })
+            .collation({ locale: "en", strength: 2 })
+            .sort({ username: 1 });
+
+        const statsPromises = users.map(async (user) => {
+            // Count the number of rounds assigned to this user
+            const assignedRoundsCount = await Round.countDocuments({ assignedUser: user._id });
+
+            return {
+                user,
+                assignedRoundsCount,
+            };
+        });
+
+        const stats = await Promise.all(statsPromises);
+
+        // Sort by assignedRoundsCount (highest to lowest)
+        stats.sort((a, b) => b.assignedRoundsCount - a.assignedRoundsCount);
 
         res.json(stats);
     }
