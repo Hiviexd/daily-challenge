@@ -14,36 +14,44 @@ interface SettingsModalProps {
 export default function SettingsModal({ opened, onClose }: SettingsModalProps) {
     const [loggedInUser] = useAtom(loggedInUserAtom);
 
-    if (!loggedInUser?.isAdmin) return null;
+    if (!loggedInUser?.hasAccess) return null;
 
     return (
         <Modal opened={opened} onClose={onClose} title="Settings" size="lg">
-            <Tabs defaultValue="users">
+            <Tabs defaultValue={loggedInUser?.isAdmin ? "users" : "activity"}>
                 <Tabs.List grow>
-                    <Tabs.Tab value="users">Users</Tabs.Tab>
-                    <Tabs.Tab value="mods">Mods</Tabs.Tab>
+                    {loggedInUser?.isAdmin && <Tabs.Tab value="users">Users</Tabs.Tab>}
+                    {loggedInUser?.isAdmin && <Tabs.Tab value="mods">Mods</Tabs.Tab>}
                     <Tabs.Tab value="activity">Activity</Tabs.Tab>
                     <Tabs.Tab value="stats">Stats</Tabs.Tab>
-                    <Tabs.Tab value="logs" disabled>
-                        Logs
-                    </Tabs.Tab>
+                    {loggedInUser?.isAdmin && (
+                        <Tabs.Tab value="logs" disabled>
+                            Logs
+                        </Tabs.Tab>
+                    )}
                 </Tabs.List>
 
-                <Tabs.Panel value="users" pt="md">
-                    <UsersSettings />
-                </Tabs.Panel>
-                <Tabs.Panel value="mods" pt="md">
-                    <ModsSyncSettings />
-                </Tabs.Panel>
+                {loggedInUser?.isAdmin && (
+                    <Tabs.Panel value="users" pt="md">
+                        <UsersSettings />
+                    </Tabs.Panel>
+                )}
+                {loggedInUser?.isAdmin && (
+                    <Tabs.Panel value="mods" pt="md">
+                        <ModsSyncSettings />
+                    </Tabs.Panel>
+                )}
                 <Tabs.Panel value="activity" pt="md">
                     <UserActivity />
                 </Tabs.Panel>
                 <Tabs.Panel value="stats" pt="md">
                     <UserStats />
                 </Tabs.Panel>
-                <Tabs.Panel value="logs" pt="md">
-                    Logs settings placeholder
-                </Tabs.Panel>
+                {loggedInUser?.isAdmin && (
+                    <Tabs.Panel value="logs" pt="md">
+                        Logs settings placeholder
+                    </Tabs.Panel>
+                )}
             </Tabs>
         </Modal>
     );

@@ -23,7 +23,7 @@ export default function UserMenuDesktop({ user }: IProps) {
                     <Avatar src={user.avatarUrl} size="2.5rem" radius="xl" />
                     <UserLink user={user} c="white" />
                     <Group gap={4} ml="auto">
-                        {user.isAdmin && (
+                        {user.hasAccess && (
                             <Tooltip label="Settings">
                                 <ActionIcon
                                     variant="subtle"

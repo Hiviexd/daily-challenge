@@ -38,7 +38,7 @@ export default function UserMenuMobile({ user }: IProps) {
 
                     <Menu.Divider />
 
-                    {user.isAdmin && (
+                    {user.hasAccess && (
                         <Menu.Item onClick={openSettingsModal} leftSection={<FontAwesomeIcon icon="cog" />}>
                             Settings
                         </Menu.Item>

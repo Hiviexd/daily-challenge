@@ -7,8 +7,8 @@ const usersRouter = express.Router();
 usersRouter.get("/me", auth.isLoggedIn, UsersController.getSelf);
 usersRouter.get("/staff", auth.isLoggedIn, auth.isStaff, UsersController.getStaff);
 usersRouter.get("/spectators", auth.isLoggedIn, auth.isAdmin, UsersController.getSpectators);
-usersRouter.get("/userActivity", auth.isLoggedIn, auth.isAdmin, UsersController.getUserActivity);
-usersRouter.get("/userStats", auth.isLoggedIn, auth.isAdmin, UsersController.getUserStats);
+usersRouter.get("/userActivity", auth.isLoggedIn, auth.hasAccess, UsersController.getUserActivity);
+usersRouter.get("/userStats", auth.isLoggedIn, auth.hasAccess, UsersController.getUserStats);
 usersRouter.get("/:userInput", auth.isLoggedIn, auth.isAdmin, UsersController.findOrCreateUser);
 usersRouter.patch("/:userInput/groupMove", auth.isLoggedIn, auth.isAdmin, UsersController.handleGroupMove);
 
