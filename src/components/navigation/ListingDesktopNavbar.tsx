@@ -77,7 +77,7 @@ export default function ListingDesktopNavbar({
                     )}
                     <Group justify="center">
                         <Text c="dimmed" size="xs" fw={500}>
-                            Next daily is in: {timeLeft}
+                            Next daily in: {timeLeft}
                         </Text>
                     </Group>
                     <Divider />
