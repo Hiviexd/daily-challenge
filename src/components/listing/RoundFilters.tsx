@@ -41,6 +41,7 @@ export default function RoundFilters({
                     <Popover.Target>
                         <Tooltip
                             multiline
+                            ta="center"
                             w={170}
                             label="Filter by round which selected date is part of"
                             position="bottom">
