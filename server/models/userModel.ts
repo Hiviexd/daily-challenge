@@ -27,13 +27,14 @@ UserSchema.virtual("isSpectator").get(function (this: IUser) {
     return this.groups.includes("spectator");
 });
 
-UserSchema.virtual("hasAccess").get(function (this: IUser) {
-    return this.isStaff || this.isSpectator;
-});
-
 UserSchema.virtual("isAdmin").get(function (this: IUser) {
     return this.groups.includes("admin");
 });
+
+UserSchema.virtual("hasAccess").get(function (this: IUser) {
+    return this.isStaff || this.isSpectator || this.isAdmin;
+});
+
 
 UserSchema.statics.findByUsernameOrOsuId = async function (this: IUserStatics, user: string | number) {
     // Attempt username lookup first
