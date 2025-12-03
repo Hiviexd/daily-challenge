@@ -84,10 +84,12 @@ export function getCurrentDayIndex(): number {
  * @param endDate End date of the week period
  * @returns true if the week has 4+ days in the first week (days 1-7) of the majority month
  */
-export function checkIfFirstWeekOfMonth(startDate: Date, endDate: Date): boolean {
+export function checkIfFirstWeekOfMonth(startDate: Date, endDate?: Date): boolean {
     // Normalize dates to UTC
     const start = toUTCDateOnly(startDate);
-    const end = toUTCDateOnly(endDate);
+
+    // if no endDate add 7 days to the start date
+    const end = endDate ? toUTCDateOnly(endDate) : toUTCDateOnly(new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000));
 
     // Count days in each month to find majority month
     const monthCounts = new Map<string, number>();
