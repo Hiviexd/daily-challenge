@@ -6,12 +6,10 @@ import { useStaff } from "@hooks/useUsers";
 import { useDeleteRound, useUpdateRound } from "@hooks/useRounds";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import utils from "@utils/index";
-import useSettings from "@hooks/useSettings";
 import UserLink from "@components/common/UserLink";
 import { useAtom } from "jotai";
 import { loggedInUserAtom } from "@store/atoms";
 import moment from "moment";
-import CopyButton from "@components/common/CopyButton";
 
 interface IProps {
     round: IRound;
@@ -21,7 +19,6 @@ export default function RoundManagement({ round }: IProps) {
     const [loggedInUser] = useAtom(loggedInUserAtom);
 
     const { data: staff = [] } = useStaff();
-    const { data: settings } = useSettings();
 
     const updateRound = useUpdateRound(round?._id || "");
     const deleteRound = useDeleteRound(round?._id || "");
@@ -234,29 +231,6 @@ export default function RoundManagement({ round }: IProps) {
             </Group>
 
             <Group>
-                {loggedInUser?.isAdmin && (
-                    <Group>
-                        <CopyButton
-                            color="info"
-                            value="osu"
-                            leftSection={<FontAwesomeIcon icon="copy" />}
-                            text={`Copy "osu"`}
-                        />
-                        <CopyButton
-                            color="info"
-                            value="none"
-                            leftSection={<FontAwesomeIcon icon="copy" />}
-                            text={`Copy "none"`}
-                        />
-                    </Group>
-                )}
-
-                <CopyButton
-                    value={settings?.mods?.osu.join(",") || ""}
-                    leftSection={<FontAwesomeIcon icon="copy" />}
-                    text="Copy default free mods"
-                />
-
                 {loggedInUser?.isAdmin && (
                     <Button
                         variant="light"

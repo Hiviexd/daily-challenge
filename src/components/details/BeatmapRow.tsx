@@ -1,7 +1,7 @@
 import { Table, TextInput, Image, Group, Anchor, Text, ActionIcon, Skeleton, Tooltip } from "@mantine/core";
 import { IBeatmap } from "@interfaces/Beatmap";
 import { useUpdateRoundBeatmapId, useUpdateRoundBeatmapNote } from "@hooks/useRounds";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserLink from "@components/common/UserLink";
 import { IWarning } from "@interfaces/Round";
@@ -12,6 +12,7 @@ import StarRatingBadge from "@components/common/StarRatingBadge";
 import DateBadge from "@components/common/DateBadge";
 import CopyActionIcon from "@components/common/CopyActionIcon";
 import utils from "@utils/index";
+import useSettings from "@hooks/useSettings";
 
 interface IProps {
     beatmap: IBeatmap | null;
@@ -47,8 +48,15 @@ export default function BeatmapRow({
     const [isEditingBeatmapId, setIsEditingBeatmapId] = useState(false);
     const [isEditingNotes, setIsEditingNotes] = useState(false);
 
-    // copy id string
-    const copyIdString = loggedInUser?.isAdmin ? `add ${beatmapId}` : beatmapId;
+    // Command
+    const { data: settings } = useSettings();
+
+    const copyCommandString = useMemo(() => {
+        if (loggedInUser?.isAdmin) {
+            return `add ${beatmapId} osu none ${settings?.mods?.osu.join(",")}`;
+        }
+        return beatmapId;
+    }, [beatmapId, loggedInUser?.isAdmin, settings?.mods?.osu]);
 
     // Check if this is the current daily challenge (using UTC time, Thursday = 0)
     const isCurrentDailyChallenge = isActiveRound && index === utils.getCurrentDayIndex();
@@ -129,7 +137,12 @@ export default function BeatmapRow({
                     </Group>
                 ) : (
                     <Group gap={4}>
-                        {beatmapId && <CopyActionIcon value={copyIdString} />}
+                        {beatmapId && (
+                            <CopyActionIcon
+                                value={copyCommandString}
+                                tooltip={loggedInUser?.isAdmin ? "Copy default osu! command" : "Copy beatmap ID"}
+                            />
+                        )}
                         <Text size="sm" fw={500}>
                             {beatmapId || ""}
                         </Text>
