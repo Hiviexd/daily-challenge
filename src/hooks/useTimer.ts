@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 export default function useTimer() {
-    const [timeLeft, setTimeLeft] = useState<string>("00:00:00");
+    const [timeLeft, setTimeLeft] = useState<string>("0s");
 
     useEffect(() => {
         const updateTimer = () => {
@@ -12,7 +12,7 @@ export default function useTimer() {
             const timeDiff = nextMidnight.getTime() - now.getTime();
 
             if (timeDiff <= 0) {
-                setTimeLeft("00:00:00");
+                setTimeLeft("0s");
                 return;
             }
 
@@ -21,10 +21,17 @@ export default function useTimer() {
             const minutes = Math.floor((totalSeconds % 3600) / 60);
             const seconds = totalSeconds % 60;
 
-            const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds
-                .toString()
-                .padStart(2, "0")}`;
-            setTimeLeft(formattedTime);
+            const parts: string[] = [];
+
+            if (hours > 0) {
+                parts.push(`${hours}h`);
+            }
+            if (minutes > 0) {
+                parts.push(`${minutes}m`);
+            }
+            parts.push(`${seconds}s`);
+
+            setTimeLeft(parts.join(" "));
         };
 
         // Update immediately
