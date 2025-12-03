@@ -1,4 +1,4 @@
-import { Table, ScrollArea, Stack, Card, Text, Divider, Badge, Group, Button } from "@mantine/core";
+import { Table, ScrollArea, Stack, Card, Text, Divider, Badge, Group, Button, Tooltip } from "@mantine/core";
 import { IRound, IWarning } from "@interfaces/Round";
 import { IBeatmap } from "@interfaces/Beatmap";
 import BeatmapRow from "./BeatmapRow";
@@ -127,6 +127,13 @@ export default function RoundDetails({ round }: IProps) {
                             <Badge color={!round?.isUpcoming ? "info" : "gray"} variant="light">
                                 <FontAwesomeIcon icon={!round?.isUpcoming ? "eye" : "eye-slash"} />
                             </Badge>
+                        )}
+                        {round?.isMonthHighlight && (
+                            <Tooltip label="Monthly Beatmap Highlight" position="bottom">
+                                <Badge color="warning" variant="light">
+                                    <FontAwesomeIcon icon="award" />
+                                </Badge>
+                            </Tooltip>
                         )}
                         {isAdmin && (
                             <Text size="sm" c="dimmed" ml="auto">

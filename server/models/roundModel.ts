@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { IRound } from "@interfaces/Round";
 import moment from "moment";
+import utils from "@utils/index";
 
 const RoundSchema = new mongoose.Schema<IRound>(
     {
@@ -42,6 +43,14 @@ RoundSchema.virtual("title").get(function (this: IRound) {
     return moment(this.startDate).format("MMM D") + " — " + moment(this.endDate).format("MMM D YYYY");
 });
 
+RoundSchema.virtual("isMonthHighlight").get(function (this: IRound) {
+    // Monthly highlights are only considered for rounds after 2026-01-01
+    if (moment(this.startDate).isBefore("2026-01-01")) {
+        return false;
+    }
+
+    return utils.checkIfFirstWeekOfMonth(this.startDate, this.endDate);
+});
 const Round = mongoose.model<IRound>("Round", RoundSchema);
 
 export default Round;

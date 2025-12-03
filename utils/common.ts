@@ -76,3 +76,57 @@ export function getCurrentDayIndex(): number {
     const currentDay = new Date().getUTCDay();
     return (currentDay + 3) % 7; // shift from sunday to thursday
 }
+
+/**
+ * Checks if a week period qualifies as the first week of a month
+ * A week qualifies if it has 4 or more days within days 1-7 of the majority month
+ * @param startDate Start date of the week period
+ * @param endDate End date of the week period
+ * @returns true if the week has 4+ days in the first week (days 1-7) of the majority month
+ */
+export function checkIfFirstWeekOfMonth(startDate: Date, endDate: Date): boolean {
+    // Normalize dates to UTC
+    const start = toUTCDateOnly(startDate);
+    const end = toUTCDateOnly(endDate);
+
+    // Count days in each month to find majority month
+    const monthCounts = new Map<string, number>();
+    const current = new Date(start);
+
+    while (current <= end) {
+        const monthKey = `${current.getUTCFullYear()}-${current.getUTCMonth()}`;
+        monthCounts.set(monthKey, (monthCounts.get(monthKey) || 0) + 1);
+        current.setUTCDate(current.getUTCDate() + 1);
+    }
+
+    // Find the month with the majority of days
+    let majorityMonthKey = "";
+    let maxCount = 0;
+    for (const [key, count] of monthCounts.entries()) {
+        if (count > maxCount) {
+            maxCount = count;
+            majorityMonthKey = key;
+        }
+    }
+
+    // Parse the majority month
+    const [year, month] = majorityMonthKey.split("-").map(Number);
+
+    // Count days that overlap with days 1-7 of the majority month
+    let overlapCount = 0;
+    const checkDate = new Date(start);
+
+    while (checkDate <= end) {
+        const checkYear = checkDate.getUTCFullYear();
+        const checkMonth = checkDate.getUTCMonth();
+        const checkDay = checkDate.getUTCDate();
+
+        if (checkYear === year && checkMonth === month && checkDay >= 1 && checkDay <= 7) {
+            overlapCount++;
+        }
+
+        checkDate.setUTCDate(checkDate.getUTCDate() + 1);
+    }
+
+    return overlapCount >= 4;
+}

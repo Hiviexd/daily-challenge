@@ -1,4 +1,4 @@
-import { Card, Text, Group } from "@mantine/core";
+import { Card, Text, Group, Tooltip } from "@mantine/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IRound } from "@interfaces/Round";
 import { loggedInUserAtom } from "@store/atoms";
@@ -28,6 +28,11 @@ export default function RoundCard({ round, selected = false, onClick }: IProps) 
                         icon={!round.isUpcoming ? "eye" : "eye-slash"}
                         color={!round.isUpcoming ? "var(--mantine-color-info-6)" : "var(--mantine-color-gray-6)"}
                     />
+                )}
+                {round.isMonthHighlight && (
+                    <Tooltip label="Monthly Beatmap Highlight">
+                        <FontAwesomeIcon icon="award" color="var(--mantine-color-warning-6)" />
+                    </Tooltip>
                 )}
                 <Text fw={700} size="md" truncate>
                     {round.title}

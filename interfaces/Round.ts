@@ -23,4 +23,5 @@ export interface IRound extends Document {
     isUpcoming: boolean;
     isPast: boolean;
     title: string;
+    isMonthHighlight: boolean;
 }
