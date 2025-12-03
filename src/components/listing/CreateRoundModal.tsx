@@ -1,5 +1,5 @@
-import { Modal, TextInput, Stack, Select, Button, Group } from "@mantine/core";
-import { DateInput } from "@mantine/dates";
+import { Modal, TextInput, Stack, Select, Button, Group, Indicator } from "@mantine/core";
+import { DateInput, DatePickerProps } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useCreateRound } from "@hooks/useRounds";
 import { useStaff } from "@hooks/useUsers";
@@ -8,6 +8,7 @@ import utils from "@utils/index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { loggedInUserAtom } from "@store/atoms";
 import { useAtom } from "jotai";
+import dayjs from "dayjs";
 
 interface IProps {
     opened: boolean;
@@ -57,6 +58,19 @@ export default function CreateRoundModal({ opened, onClose }: IProps) {
 
     if (!loggedInUser?.isStaff) return null;
 
+    const dayRenderer: DatePickerProps["renderDay"] = (date) => {
+        const day = dayjs(date).date();
+        const disableIndicator =
+            !utils.checkIfFirstWeekOfMonth(date) ||
+            date.getDay() !== 4 ||
+            dayjs(date).isBefore("2026-01-01");
+        return (
+            <Indicator size={6} color="yellow" offset={-5} disabled={disableIndicator}>
+                <div>{day}</div>
+            </Indicator>
+        );
+    };
+
     return (
         <Modal opened={opened} onClose={onClose} title="Create Round">
             <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -64,12 +78,13 @@ export default function CreateRoundModal({ opened, onClose }: IProps) {
                     <DateInput
                         label="Start Date"
                         placeholder="Select start date"
-                        description="End date will be 6 days after start date"
+                        description="End date will be 6 days after start date. Yellow dots are Monthly Beatmap Highlight weeks."
                         leftSection={<FontAwesomeIcon icon="calendar" />}
                         clearable
                         withAsterisk
                         {...form.getInputProps("startDate")}
                         excludeDate={(date) => date.getDay() !== 4}
+                        renderDay={dayRenderer}
                     />
                     <Select
                         label="Assigned User"
