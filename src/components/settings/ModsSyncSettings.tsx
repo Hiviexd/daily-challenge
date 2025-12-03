@@ -1,8 +1,9 @@
-import { Button, Stack, Text, Loader, Alert } from "@mantine/core";
+import { Button, Stack, Text, Loader, Alert, Group } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
 import useSettings, { useSyncMods } from "@hooks/useSettings";
 import { OsuGameMode } from "@interfaces/OsuApi";
 import DateBadge from "@components/common/DateBadge";
+import CopyActionIcon from "@components/common/CopyActionIcon";
 
 const GAME_MODE_LABELS: Record<OsuGameMode, string> = {
     osu: "osu!",
@@ -27,9 +28,12 @@ export default function ModsSyncSettings() {
                 <Stack gap="sm">
                     {Object.entries(settings.mods).map(([mode, mods]) => (
                         <div key={mode}>
-                            <Text fw={600} size="md" mb={4}>
-                                {GAME_MODE_LABELS[mode as OsuGameMode] || mode}
-                            </Text>
+                            <Group gap={4} align="center" mb="sm">
+                                <Text fw={600} size="md">
+                                    {GAME_MODE_LABELS[mode as OsuGameMode] || mode}
+                                </Text>
+                                <CopyActionIcon value={mods.join(",")} tooltip="Copy mods string" />
+                            </Group>
                             <Text size="sm" c="dimmed" style={{ whiteSpace: "normal", wordBreak: "break-word" }}>
                                 {(mods as string[]).length > 0 ? (mods as string[]).join(",") : "No mods available."}
                             </Text>
