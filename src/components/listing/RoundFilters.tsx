@@ -1,7 +1,8 @@
-import { TextInput, ActionIcon, Popover, Tooltip, Stack } from "@mantine/core";
+import { TextInput, ActionIcon, Popover, Tooltip, Stack, Select } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useStaff } from "@hooks/useUsers";
 
 interface IProps {
     themeSearch: string;
@@ -10,6 +11,9 @@ interface IProps {
     setArtistTitleSearch: (val: string) => void;
     selectedDate: Date | null;
     setSelectedDate: (date: Date | null) => void;
+    selectedCreator: string | null;
+    setSelectedCreator: (creator: string | null) => void;
+    isStaff: boolean;
 }
 
 export default function RoundFilters({
@@ -19,8 +23,12 @@ export default function RoundFilters({
     setArtistTitleSearch,
     selectedDate,
     setSelectedDate,
+    selectedCreator,
+    setSelectedCreator,
+    isStaff,
 }: IProps) {
     const [calendarOpen, setCalendarOpen] = useState(false);
+    const { data: staff = [] } = useStaff();
 
     return (
         <Stack>
@@ -85,6 +93,16 @@ export default function RoundFilters({
                 leftSection={<FontAwesomeIcon icon="search" />}
                 style={{ flex: 1 }}
             />
+            {isStaff && (
+                <Select
+                    placeholder="Filter by creator..."
+                    value={selectedCreator}
+                    onChange={(val) => setSelectedCreator(val)}
+                    data={staff.map((user) => ({ value: user._id, label: user.username }))}
+                    clearable
+                    leftSection={<FontAwesomeIcon icon="user" />}
+                />
+            )}
         </Stack>
     );
 }

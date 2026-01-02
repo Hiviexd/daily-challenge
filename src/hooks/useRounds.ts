@@ -16,6 +16,7 @@ export interface RoundsFilterParams {
     theme?: string;
     artistTitle?: string;
     date?: string;
+    creator?: string;
 }
 
 export function useInfiniteRounds(params: RoundsFilterParams = {}) {

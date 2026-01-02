@@ -11,6 +11,8 @@ interface IProps {
     setArtistTitleSearch: (search: string) => void;
     selectedDate: Date | null;
     setSelectedDate: (selectedDate: Date | null) => void;
+    selectedCreator: string | null;
+    setSelectedCreator: (creator: string | null) => void;
     loggedInUser: any;
     openCreateRoundModal: () => void;
     closeMobileNavbar: () => void;
@@ -25,6 +27,8 @@ export default function ListingMobileNavbar({
     setArtistTitleSearch,
     selectedDate,
     setSelectedDate,
+    selectedCreator,
+    setSelectedCreator,
     loggedInUser,
     openCreateRoundModal,
     closeMobileNavbar,
@@ -43,6 +47,9 @@ export default function ListingMobileNavbar({
                     setArtistTitleSearch={setArtistTitleSearch}
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
+                    selectedCreator={selectedCreator}
+                    setSelectedCreator={setSelectedCreator}
+                    isStaff={!!loggedInUser?.isStaff}
                 />
                 {loggedInUser?.isStaff && (
                     <>

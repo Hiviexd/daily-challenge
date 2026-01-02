@@ -20,6 +20,7 @@ export default function ListingPage() {
     const [themeSearch, setThemeSearch] = useState("");
     const [artistTitleSearch, setArtistTitleSearch] = useState("");
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [selectedCreator, setSelectedCreator] = useState<string | null>(null);
 
     const [debouncedThemeSearch] = useDebouncedValue(themeSearch, 500);
     const [debouncedArtistTitleSearch] = useDebouncedValue(artistTitleSearch, 500);
@@ -31,8 +32,9 @@ export default function ListingPage() {
             theme: debouncedThemeSearch.trim() || undefined,
             artistTitle: debouncedArtistTitleSearch.trim() || undefined,
             date: selectedDate ? utils.toUTCDateOnly(selectedDate).toISOString() : undefined,
+            creator: selectedCreator || undefined,
         }),
-        [debouncedThemeSearch, debouncedArtistTitleSearch, selectedDate]
+        [debouncedThemeSearch, debouncedArtistTitleSearch, selectedDate, selectedCreator]
     );
 
     const { fetchNextPage } = useRoundsQuery(filterParams);
@@ -81,6 +83,8 @@ export default function ListingPage() {
                 setArtistTitleSearch={setArtistTitleSearch}
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
+                selectedCreator={selectedCreator}
+                setSelectedCreator={setSelectedCreator}
                 loggedInUser={loggedInUser}
                 openCreateRoundModal={openCreateRoundModal}
                 openCurationGuideModal={openCurationGuideModal}
@@ -98,6 +102,8 @@ export default function ListingPage() {
                 setArtistTitleSearch={setArtistTitleSearch}
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
+                selectedCreator={selectedCreator}
+                setSelectedCreator={setSelectedCreator}
                 loggedInUser={loggedInUser}
                 openCreateRoundModal={openCreateRoundModal}
                 closeMobileNavbar={closeMobileNavbar}

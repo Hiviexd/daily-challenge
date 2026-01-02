@@ -23,6 +23,7 @@ class RoundController {
         const theme = req.query.theme as string | undefined;
         const date = req.query.date as string | undefined;
         const artistTitle = req.query.artistTitle as string | undefined;
+        const creator = req.query.creator as string | undefined;
 
         const now = new Date();
         const query: any = hasAccess ? {} : { startDate: { $lte: now } };
@@ -39,6 +40,10 @@ class RoundController {
             const d = new Date(date);
             query.startDate = { ...(query.startDate || {}), $lte: d };
             query.endDate = { $gte: d };
+        }
+
+        if (creator) {
+            query.assignedUser = creator;
         }
 
         if (artistTitle) {
