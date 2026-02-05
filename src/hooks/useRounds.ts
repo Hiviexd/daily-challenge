@@ -163,3 +163,17 @@ export function useRoundsQuery(params: RoundsFilterParams) {
         fetchNextPage: infiniteQuery.fetchNextPage,
     };
 }
+
+export function useToggleRoundQueue(roundId: string) {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async () => {
+            const response = await utils.apiCall({ method: "put", url: `/api/rounds/${roundId}/toggleQueue` });
+            return utils.handleMutationResponse(response);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["rounds"] });
+        },
+    });
+}

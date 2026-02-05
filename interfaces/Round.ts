@@ -17,6 +17,7 @@ export interface IRound extends Document {
     endDate: Date;
     theme?: string;
     beatmapOrder: { beatmapId: string; order: number }[];
+    isQueued?: boolean;
 
     // Virtuals
     isActive: boolean;

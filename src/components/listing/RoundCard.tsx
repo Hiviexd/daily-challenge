@@ -7,10 +7,11 @@ import { useAtom } from "jotai";
 interface IProps {
     round: IRound;
     selected?: boolean | null;
+    showQueueStatus?: boolean;
     onClick?: () => void;
 }
 
-export default function RoundCard({ round, selected = false, onClick }: IProps) {
+export default function RoundCard({ round, selected = false, showQueueStatus = false, onClick }: IProps) {
     const [loggedInUser] = useAtom(loggedInUserAtom);
 
     return (
@@ -23,11 +24,19 @@ export default function RoundCard({ round, selected = false, onClick }: IProps) 
             onClick={onClick}
             style={{ cursor: onClick ? "pointer" : undefined }}>
             <Group gap="xs" align="center" mb={4}>
-                {loggedInUser?.hasAccess && (
+                {loggedInUser?.hasAccess && !(showQueueStatus && round.isMonthHighlight) && (
                     <FontAwesomeIcon
                         icon={!round.isUpcoming ? "eye" : "eye-slash"}
                         color={!round.isUpcoming ? "var(--mantine-color-info-6)" : "var(--mantine-color-gray-6)"}
                     />
+                )}
+                {loggedInUser?.hasAccess && showQueueStatus && (
+                    <Tooltip label={round.isQueued ? "Queued" : "Not queued"}>
+                        <FontAwesomeIcon
+                            icon="list-ul"
+                            color={round.isQueued ? "var(--mantine-color-success-6)" : "var(--mantine-color-danger-5)"}
+                        />
+                    </Tooltip>
                 )}
                 {round.isMonthHighlight && (
                     <Tooltip label="Monthly Beatmap Highlight">

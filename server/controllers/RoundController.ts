@@ -308,6 +308,28 @@ class RoundController {
         // logging
         LogService.generate(loggedInUser._id, `Deleted round: ${round.title}`);
     }
+
+    /* PUT queue/unqueue round */
+    public async toggleQueue(req: Request, res: Response) {
+        const { roundId } = req.params;
+
+        const round = await Round.findById(roundId);
+        if (!round) {
+            return res.status(404).json({ message: "Round not found" });
+        }
+
+        if (round.isPast) {
+            return res.status(403).json({ message: "Cannot queue/unqueue past rounds" });
+        }
+
+        round.isQueued = !round.isQueued;
+        await round.save();
+
+        res.status(200).json({ message: `Round ${round.isQueued ? "queued" : "unqueued"} successfully!` });
+
+        // logging
+        LogService.generate(res.locals!.user!._id, `Toggled queue status for round: ${round.title}`);
+    }
 }
 
 export default new RoundController();

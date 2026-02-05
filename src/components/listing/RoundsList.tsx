@@ -35,6 +35,13 @@ export default function RoundsList({ closeMobileNavbar, fetchNextPage }: IProps)
         ));
     };
 
+    const activeRound = rounds.find((r) => r.isActive);
+    const upcomingByStart = rounds
+        .filter((r) => r.isUpcoming)
+        .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+    const nextRound = upcomingByStart[0] ?? null;
+    const showQueueStatus = (round: (typeof rounds)[0]) => round.id === activeRound?.id || round.id === nextRound?.id;
+
     return (
         <ScrollArea
             style={{ flex: 1, minHeight: 0 }}
@@ -62,6 +69,7 @@ export default function RoundsList({ closeMobileNavbar, fetchNextPage }: IProps)
                                 <RoundCard
                                     round={round}
                                     selected={selectedRoundId === round.id}
+                                    showQueueStatus={showQueueStatus(round)}
                                     onClick={() => {
                                         setSelectedRoundId(round.id);
                                         closeMobileNavbar();

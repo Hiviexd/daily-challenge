@@ -12,5 +12,5 @@ roundRouter.put("/:roundId/updateBeatmapId", auth.isLoggedIn, auth.isStaff, Roun
 roundRouter.put("/:roundId/updateBeatmapNote", auth.isLoggedIn, auth.isStaff, RoundController.updateBeatmapNote);
 roundRouter.get("/:id/checkDuplicates", auth.isLoggedIn, auth.isStaff, RoundController.checkDuplicates);
 roundRouter.delete("/:roundId/delete", auth.isLoggedIn, auth.isAdmin, RoundController.delete);
-
+roundRouter.put("/:roundId/toggleQueue", auth.isLoggedIn, auth.isAdmin, RoundController.toggleQueue);
 export default roundRouter;

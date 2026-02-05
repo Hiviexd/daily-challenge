@@ -16,6 +16,7 @@ const RoundSchema = new mongoose.Schema<IRound>(
         startDate: { type: Date, required: true },
         endDate: { type: Date, required: true },
         theme: { type: String },
+        isQueued: { type: Boolean, default: false },
     },
     { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );

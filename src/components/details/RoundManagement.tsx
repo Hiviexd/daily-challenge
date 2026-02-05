@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Select, TextInput, Group, ActionIcon, Text, Loader, Stack, Button } from "@mantine/core";
+import { Select, TextInput, Group, ActionIcon, Text, Loader, Stack, Button, Switch } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { IRound } from "@interfaces/Round";
 import { useStaff } from "@hooks/useUsers";
-import { useDeleteRound, useUpdateRound } from "@hooks/useRounds";
+import { useDeleteRound, useUpdateRound, useToggleRoundQueue } from "@hooks/useRounds";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import utils from "@utils/index";
 import UserLink from "@components/common/UserLink";
@@ -22,6 +22,7 @@ export default function RoundManagement({ round }: IProps) {
 
     const updateRound = useUpdateRound(round?._id || "");
     const deleteRound = useDeleteRound(round?._id || "");
+    const toggleQueue = useToggleRoundQueue(round?._id || "");
 
     const [theme, setTheme] = useState(round?.theme || "");
     const [assignedUserId, setAssignedUserId] = useState(round?.assignedUser?._id || "");
@@ -87,9 +88,14 @@ export default function RoundManagement({ round }: IProps) {
         setIsEditingStartDate(false);
     };
 
+    const handleToggleQueue = async () => {
+        if (round?.isPast) return;
+        await toggleQueue.mutateAsync();
+    };
+
     return (
         <Stack>
-            <Group align="flex-end" gap="xl">
+            <Group align="flex-start" gap="xl">
                 <div style={{ minWidth: 220 }}>
                     <label style={{ fontSize: 14, fontWeight: 500, display: "block", marginBottom: 4 }}>
                         Assigned User
@@ -228,6 +234,23 @@ export default function RoundManagement({ round }: IProps) {
                         </Group>
                     )}
                 </div>
+                {loggedInUser?.isAdmin && (
+                    <div style={{ minWidth: 220 }}>
+                        <label style={{ fontSize: 14, fontWeight: 500, display: "block", marginBottom: 4 }}>
+                            Queue status
+                        </label>
+                        <Group gap="sm" wrap="nowrap">
+                            <Switch
+                                checked={!!round?.isQueued}
+                                onChange={handleToggleQueue}
+                                disabled={!!round?.isPast || toggleQueue.isPending}
+                                size="sm"
+                                label={round?.isQueued ? "Queued" : "Not queued"}
+                            />
+                            {toggleQueue.isPending && <Loader size="xs" />}
+                        </Group>
+                    </div>
+                )}
             </Group>
 
             <Group>
