@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
-import axios from "axios";
-import { loadJson } from "@utils/config";
 import Settings from "@models/settingsModel";
-import { IModsExternalApiResponse, type SettingsMods } from "@interfaces/Settings";
-import { IModsCatalogResponse, IModsExternalApiResponse as IModsCatalogSource } from "@interfaces/Mod";
-import LogService from "@services/LogService";
-import { BLACKLISTED_MODS, buildModsCatalog, enrichCatalogWithDefaultSettings } from "@utils/mods";
-import { loadDefaultSettingsFromFile } from "@utils/modsServer";
+import { IModsCatalogResponse } from "@interfaces/Mod";
+import { IModsInfo } from "@interfaces/Settings";
+import { buildModsCatalog, enrichCatalogWithDefaultSettings } from "@utils/mods";
+import { loadDefaultSettingsFileRaw, loadDefaultSettingsFromFile, loadModsFromFile } from "@utils/modsServer";
 
+import { loadJson } from "@utils/config";
 import { IConfig } from "@interfaces/Config";
 const config = loadJson<IConfig>("../config.json");
+
+const SYNC_MODS_WORKFLOW_FILE = "sync-mods.yml";
 
 class SettingsController {
     public async getSettingsConfig(_: Request, res: Response) {
@@ -20,7 +20,7 @@ class SettingsController {
     /** Get filtered mod catalog for mod selector UI */
     public getModsCatalog(_: Request, res: Response) {
         try {
-            const modsApiResponse = loadJson<IModsCatalogSource[]>("../mods.json");
+            const modsApiResponse = loadModsFromFile();
             const defaultSettings = loadDefaultSettingsFromFile();
             const catalog = enrichCatalogWithDefaultSettings(buildModsCatalog(modsApiResponse), defaultSettings);
 
@@ -31,40 +31,23 @@ class SettingsController {
         }
     }
 
-    /** Sync osu! mods */
-    public async syncMods(_: Request, res: Response) {
+    /** Read-only metadata about committed mod data files */
+    public getModsInfo(_: Request, res: Response) {
         try {
-            const loggedInUser = res.locals!.user!;
+            const raw = loadDefaultSettingsFileRaw();
+            const workflowUrl = config.githubRepo
+                ? `https://github.com/${config.githubRepo}/actions/workflows/${SYNC_MODS_WORKFLOW_FILE}`
+                : undefined;
 
-            const response = await axios.get<IModsExternalApiResponse[]>(config.modsSource);
-            const modsApiResponse = response.data;
-
-            const settingsMods: SettingsMods = {
-                osu: [],
-                taiko: [],
-                fruits: [],
-                mania: [],
+            const info: IModsInfo = {
+                defaultSettingsGeneratedAt: raw.generated_at ?? null,
+                modsCatalogSource: "osu-web database/mods.json",
+                workflowUrl,
             };
 
-            for (const ruleset of modsApiResponse) {
-                const mods = ruleset.Mods.map((m) => m.Acronym).filter((m) => !BLACKLISTED_MODS.includes(m));
-                settingsMods[ruleset.Name] = mods;
-            }
-
-            const modDefaultSettings = loadDefaultSettingsFromFile();
-
-            const settings = await Settings.getSettingsConfig();
-
-            settings.mods = settingsMods;
-            settings.modDefaultSettings = modDefaultSettings;
-            settings.modsUpdatedAt = new Date();
-            await settings.save();
-
-            res.json({ message: "Mods synced successfully!" });
-
-            LogService.generate(loggedInUser._id, `Synced osu! mods`);
+            res.json(info);
         } catch (error) {
-            return res.status(500).json({ error: "Error fetching mods from GitHub" });
+            return res.status(500).json({ error: "Error loading mods info" });
         }
     }
 }

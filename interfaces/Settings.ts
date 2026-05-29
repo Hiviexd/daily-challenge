@@ -39,6 +39,12 @@ export interface IModsExternalApiResponse {
     Mods: IExternalMod[];
 }
 
+export interface IModsInfo {
+    defaultSettingsGeneratedAt: string | null;
+    modsCatalogSource: string;
+    workflowUrl?: string;
+}
+
 export interface ISettings extends Document {
     mods: SettingsMods;
     modDefaultSettings?: ModDefaultSettings;

@@ -5,10 +5,9 @@ import User from "@models/userModel";
 import RoundService from "@services/RoundService";
 import BeatmapService from "@services/BeatmapService";
 import Beatmap from "@models/beatmapModel";
-import { loadJson } from "@utils/config";
 import { buildModsCatalog, enrichCatalogWithDefaultSettings, validateModSelection } from "@utils/mods";
-import { loadDefaultSettingsFromFile } from "@utils/modsServer";
-import { IBeatmapSlotMods, IModsExternalApiResponse } from "@interfaces/Mod";
+import { loadModsFromFile, loadDefaultSettingsFromFile } from "@utils/modsServer";
+import { IBeatmapSlotMods } from "@interfaces/Mod";
 
 const DEFAULT_POPULATE = [{ path: "assignedUser", select: "username osuId groups" }, { path: "beatmaps" }];
 const DEFAULT_LIMIT = 10;
@@ -316,7 +315,7 @@ class RoundController {
         }
 
         try {
-            const modsApiResponse = loadJson<IModsExternalApiResponse[]>("../mods.json");
+            const modsApiResponse = loadModsFromFile();
             const defaultSettings = loadDefaultSettingsFromFile();
             const catalog = enrichCatalogWithDefaultSettings(buildModsCatalog(modsApiResponse), defaultSettings);
             const validationError = validateModSelection(mods, catalog, defaultSettings);

@@ -1,0 +1,157 @@
+name: Sync Mods
+
+on:
+    workflow_dispatch:
+        inputs:
+            reason:
+                description: "Reason for syncing mods"
+                required: false
+                type: string
+
+env:
+    MODS_JSON_URL: https://raw.githubusercontent.com/ppy/osu-web/master/database/mods.json
+
+jobs:
+    sync:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        outputs:
+            changed: ${{ steps.commit.outputs.changed }}
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v4
+              with:
+                  dotnet-version: "8.0.x"
+
+            - name: Fetch mods.json from osu-web
+              run: |
+                  mkdir -p mods
+                  curl -fsSL "$MODS_JSON_URL" -o mods/mods.json
+
+            - name: Resolve latest ppy/osu release
+              id: osu_release
+              run: |
+                  tag=$(curl -fsSL https://api.github.com/repos/ppy/osu/releases/latest | jq -r .tag_name)
+                  if [[ -z "$tag" || "$tag" == "null" ]]; then
+                      echo "Failed to resolve latest ppy/osu release tag"
+                      exit 1
+                  fi
+                  echo "tag=$tag" >> "$GITHUB_OUTPUT"
+                  echo "Using ppy/osu release: $tag"
+
+            - name: Clone ppy/osu
+              run: |
+                  git clone --depth 1 --branch "${{ steps.osu_release.outputs.tag }}" https://github.com/ppy/osu.git osu
+
+            - name: Install ModDefaultSettingsExporter into osu repo
+              run: |
+                  mkdir -p osu/Tools
+                  cp -r tools/ModDefaultSettingsExporter osu/Tools/ModDefaultSettingsExporter
+
+            - name: Export default mod settings
+              run: bash scripts/export-default-mod-settings.sh osu mods/default_settings.json
+
+            - name: Commit and push changes
+              id: commit
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+                  if git diff --quiet -- mods/mods.json mods/default_settings.json; then
+                      echo "No mod data changes to commit"
+                      echo "changed=false" >> "$GITHUB_OUTPUT"
+                      exit 0
+                  fi
+
+                  git add mods/mods.json mods/default_settings.json
+                  git commit -m "chore: sync mods data --skip-deploy"
+                  git push
+                  echo "changed=true" >> "$GITHUB_OUTPUT"
+
+    deploy:
+        needs: sync
+        if: needs.sync.outputs.changed == 'true'
+        runs-on: ubuntu-latest
+        environment: production
+
+        steps:
+            - name: Send Deploy Start Notification
+              uses: sarisia/actions-status-discord@v1
+              if: always()
+              with:
+                  webhook: ${{ secrets.DISCORD_WEBHOOK }}
+                  noprefix: true
+                  title: "Sync Mods Deploy Started"
+                  description: |
+                      Pulling synced mod data and reloading production...
+                      - Reason: `${{ github.event.inputs.reason || 'Manual mods sync' }}`
+                  color: 0x008cff
+
+            - name: Pull Changes and Reload
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.SERVER_HOST }}
+                  username: ${{ secrets.SERVER_USER }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  script: |
+                      cd ~/projects/daily-challenge || { echo "Directory not found"; exit 1; }
+
+                      if [[ -n $(git status -s) ]]; then
+                          echo "Error: Working directory is not clean. Please commit or stash changes."
+                          exit 1
+                      fi
+
+                      pull_output=$(git pull 2>&1)
+                      pull_status=$?
+                      echo "$pull_output"
+
+                      if [[ $pull_status -ne 0 ]] || [[ $pull_output == *"CONFLICT"* ]] || [[ $pull_output == *"error:"* ]]; then
+                          echo "Error: Git pull failed or encountered conflicts"
+                          git status
+                          exit 1
+                      fi
+
+                      echo "Syncing mod data files to dist/mods..."
+                      mkdir -p dist/mods
+                      cp mods/mods.json mods/default_settings.json dist/mods/
+
+                      echo "Reloading service..."
+                      pm2 reload scripts/ecosystem.config.cjs || pm2 start scripts/ecosystem.config.cjs
+
+                      sleep 5
+                      pm2 ls
+
+                      echo "Success! Showing startup logs for 5 seconds..."
+                      timeout 5 pm2 logs daily-challenge --lines 10 || true
+                      exit 0
+
+    notify:
+        needs: [sync, deploy]
+        runs-on: ubuntu-latest
+        if: always() && needs.sync.outputs.changed == 'true'
+        steps:
+            - name: Send Discord Notification
+              uses: sarisia/actions-status-discord@v1
+              with:
+                  webhook: ${{ secrets.DISCORD_WEBHOOK }}
+                  noprefix: true
+                  title: >-
+                      ${{ needs.deploy.result == 'success' && 'Mods Sync Deploy Successful' ||
+                          needs.deploy.result == 'skipped' && 'Mods Sync Deploy Skipped' ||
+                          'Mods Sync Deploy Failed' }}
+                  description: >-
+                      ${{ format('- Sync job: `{0}`\n- Deploy job: `{1}`\n- Reason: `{2}`',
+                          needs.sync.result,
+                          needs.deploy.result,
+                          github.event.inputs.reason || 'Manual mods sync') }}
+                  color: >-
+                      ${{ needs.deploy.result == 'success' && '0x1df27d' ||
+                          needs.deploy.result == 'skipped' && '0xffff00' || '0xff5050' }}
+                  content: >-
+                      ${{ needs.deploy.result != 'success' && needs.deploy.result != 'skipped'
+                          && 'Mods sync deploy failed! <@341321481390784512>' || '' }}

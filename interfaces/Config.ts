@@ -6,7 +6,7 @@ export interface IConfig {
         secret: string;
         redirect: string;
     };
-    modsSource: string;
+    githubRepo?: string;
     discord?: {
         webhooks?: {
             main?: {

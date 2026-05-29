@@ -6,6 +6,6 @@ const settingsRouter = express.Router();
 
 settingsRouter.get("/", auth.isLoggedIn, auth.isStaff, SettingsController.getSettingsConfig);
 settingsRouter.get("/mods", SettingsController.getModsCatalog);
-settingsRouter.post("/syncMods", auth.isLoggedIn, auth.isAdmin, SettingsController.syncMods);
+settingsRouter.get("/modsInfo", auth.isLoggedIn, auth.isAdmin, SettingsController.getModsInfo);
 
 export default settingsRouter;

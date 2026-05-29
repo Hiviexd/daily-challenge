@@ -1,7 +1,7 @@
 import { Modal, Tabs } from "@mantine/core";
 import { useAtom } from "jotai";
 import { loggedInUserAtom } from "@store/atoms";
-import ModsSyncSettings from "@components/settings/ModsSyncSettings";
+import ModsInfoSettings from "@components/settings/ModsInfoSettings";
 import UsersSettings from "@components/settings/UsersSettings";
 import UserActivity from "@components/settings/UserActivity";
 import UserStats from "@components/settings/UserStats";
@@ -38,7 +38,7 @@ export default function SettingsModal({ opened, onClose }: SettingsModalProps) {
                 )}
                 {loggedInUser?.isAdmin && (
                     <Tabs.Panel value="mods" pt="md">
-                        <ModsSyncSettings />
+                        <ModsInfoSettings />
                     </Tabs.Panel>
                 )}
                 <Tabs.Panel value="activity" pt="md">
