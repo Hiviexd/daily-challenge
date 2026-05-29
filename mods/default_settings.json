@@ -46,7 +46,7 @@
         "speed_change": {
           "default": 1.5,
           "min": 1.01,
-          "max": 2,
+          "max": 3,
           "precision": 0.01
         },
         "adjust_pitch": {
