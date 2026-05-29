@@ -30,14 +30,14 @@ export default function RoundCard({ round, selected = false, showQueueStatus = f
                         color={!round.isUpcoming ? "var(--mantine-color-info-6)" : "var(--mantine-color-gray-6)"}
                     />
                 )}
-                {loggedInUser?.hasAccess && showQueueStatus && (
+                {/*loggedInUser?.hasAccess && showQueueStatus && (
                     <Tooltip label={round.isQueued ? "Queued" : "Not queued"}>
                         <FontAwesomeIcon
                             icon="list-ul"
                             color={round.isQueued ? "var(--mantine-color-success-6)" : "var(--mantine-color-danger-5)"}
                         />
                     </Tooltip>
-                )}
+                )*/}
                 {round.isMonthHighlight && (
                     <Tooltip label="Monthly Beatmap Highlight">
                         <FontAwesomeIcon icon="award" color="var(--mantine-color-warning-6)" />
