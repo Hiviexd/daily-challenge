@@ -47,7 +47,7 @@
           "default": 1.5,
           "min": 1.01,
           "max": 3,
-          "precision": 0.01
+          "precision": 0.1
         },
         "adjust_pitch": {
           "default": false
