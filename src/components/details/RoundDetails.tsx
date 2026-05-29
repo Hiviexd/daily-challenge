@@ -1,6 +1,7 @@
 import { Table, ScrollArea, Stack, Card, Text, Divider, Badge, Group, Button, Tooltip } from "@mantine/core";
 import { IRound, IWarning } from "@interfaces/Round";
 import { IBeatmap } from "@interfaces/Beatmap";
+import { IBeatmapSlotMods } from "@interfaces/Mod";
 import BeatmapRow from "./BeatmapRow";
 import RoundManagement from "./RoundManagement";
 import { useCheckRoundDuplicates } from "@hooks/useRounds";
@@ -29,10 +30,12 @@ export default function RoundDetails({ round }: IProps) {
 
     // Build the display array using beatmapOrder (length 7, null for empty slots)
     const displayBeatmaps: (IBeatmap | null)[] = Array(7).fill(null);
+    const displaySlotMods: (IBeatmapSlotMods | null)[] = Array(7).fill(null);
     (round?.beatmapOrder ?? []).forEach((entry) => {
         if (typeof entry.order === "number" && entry.order >= 0 && entry.order < 7) {
             const bm = beatmapMap.get(entry.beatmapId.toString()) ?? null;
             displayBeatmaps[entry.order] = bm;
+            displaySlotMods[entry.order] = entry.mods ?? null;
         }
     });
 
@@ -167,7 +170,7 @@ export default function RoundDetails({ round }: IProps) {
             </Card>
             <Card shadow="sm" p="md" bg="primary.11">
                 <ScrollArea>
-                    <Table miw={{ base: 1200 }}>
+                    <Table miw={{ base: 1280 }}>
                         <Table.Thead>
                             <Table.Tr>
                                 <Table.Th style={{ minWidth: 80, maxWidth: 100, width: 100 }}>Beatmap ID</Table.Th>
@@ -177,7 +180,8 @@ export default function RoundDetails({ round }: IProps) {
                                 <Table.Th>Difficulty</Table.Th>
                                 <Table.Th>Host</Table.Th>
                                 <Table.Th>Date Ranked</Table.Th>
-                                <Table.Th>Notes/Mods</Table.Th>
+                                <Table.Th>Notes</Table.Th>
+                                <Table.Th>Mods</Table.Th>
                                 {isStaff && (
                                     <Table.Th style={{ textAlign: "center" }}>
                                         <Button
@@ -200,9 +204,11 @@ export default function RoundDetails({ round }: IProps) {
                                     <BeatmapRow
                                         key={idx}
                                         beatmap={bm}
+                                        slotMods={displaySlotMods[idx]}
                                         index={idx}
                                         roundId={roundId}
                                         isActiveRound={round?.isActive}
+                                        roundIsQueued={round?.isQueued}
                                         warning={
                                             bm && bm.beatmapId ? warningMap.get(bm.beatmapId.toString()) : undefined
                                         }

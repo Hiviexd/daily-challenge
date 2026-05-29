@@ -10,6 +10,7 @@ roundRouter.post("/create", auth.isLoggedIn, auth.isStaff, RoundController.creat
 roundRouter.put("/:roundId/update", auth.isLoggedIn, auth.isStaff, RoundController.update);
 roundRouter.put("/:roundId/updateBeatmapId", auth.isLoggedIn, auth.isStaff, RoundController.updateBeatmapId);
 roundRouter.put("/:roundId/updateBeatmapNote", auth.isLoggedIn, auth.isStaff, RoundController.updateBeatmapNote);
+roundRouter.put("/:roundId/updateBeatmapMods", auth.isLoggedIn, auth.isStaff, RoundController.updateBeatmapMods);
 roundRouter.get("/:id/checkDuplicates", auth.isLoggedIn, auth.isStaff, RoundController.checkDuplicates);
 roundRouter.delete("/:roundId/delete", auth.isLoggedIn, auth.isAdmin, RoundController.delete);
 roundRouter.put("/:roundId/toggleQueue", auth.isLoggedIn, auth.isAdmin, RoundController.toggleQueue);

@@ -1,0 +1,867 @@
+{
+  "generated_at": "2026-05-29T01:41:06.2735064+00:00",
+  "rulesets": {
+    "osu": {
+      "EZ": {
+        "retries": {
+          "default": 2,
+          "min": 0,
+          "max": 10,
+          "precision": 1
+        }
+      },
+      "HT": {
+        "speed_change": {
+          "default": 0.75,
+          "min": 0.5,
+          "max": 0.99,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": false
+        }
+      },
+      "DC": {
+        "speed_change": {
+          "default": 0.75,
+          "min": 0.5,
+          "max": 0.99,
+          "precision": 0.01
+        }
+      },
+      "SD": {
+        "fail_on_slider_tail": {
+          "default": false
+        },
+        "restart": {
+          "default": false
+        }
+      },
+      "PF": {
+        "restart": {
+          "default": true
+        }
+      },
+      "DT": {
+        "speed_change": {
+          "default": 1.5,
+          "min": 1.01,
+          "max": 2,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": false
+        }
+      },
+      "NC": {
+        "speed_change": {
+          "default": 1.5,
+          "min": 1.01,
+          "max": 2,
+          "precision": 0.01
+        }
+      },
+      "HD": {
+        "only_fade_approach_circles": {
+          "default": false
+        }
+      },
+      "FL": {
+        "follow_delay": {
+          "default": 120,
+          "min": 120,
+          "max": 1200,
+          "precision": 120
+        },
+        "size_multiplier": {
+          "default": 1,
+          "min": 0.5,
+          "max": 2,
+          "precision": 0.1
+        },
+        "combo_based_size": {
+          "default": true
+        }
+      },
+      "AC": {
+        "minimum_accuracy": {
+          "default": 0.9,
+          "min": 0.6,
+          "max": 0.999,
+          "precision": 0.001
+        },
+        "accuracy_judge_mode": {
+          "default": "MaximumAchievable",
+          "options": [
+            "MaximumAchievable",
+            "Standard"
+          ]
+        },
+        "restart": {
+          "default": false
+        }
+      },
+      "TP": {
+        "seed": {},
+        "metronome": {
+          "default": true
+        }
+      },
+      "DA": {
+        "circle_size": {
+          "min": 0,
+          "max": 10
+        },
+        "approach_rate": {
+          "min": 0,
+          "max": 10
+        },
+        "drain_rate": {
+          "min": 0,
+          "max": 10
+        },
+        "overall_difficulty": {
+          "min": 0,
+          "max": 10
+        },
+        "extended_limits": {
+          "default": false
+        }
+      },
+      "CL": {
+        "no_slider_head_accuracy": {
+          "default": true
+        },
+        "classic_note_lock": {
+          "default": true
+        },
+        "always_play_tail_sample": {
+          "default": true
+        },
+        "fade_hit_circle_early": {
+          "default": true
+        },
+        "classic_health": {
+          "default": true
+        }
+      },
+      "RD": {
+        "angle_sharpness": {
+          "default": 7,
+          "min": 1,
+          "max": 10,
+          "precision": 0.1
+        },
+        "seed": {}
+      },
+      "MR": {
+        "reflection": {
+          "default": "Horizontal",
+          "options": [
+            "Horizontal",
+            "Vertical",
+            "Both"
+          ]
+        }
+      },
+      "WG": {
+        "strength": {
+          "default": 1,
+          "min": 0.10000000149011612,
+          "max": 2,
+          "precision": 0.10000000149011612
+        }
+      },
+      "GR": {
+        "start_scale": {
+          "default": 0.5,
+          "min": 0,
+          "max": 0.99,
+          "precision": 0.01
+        }
+      },
+      "DF": {
+        "start_scale": {
+          "default": 2,
+          "min": 1,
+          "max": 25,
+          "precision": 0.1
+        }
+      },
+      "WU": {
+        "initial_rate": {
+          "default": 1,
+          "min": 0.5,
+          "max": 1.99,
+          "precision": 0.01
+        },
+        "final_rate": {
+          "default": 1.5,
+          "min": 0.51,
+          "max": 2,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": true
+        }
+      },
+      "WD": {
+        "initial_rate": {
+          "default": 1,
+          "min": 0.51,
+          "max": 2,
+          "precision": 0.01
+        },
+        "final_rate": {
+          "default": 0.75,
+          "min": 0.5,
+          "max": 1.99,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": true
+        }
+      },
+      "BR": {
+        "spin_speed": {
+          "default": 0.5,
+          "min": 0.02,
+          "max": 12,
+          "precision": 0.01
+        },
+        "direction": {
+          "default": "Clockwise",
+          "options": [
+            "Clockwise",
+            "Counterclockwise"
+          ]
+        }
+      },
+      "AD": {
+        "scale": {
+          "default": 4,
+          "min": 1.5,
+          "max": 10,
+          "precision": 0.1
+        },
+        "style": {
+          "default": "Gravity",
+          "options": [
+            "Linear",
+            "Gravity",
+            "InOut1",
+            "InOut2",
+            "Accelerate1",
+            "Accelerate2",
+            "Accelerate3",
+            "Decelerate1",
+            "Decelerate2",
+            "Decelerate3"
+          ]
+        }
+      },
+      "MU": {
+        "inverse_muting": {
+          "default": false
+        },
+        "enable_metronome": {
+          "default": true
+        },
+        "mute_combo_count": {
+          "default": 100,
+          "min": 0,
+          "max": 500,
+          "precision": 1
+        },
+        "affects_hit_sounds": {
+          "default": true
+        }
+      },
+      "NS": {
+        "hidden_combo_count": {
+          "default": 10,
+          "min": 0,
+          "max": 50,
+          "precision": 1
+        }
+      },
+      "MG": {
+        "attraction_strength": {
+          "default": 0.5,
+          "min": 0.05,
+          "max": 1,
+          "precision": 0.05
+        }
+      },
+      "RP": {
+        "repulsion_strength": {
+          "default": 0.5,
+          "min": 0.05,
+          "max": 1,
+          "precision": 0.05
+        }
+      },
+      "AS": {
+        "initial_rate": {
+          "default": 1,
+          "min": 0.5,
+          "max": 2,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": true
+        }
+      },
+      "DP": {
+        "max_depth": {
+          "default": 100,
+          "min": 50,
+          "max": 200,
+          "precision": 10
+        },
+        "show_approach_circles": {
+          "default": true
+        }
+      },
+      "BM": {
+        "max_size_combo_count": {
+          "default": 50,
+          "min": 5,
+          "max": 100,
+          "precision": 1
+        },
+        "max_cursor_size": {
+          "default": 10,
+          "min": 5,
+          "max": 15,
+          "precision": 0.5
+        }
+      }
+    },
+    "taiko": {
+      "HT": {
+        "speed_change": {
+          "default": 0.75,
+          "min": 0.5,
+          "max": 0.99,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": false
+        }
+      },
+      "DC": {
+        "speed_change": {
+          "default": 0.75,
+          "min": 0.5,
+          "max": 0.99,
+          "precision": 0.01
+        }
+      },
+      "SR": {
+        "one_third_conversion": {
+          "default": false
+        },
+        "one_sixth_conversion": {
+          "default": true
+        },
+        "one_eighth_conversion": {
+          "default": false
+        }
+      },
+      "SD": {
+        "restart": {
+          "default": false
+        }
+      },
+      "PF": {
+        "restart": {
+          "default": true
+        }
+      },
+      "DT": {
+        "speed_change": {
+          "default": 1.5,
+          "min": 1.01,
+          "max": 2,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": false
+        }
+      },
+      "NC": {
+        "speed_change": {
+          "default": 1.5,
+          "min": 1.01,
+          "max": 2,
+          "precision": 0.01
+        }
+      },
+      "FL": {
+        "size_multiplier": {
+          "default": 1,
+          "min": 0.5,
+          "max": 1.5,
+          "precision": 0.1
+        },
+        "combo_based_size": {
+          "default": true
+        }
+      },
+      "AC": {
+        "minimum_accuracy": {
+          "default": 0.9,
+          "min": 0.6,
+          "max": 0.999,
+          "precision": 0.001
+        },
+        "accuracy_judge_mode": {
+          "default": "MaximumAchievable",
+          "options": [
+            "MaximumAchievable",
+            "Standard"
+          ]
+        },
+        "restart": {
+          "default": false
+        }
+      },
+      "RD": {
+        "seed": {}
+      },
+      "DA": {
+        "scroll_speed": {
+          "min": 0.25,
+          "max": 4
+        },
+        "drain_rate": {
+          "min": 0,
+          "max": 10
+        },
+        "overall_difficulty": {
+          "min": 0,
+          "max": 10
+        },
+        "extended_limits": {
+          "default": false
+        }
+      },
+      "WU": {
+        "initial_rate": {
+          "default": 1,
+          "min": 0.5,
+          "max": 1.99,
+          "precision": 0.01
+        },
+        "final_rate": {
+          "default": 1.5,
+          "min": 0.51,
+          "max": 2,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": true
+        }
+      },
+      "WD": {
+        "initial_rate": {
+          "default": 1,
+          "min": 0.51,
+          "max": 2,
+          "precision": 0.01
+        },
+        "final_rate": {
+          "default": 0.75,
+          "min": 0.5,
+          "max": 1.99,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": true
+        }
+      },
+      "MU": {
+        "inverse_muting": {
+          "default": false
+        },
+        "enable_metronome": {
+          "default": true
+        },
+        "mute_combo_count": {
+          "default": 100,
+          "min": 0,
+          "max": 500,
+          "precision": 1
+        },
+        "affects_hit_sounds": {
+          "default": true
+        }
+      },
+      "AS": {
+        "initial_rate": {
+          "default": 1,
+          "min": 0.5,
+          "max": 2,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": true
+        }
+      }
+    },
+    "fruits": {
+      "EZ": {
+        "retries": {
+          "default": 2,
+          "min": 0,
+          "max": 10,
+          "precision": 1
+        }
+      },
+      "HT": {
+        "speed_change": {
+          "default": 0.75,
+          "min": 0.5,
+          "max": 0.99,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": false
+        }
+      },
+      "DC": {
+        "speed_change": {
+          "default": 0.75,
+          "min": 0.5,
+          "max": 0.99,
+          "precision": 0.01
+        }
+      },
+      "SD": {
+        "restart": {
+          "default": false
+        }
+      },
+      "PF": {
+        "restart": {
+          "default": true
+        }
+      },
+      "DT": {
+        "speed_change": {
+          "default": 1.5,
+          "min": 1.01,
+          "max": 2,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": false
+        }
+      },
+      "NC": {
+        "speed_change": {
+          "default": 1.5,
+          "min": 1.01,
+          "max": 2,
+          "precision": 0.01
+        }
+      },
+      "FL": {
+        "size_multiplier": {
+          "default": 1,
+          "min": 0.5,
+          "max": 1.5,
+          "precision": 0.1
+        },
+        "combo_based_size": {
+          "default": true
+        }
+      },
+      "AC": {
+        "minimum_accuracy": {
+          "default": 0.9,
+          "min": 0.6,
+          "max": 0.999,
+          "precision": 0.001
+        },
+        "accuracy_judge_mode": {
+          "default": "MaximumAchievable",
+          "options": [
+            "MaximumAchievable",
+            "Standard"
+          ]
+        },
+        "restart": {
+          "default": false
+        }
+      },
+      "DA": {
+        "circle_size": {
+          "min": 0,
+          "max": 10
+        },
+        "approach_rate": {
+          "min": 0,
+          "max": 10
+        },
+        "hard_rock_offsets": {
+          "default": false
+        },
+        "drain_rate": {
+          "min": 0,
+          "max": 10
+        },
+        "overall_difficulty": {
+          "min": 0,
+          "max": 10
+        },
+        "extended_limits": {
+          "default": false
+        }
+      },
+      "WU": {
+        "initial_rate": {
+          "default": 1,
+          "min": 0.5,
+          "max": 1.99,
+          "precision": 0.01
+        },
+        "final_rate": {
+          "default": 1.5,
+          "min": 0.51,
+          "max": 2,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": true
+        }
+      },
+      "WD": {
+        "initial_rate": {
+          "default": 1,
+          "min": 0.51,
+          "max": 2,
+          "precision": 0.01
+        },
+        "final_rate": {
+          "default": 0.75,
+          "min": 0.5,
+          "max": 1.99,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": true
+        }
+      },
+      "MU": {
+        "inverse_muting": {
+          "default": false
+        },
+        "enable_metronome": {
+          "default": true
+        },
+        "mute_combo_count": {
+          "default": 100,
+          "min": 0,
+          "max": 500,
+          "precision": 1
+        },
+        "affects_hit_sounds": {
+          "default": true
+        }
+      },
+      "NS": {
+        "hidden_combo_count": {
+          "default": 10,
+          "min": 0,
+          "max": 50,
+          "precision": 1
+        }
+      }
+    },
+    "mania": {
+      "EZ": {
+        "retries": {
+          "default": 2,
+          "min": 0,
+          "max": 10,
+          "precision": 1
+        }
+      },
+      "HT": {
+        "speed_change": {
+          "default": 0.75,
+          "min": 0.5,
+          "max": 0.99,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": false
+        }
+      },
+      "DC": {
+        "speed_change": {
+          "default": 0.75,
+          "min": 0.5,
+          "max": 0.99,
+          "precision": 0.01
+        }
+      },
+      "SD": {
+        "restart": {
+          "default": false
+        }
+      },
+      "PF": {
+        "require_perfect_hits": {
+          "default": false
+        },
+        "restart": {
+          "default": true
+        }
+      },
+      "DT": {
+        "speed_change": {
+          "default": 1.5,
+          "min": 1.01,
+          "max": 2,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": false
+        }
+      },
+      "NC": {
+        "speed_change": {
+          "default": 1.5,
+          "min": 1.01,
+          "max": 2,
+          "precision": 0.01
+        }
+      },
+      "CO": {
+        "coverage": {
+          "default": 0.5,
+          "min": 0.2,
+          "max": 0.8,
+          "precision": 0.1
+        },
+        "direction": {
+          "default": "AlongScroll",
+          "options": [
+            "AlongScroll",
+            "AgainstScroll"
+          ]
+        }
+      },
+      "FL": {
+        "size_multiplier": {
+          "default": 1,
+          "min": 0.5,
+          "max": 3,
+          "precision": 0.1
+        },
+        "combo_based_size": {
+          "default": false
+        }
+      },
+      "AC": {
+        "minimum_accuracy": {
+          "default": 0.9,
+          "min": 0.6,
+          "max": 0.999,
+          "precision": 0.001
+        },
+        "accuracy_judge_mode": {
+          "default": "MaximumAchievable",
+          "options": [
+            "MaximumAchievable",
+            "Standard"
+          ]
+        },
+        "restart": {
+          "default": false
+        }
+      },
+      "RD": {
+        "seed": {}
+      },
+      "DA": {
+        "overall_difficulty": {
+          "min": 0,
+          "max": 10
+        },
+        "drain_rate": {
+          "min": 0,
+          "max": 10
+        },
+        "extended_limits": {
+          "default": false
+        }
+      },
+      "WU": {
+        "initial_rate": {
+          "default": 1,
+          "min": 0.5,
+          "max": 1.99,
+          "precision": 0.01
+        },
+        "final_rate": {
+          "default": 1.5,
+          "min": 0.51,
+          "max": 2,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": true
+        }
+      },
+      "WD": {
+        "initial_rate": {
+          "default": 1,
+          "min": 0.51,
+          "max": 2,
+          "precision": 0.01
+        },
+        "final_rate": {
+          "default": 0.75,
+          "min": 0.5,
+          "max": 1.99,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": true
+        }
+      },
+      "MU": {
+        "inverse_muting": {
+          "default": false
+        },
+        "enable_metronome": {
+          "default": true
+        },
+        "mute_combo_count": {
+          "default": 100,
+          "min": 0,
+          "max": 500,
+          "precision": 1
+        },
+        "affects_hit_sounds": {
+          "default": true
+        }
+      },
+      "AS": {
+        "initial_rate": {
+          "default": 1,
+          "min": 0.5,
+          "max": 2,
+          "precision": 0.01
+        },
+        "adjust_pitch": {
+          "default": true
+        }
+      }
+    }
+  }
+}

@@ -11,6 +11,15 @@ const RoundSchema = new mongoose.Schema<IRound>(
             {
                 beatmapId: { type: mongoose.Schema.Types.ObjectId, ref: "Beatmap", required: true },
                 order: { type: Number, required: true },
+                mods: {
+                    ruleset: { type: String, enum: ["osu", "taiko", "fruits", "mania"], default: "osu" },
+                    selected: [
+                        {
+                            acronym: { type: String, required: true },
+                            settings: { type: mongoose.Schema.Types.Mixed },
+                        },
+                    ],
+                },
             },
         ],
         startDate: { type: Date, required: true },

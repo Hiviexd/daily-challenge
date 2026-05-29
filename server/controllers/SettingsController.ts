@@ -3,18 +3,32 @@ import axios from "axios";
 import { loadJson } from "@utils/config";
 import Settings from "@models/settingsModel";
 import { IModsExternalApiResponse, type SettingsMods } from "@interfaces/Settings";
+import { IModsCatalogResponse, IModsExternalApiResponse as IModsCatalogSource } from "@interfaces/Mod";
 import LogService from "@services/LogService";
+import { BLACKLISTED_MODS, buildModsCatalog, enrichCatalogWithDefaultSettings } from "@utils/mods";
+import { loadDefaultSettingsFromFile } from "@utils/modsServer";
 
 import { IConfig } from "@interfaces/Config";
 const config = loadJson<IConfig>("../config.json");
 
-const BLACKLISTED_MODS = ["RD", "AT", "CN", "TD", "SV2", "1K", "2K", "3K", "4K", "5K", "6K", "7K", "8K", "9K", "10K"];
-
 class SettingsController {
-    /** Get the settings config */
     public async getSettingsConfig(_: Request, res: Response) {
         const settings = await Settings.getSettingsConfig();
         res.json(settings);
+    }
+
+    /** Get filtered mod catalog for mod selector UI */
+    public getModsCatalog(_: Request, res: Response) {
+        try {
+            const modsApiResponse = loadJson<IModsCatalogSource[]>("../mods.json");
+            const defaultSettings = loadDefaultSettingsFromFile();
+            const catalog = enrichCatalogWithDefaultSettings(buildModsCatalog(modsApiResponse), defaultSettings);
+
+            const response: IModsCatalogResponse = { catalog, defaultSettings };
+            res.json(response);
+        } catch (error) {
+            return res.status(500).json({ error: "Error loading mod catalog" });
+        }
     }
 
     /** Sync osu! mods */
@@ -33,20 +47,21 @@ class SettingsController {
             };
 
             for (const ruleset of modsApiResponse) {
-                // iterate over the rulesets to form a strings array of the mods
                 const mods = ruleset.Mods.map((m) => m.Acronym).filter((m) => !BLACKLISTED_MODS.includes(m));
                 settingsMods[ruleset.Name] = mods;
             }
 
+            const modDefaultSettings = loadDefaultSettingsFromFile();
+
             const settings = await Settings.getSettingsConfig();
 
             settings.mods = settingsMods;
+            settings.modDefaultSettings = modDefaultSettings;
             settings.modsUpdatedAt = new Date();
             await settings.save();
 
             res.json({ message: "Mods synced successfully!" });
 
-            // logging
             LogService.generate(loggedInUser._id, `Synced osu! mods`);
         } catch (error) {
             return res.status(500).json({ error: "Error fetching mods from GitHub" });

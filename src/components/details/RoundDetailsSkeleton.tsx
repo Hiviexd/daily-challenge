@@ -35,7 +35,8 @@ export default function RoundDetailsSkeleton({ isStaff }: { isStaff: boolean }) 
                                 <Table.Th>Difficulty</Table.Th>
                                 <Table.Th>Host</Table.Th>
                                 <Table.Th>Date Ranked</Table.Th>
-                                <Table.Th>Notes/Mods</Table.Th>
+                                <Table.Th>Notes</Table.Th>
+                                <Table.Th>Mods</Table.Th>
                                 {isStaff && (
                                     <Table.Th style={{ textAlign: "center" }}>
                                         <Skeleton height={18} width={60} radius="sm" />
@@ -68,7 +69,10 @@ export default function RoundDetailsSkeleton({ isStaff }: { isStaff: boolean }) 
                                         <Skeleton height={18} width={90} radius="sm" />
                                     </Table.Td>
                                     <Table.Td>
-                                        <Skeleton height={18} width={120} radius="sm" />
+                                        <Skeleton height={18} width={100} radius="sm" />
+                                    </Table.Td>
+                                    <Table.Td>
+                                        <Skeleton height={18} width={80} radius="sm" />
                                     </Table.Td>
                                     {isStaff && (
                                         <Table.Td>

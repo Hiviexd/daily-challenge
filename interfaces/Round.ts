@@ -1,6 +1,7 @@
 import { Document } from "mongoose";
 import { IUser } from "./User";
 import { IBeatmap } from "./Beatmap";
+import { IBeatmapSlotMods } from "./Mod";
 
 export type WarningType = "duplicate_set" | "duplicate_difficulty" | "duplicate_song";
 
@@ -16,7 +17,7 @@ export interface IRound extends Document {
     startDate: Date;
     endDate: Date;
     theme?: string;
-    beatmapOrder: { beatmapId: string; order: number }[];
+    beatmapOrder: { beatmapId: string; order: number; mods?: IBeatmapSlotMods }[];
     isQueued?: boolean;
 
     // Virtuals

@@ -3,6 +3,7 @@ import { useAtom } from "jotai";
 import { roundsAtom, roundsQueryStateAtom } from "@store/atoms";
 import utils from "@utils/index";
 import { IRound } from "@interfaces/Round";
+import { IBeatmapSlotMods } from "@interfaces/Mod";
 import { useEffect } from "react";
 
 export default function useRounds() {
@@ -123,6 +124,23 @@ export function useUpdateRoundBeatmapNote(roundId: string) {
             const response = await utils.apiCall({
                 method: "put",
                 url: `/api/rounds/${roundId}/updateBeatmapNote`,
+                data,
+            });
+            return utils.handleMutationResponse(response);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["rounds"] });
+        },
+    });
+}
+
+export function useUpdateRoundBeatmapMods(roundId: string) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (data: { index: number; mods: IBeatmapSlotMods }) => {
+            const response = await utils.apiCall({
+                method: "put",
+                url: `/api/rounds/${roundId}/updateBeatmapMods`,
                 data,
             });
             return utils.handleMutationResponse(response);

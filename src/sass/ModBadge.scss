@@ -1,0 +1,64 @@
+.modBadgeWrapper {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+}
+
+.modBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transform: skewX(-12deg);
+    border-radius: 3px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: #fff;
+    user-select: none;
+}
+
+.modBadgeSm {
+    min-width: 26px;
+    height: 20px;
+    padding: 0 5px;
+    font-size: 0.6rem;
+}
+
+.modBadgeMd {
+    min-width: 30px;
+    height: 24px;
+    padding: 0 6px;
+    font-size: 0.65rem;
+}
+
+.modBadgeLabel {
+    display: block;
+    transform: skewX(12deg);
+    line-height: 1;
+}
+
+.modBadgeIdle {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.modBadgeSelected {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.modBadgeDark {
+    background: var(--mantine-color-primary-11);
+    color: var(--mantine-color-white);
+}
+
+.modBadgeSettingsIndicator {
+    position: absolute;
+    top: -3px;
+    right: -4px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--mantine-color-warning-5);
+    border: 1.5px solid var(--mantine-color-primary-11);
+    z-index: 1;
+    pointer-events: none;
+}

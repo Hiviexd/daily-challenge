@@ -1,0 +1,179 @@
+.modSelectorRoot {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    max-height: min(72vh, 720px);
+}
+
+.modSelectorScroll {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-bottom: 0.5rem;
+}
+
+.modSelectorFooter {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 0.75rem var(--mantine-spacing-md) var(--mantine-spacing-md);
+    margin-inline: calc(-1 * var(--mantine-spacing-md));
+    margin-bottom: calc(-1 * var(--mantine-spacing-md));
+    border-top: 1px solid var(--mantine-color-default-border);
+    background: var(--mantine-color-body);
+}
+
+.modeSelector {
+    position: relative;
+    display: inline-flex;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: var(--mantine-radius-md);
+    background: var(--mantine-color-primary-10);
+    border: 1px solid var(--mantine-color-primary-8);
+}
+
+.modeButton {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 36px;
+    border: none;
+    border-radius: var(--mantine-radius-sm);
+    background: transparent;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.modeButton:hover {
+    opacity: 0.85;
+}
+
+.modeButton .gamemode-icon {
+    margin: 0;
+}
+
+.modeIndicator {
+    background: var(--mantine-color-primary-8);
+    border-radius: var(--mantine-radius-sm);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.columns {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.75rem;
+    padding-inline: 0.5rem;
+    overflow: visible;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+    overflow: visible;
+}
+
+.columnHeader {
+    position: relative;
+    padding: 0.35rem 0.85rem;
+    margin-inline: 0.2rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--mantine-color-white);
+    transform: skewX(-8deg);
+    transform-origin: center;
+    border-radius: var(--mantine-radius-sm);
+}
+
+.columnHeaderText {
+    display: block;
+    transform: skewX(8deg);
+}
+
+.columnList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 0;
+}
+
+.modButton {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem 0.6rem;
+    border-radius: var(--mantine-radius-sm);
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s ease, opacity 0.15s ease;
+    outline: none;
+}
+
+.modButton:focus,
+.modButton:focus-visible {
+    outline: none;
+}
+
+.modButtonIdle {
+    border: none;
+    background: var(--mantine-color-primary-10);
+    color: var(--mantine-color-white);
+}
+
+.modButtonIdle:hover:not(:disabled) {
+    background: var(--mantine-color-primary-9);
+}
+
+.modButton:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.modButtonSelected {
+    border: none;
+    color: #fff;
+}
+
+.modButtonSelected .modDescription {
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.modButtonIdle .modDescription {
+    color: var(--mantine-color-gray-5);
+}
+
+.modContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+    flex: 1;
+}
+
+.modName {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.modDescription {
+    display: block;
+    font-size: 0.65rem;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}

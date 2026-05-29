@@ -5,6 +5,10 @@ import User from "@models/userModel";
 import RoundService from "@services/RoundService";
 import BeatmapService from "@services/BeatmapService";
 import Beatmap from "@models/beatmapModel";
+import { loadJson } from "@utils/config";
+import { buildModsCatalog, enrichCatalogWithDefaultSettings, validateModSelection } from "@utils/mods";
+import { loadDefaultSettingsFromFile } from "@utils/modsServer";
+import { IBeatmapSlotMods, IModsExternalApiResponse } from "@interfaces/Mod";
 
 const DEFAULT_POPULATE = [{ path: "assignedUser", select: "username osuId groups" }, { path: "beatmaps" }];
 const DEFAULT_LIMIT = 10;
@@ -287,6 +291,54 @@ class RoundController {
             LogService.generate(loggedInUser._id, `Updated beatmap notes for round: ${round.title}`);
         } else {
             return res.status(400).json({ message: "Invalid request for updateBeatmapNote" });
+        }
+    }
+
+    /* PUT update beatmap mods for a round slot */
+    public async updateBeatmapMods(req: Request, res: Response) {
+        const { roundId } = req.params;
+        const { index, mods } = req.body as { index: number; mods: IBeatmapSlotMods };
+
+        const loggedInUser = res.locals!.user!;
+
+        const round = await Round.findById(roundId).populate(DEFAULT_POPULATE);
+        if (!round) {
+            return res.status(404).json({ message: "Round not found" });
+        }
+
+        if (index === undefined || !mods || typeof mods !== "object") {
+            return res.status(400).json({ message: "Invalid request for updateBeatmapMods" });
+        }
+
+        const entry = round.beatmapOrder.find((e: any) => e.order === index);
+        if (!entry) {
+            return res.status(404).json({ message: "Beatmap slot not found" });
+        }
+
+        try {
+            const modsApiResponse = loadJson<IModsExternalApiResponse[]>("../mods.json");
+            const defaultSettings = loadDefaultSettingsFromFile();
+            const catalog = enrichCatalogWithDefaultSettings(buildModsCatalog(modsApiResponse), defaultSettings);
+            const validationError = validateModSelection(mods, catalog, defaultSettings);
+            if (validationError) {
+                return res.status(400).json({ message: validationError });
+            }
+
+            entry.mods = {
+                ruleset: mods.ruleset,
+                selected: mods.selected.map((sel) => ({
+                    acronym: sel.acronym,
+                    ...(sel.settings ? { settings: sel.settings } : {}),
+                })),
+            };
+
+            round.markModified("beatmapOrder");
+            await round.save();
+            res.status(200).json({ message: "Beatmap mods updated successfully!" });
+
+            LogService.generate(loggedInUser._id, `Updated beatmap mods for round slot ${index + 1}`);
+        } catch (error) {
+            return res.status(500).json({ message: "Error updating beatmap mods" });
         }
     }
 
