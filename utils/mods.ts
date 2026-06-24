@@ -1,5 +1,5 @@
 import { OsuGameMode } from "@interfaces/OsuApi";
-import { IDefaultSettingsFile, ModDefaultSettings, ModSettingSpec, ModSettingValue } from "@interfaces/Settings";
+import { IDefaultSettingsFile, ModDefaultSettings, ModSettingSpec, ModSettingValue, SettingsMods } from "@interfaces/Settings";
 import {
     IBeatmapSlotMods,
     IExternalModRaw,
@@ -14,6 +14,35 @@ import {
 export const BLACKLISTED_MODS = ["RD", "AT", "CN", "TD", "SV2", "1K", "2K", "3K", "4K", "5K", "6K", "7K", "8K", "9K", "10K"];
 
 export const OSU_GAME_MODES: OsuGameMode[] = ["osu", "taiko", "fruits", "mania"];
+
+export function normalizeOsuGameMode(mode: string | undefined | null): OsuGameMode | undefined {
+    if (!mode) return undefined;
+    if (mode === "catch") return "fruits";
+    return OSU_GAME_MODES.includes(mode as OsuGameMode) ? (mode as OsuGameMode) : undefined;
+}
+
+export function resolveBeatmapSlotRuleset(
+    slotMods: IBeatmapSlotMods | null | undefined,
+    beatmapMode?: OsuGameMode | null
+): OsuGameMode {
+    if (slotMods?.selected.length) {
+        return slotMods.ruleset;
+    }
+    return beatmapMode ?? slotMods?.ruleset ?? "osu";
+}
+
+export function buildAddBeatmapCommand(
+    beatmapId: string | number,
+    ruleset: OsuGameMode,
+    slotMods: IBeatmapSlotMods | null | undefined,
+    globalMods?: SettingsMods
+): string {
+    const selectedPart = slotMods?.selected.length
+        ? slotMods.selected.map((mod) => mod.acronym).join(",")
+        : "none";
+    const globalPart = globalMods?.[ruleset]?.join(",") ?? "";
+    return `add ${beatmapId} ${ruleset} ${selectedPart} ${globalPart}`;
+}
 
 export const MOD_TYPES: ModType[] = [
     "DifficultyReduction",

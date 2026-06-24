@@ -1,7 +1,7 @@
 import { Table, TextInput, Image, Group, Anchor, Text, ActionIcon, Skeleton, Tooltip } from "@mantine/core";
 import { IBeatmap } from "@interfaces/Beatmap";
 import { IBeatmapSlotMods } from "@interfaces/Mod";
-import { useUpdateRoundBeatmapId, useUpdateRoundBeatmapMods, useUpdateRoundBeatmapNote } from "@hooks/useRounds";
+import { useUpdateRoundBeatmapId, useUpdateRoundBeatmapMods, useUpdateRoundBeatmapNote, useSyncBeatmapMode } from "@hooks/useRounds";
 import { useState, useEffect, useMemo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserLink from "@components/common/UserLink";
@@ -15,9 +15,12 @@ import DateBadge from "@components/common/DateBadge";
 import CopyActionIcon from "@components/common/CopyActionIcon";
 import utils from "@utils/index";
 import useSettings from "@hooks/useSettings";
+import { buildAddBeatmapCommand, resolveBeatmapSlotRuleset } from "@utils/mods";
+import { getGameModeLabel } from "@themes/modeConfig";
 import SelectedModsDisplay from "./SelectedModsDisplay";
 import useModCatalog from "@hooks/useModCatalog";
 import { useDisclosure } from "@mantine/hooks";
+import GameModeIcon from "@components/common/GameModeIcon";
 
 interface IProps {
     beatmap: IBeatmap | null;
@@ -47,6 +50,7 @@ export default function BeatmapRow({
     const updateRoundBeatmapId = useUpdateRoundBeatmapId(roundId);
     const updateRoundBeatmapNote = useUpdateRoundBeatmapNote(roundId);
     const updateRoundBeatmapMods = useUpdateRoundBeatmapMods(roundId);
+    const syncBeatmapMode = useSyncBeatmapMode(roundId);
     const [loggedInUser] = useAtom(loggedInUserAtom);
     const [modModalOpen, { open: openModModal, close: closeModModal }] = useDisclosure(false);
 
@@ -60,7 +64,7 @@ export default function BeatmapRow({
 
     const { data: settings } = useSettings();
 
-    const ruleset = slotMods?.ruleset ?? "osu";
+    const ruleset = resolveBeatmapSlotRuleset(slotMods, beatmap?.mode);
     const showModsToPublic = roundIsQueued || isActiveRound;
     const canViewMods = loggedInUser?.isStaff || showModsToPublic;
     const hasSelectedMods = !!slotMods?.selected.length;
@@ -68,14 +72,14 @@ export default function BeatmapRow({
 
     const copyCommandString = useMemo(() => {
         if (loggedInUser?.isAdmin) {
-            const selectedPart = slotMods?.selected.length
-                ? slotMods.selected.map((mod) => mod.acronym).join(",")
-                : "none";
-            const globalPart = settings?.mods?.[ruleset]?.join(",") ?? "";
-            return `add ${beatmapId} ${ruleset} ${selectedPart} ${globalPart}`;
+            return buildAddBeatmapCommand(beatmapId, ruleset, slotMods, settings?.mods);
         }
         return beatmapId;
     }, [beatmapId, loggedInUser?.isAdmin, settings?.mods, slotMods, ruleset]);
+
+    const copyCommandTooltip = loggedInUser?.isAdmin
+        ? `Copy default ${getGameModeLabel(ruleset)} command`
+        : "Copy beatmap ID";
 
     const isCurrentDailyChallenge = isActiveRound && index === utils.getCurrentDayIndex();
 
@@ -127,6 +131,10 @@ export default function BeatmapRow({
         setIsEditingBeatmapId(false);
     };
 
+    const handleSyncMode = async () => {
+        await syncBeatmapMode.mutateAsync({ index });
+    };
+
     const beatmapMissing = beatmap?.beatmapId === 0 || beatmap?.beatmapId == null;
 
     return (
@@ -165,7 +173,7 @@ export default function BeatmapRow({
                             {beatmapId && (
                                 <CopyActionIcon
                                     value={copyCommandString}
-                                    tooltip={loggedInUser?.isAdmin ? "Copy default osu! command" : "Copy beatmap ID"}
+                                    tooltip={copyCommandTooltip}
                                 />
                             )}
                             <Text size="sm" fw={500}>
@@ -185,6 +193,29 @@ export default function BeatmapRow({
                 </Table.Td>
                 <Table.Td style={{ textAlign: "center", width: 100, minWidth: 100, maxWidth: 120 }}>
                     {typeof beatmap?.starRating === "number" ? <StarRatingBadge rating={beatmap?.starRating} /> : "-"}
+                </Table.Td>
+                <Table.Td style={{ textAlign: "center", width: 56, minWidth: 56, maxWidth: 64 }}>
+                    {beatmapMissing ? (
+                        "-"
+                    ) : beatmap?.mode ? (
+                        <div style={{ fontSize: 20, lineHeight: 1, display: "inline-flex", justifyContent: "center" }}>
+                            <GameModeIcon mode={beatmap.mode} />
+                        </div>
+                    ) : loggedInUser?.isAdmin ? (
+                        <Tooltip label="Sync game mode from osu!">
+                            <ActionIcon
+                                color="blue"
+                                variant="subtle"
+                                onClick={handleSyncMode}
+                                loading={syncBeatmapMode.isPending}
+                                size="sm"
+                                aria-label="Sync game mode">
+                                <FontAwesomeIcon icon="arrows-rotate" size="sm" />
+                            </ActionIcon>
+                        </Tooltip>
+                    ) : (
+                        "-"
+                    )}
                 </Table.Td>
                 <Table.Td>
                     {beatmap?.artist && (

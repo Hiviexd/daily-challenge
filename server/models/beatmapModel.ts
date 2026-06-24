@@ -6,6 +6,7 @@ const BeatmapSchema = new mongoose.Schema<IBeatmap>(
         beatmapId: { type: Number, required: true, unique: true },
         beatmapsetId: { type: Number, required: true },
         starRating: { type: Number, required: true },
+        mode: { type: String, enum: ["osu", "taiko", "fruits", "mania"] },
         artist: { type: String, required: true },
         title: { type: String, required: true },
         version: { type: String, required: true },

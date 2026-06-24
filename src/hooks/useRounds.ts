@@ -151,6 +151,23 @@ export function useUpdateRoundBeatmapMods(roundId: string) {
     });
 }
 
+export function useSyncBeatmapMode(roundId: string) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (data: { index: number }) => {
+            const response = await utils.apiCall({
+                method: "put",
+                url: `/api/rounds/${roundId}/syncBeatmapMode`,
+                data,
+            });
+            return utils.handleMutationResponse(response);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["rounds"] });
+        },
+    });
+}
+
 export function useCheckRoundDuplicates(roundId: string) {
     return useMutation({
         mutationFn: async () => {

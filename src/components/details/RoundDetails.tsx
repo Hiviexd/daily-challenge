@@ -175,6 +175,7 @@ export default function RoundDetails({ round }: IProps) {
                             <Table.Tr>
                                 <Table.Th style={{ minWidth: 80, maxWidth: 100, width: 100 }}>Beatmap ID</Table.Th>
                                 <Table.Th style={{ textAlign: "center" }}>Star Rating</Table.Th>
+                                <Table.Th style={{ textAlign: "center", width: 56 }}>Mode</Table.Th>
                                 <Table.Th style={{ width: 140 }} />
                                 <Table.Th>Artist - Title</Table.Th>
                                 <Table.Th>Difficulty</Table.Th>

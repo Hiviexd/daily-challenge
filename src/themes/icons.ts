@@ -35,6 +35,7 @@ import {
     faAward,
     faListUl,
     faSliders,
+    faArrowsRotate,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function loadIcons() {
@@ -73,5 +74,6 @@ export default function loadIcons() {
         faAward,
         faListUl,
         faSliders,
+        faArrowsRotate,
     );
 }

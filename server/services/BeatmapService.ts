@@ -1,16 +1,27 @@
 import Beatmap from "@models/beatmapModel";
 import OsuApiService from "@services/OsuApiService";
+import { normalizeOsuGameMode } from "@utils/mods";
 
 class BeatmapService {
     public async getOrCreateBeatmap(beatmapId: string | number, accessToken: string) {
         const beatmap = await Beatmap.findOne({ beatmapId: parseInt(beatmapId.toString()) });
 
-        if (beatmap) return beatmap;
+        if (beatmap?.mode) return beatmap;
 
         const beatmapResponse = await OsuApiService.getBeatmap(beatmapId.toString(), accessToken);
 
         if (OsuApiService.isOsuResponseError(beatmapResponse)) {
-            return null;
+            return beatmap ?? null;
+        }
+
+        const mode = normalizeOsuGameMode(beatmapResponse.mode);
+
+        if (beatmap) {
+            if (!beatmap.mode && mode) {
+                beatmap.mode = mode;
+                await beatmap.save();
+            }
+            return beatmap;
         }
 
         // prepare fields
@@ -31,6 +42,7 @@ class BeatmapService {
             beatmapId: newBeatmapId,
             beatmapsetId,
             starRating,
+            mode,
             artist,
             title,
             version,
@@ -42,6 +54,24 @@ class BeatmapService {
         await newBeatmap.save();
 
         return newBeatmap;
+    }
+
+    public async syncBeatmap(beatmapId: string | number, accessToken: string) {
+        const beatmap = await Beatmap.findOne({ beatmapId: parseInt(beatmapId.toString()) });
+        if (!beatmap) return null;
+
+        const beatmapResponse = await OsuApiService.getBeatmap(beatmapId.toString(), accessToken);
+        if (OsuApiService.isOsuResponseError(beatmapResponse)) {
+            return null;
+        }
+
+        const mode = normalizeOsuGameMode(beatmapResponse.mode);
+        if (mode) {
+            beatmap.mode = mode;
+            await beatmap.save();
+        }
+
+        return beatmap;
     }
 }
 

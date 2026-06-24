@@ -341,6 +341,41 @@ class RoundController {
         }
     }
 
+    /* PUT sync beatmap game mode from osu! API */
+    public async syncBeatmapMode(req: Request, res: Response) {
+        const { roundId } = req.params;
+        const { index } = req.body as { index: number };
+
+        const loggedInUser = res.locals!.user!;
+
+        const round = await Round.findById(roundId);
+        if (!round) {
+            return res.status(404).json({ message: "Round not found" });
+        }
+
+        if (index === undefined) {
+            return res.status(400).json({ message: "Invalid request for syncBeatmapMode" });
+        }
+
+        const entry = round.beatmapOrder.find((e: any) => e.order === index);
+        if (!entry?.beatmapId) {
+            return res.status(404).json({ message: "Beatmap slot not found" });
+        }
+
+        const beatmap = await Beatmap.findById(entry.beatmapId);
+        if (!beatmap) {
+            return res.status(404).json({ message: "Beatmap not found" });
+        }
+
+        const synced = await BeatmapService.syncBeatmap(beatmap.beatmapId, req.session!.accessToken!);
+        if (!synced) {
+            return res.status(404).json({ message: "Failed to sync beatmap from osu! API" });
+        }
+
+        res.status(200).json({ message: "Beatmap mode synced successfully!", beatmap: synced });
+        LogService.generate(loggedInUser._id, `Synced beatmap mode for round: ${round.title}`);
+    }
+
     /** DELETE round */
     public async delete(req: Request, res: Response) {
         const { roundId } = req.params;
