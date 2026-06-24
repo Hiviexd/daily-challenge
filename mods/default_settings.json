@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-29T02:21:30.2033707+00:00",
+  "generated_at": "2026-05-29T02:29:49.6412641+00:00",
   "rulesets": {
     "osu": {
       "EZ": {
@@ -46,8 +46,8 @@
         "speed_change": {
           "default": 1.5,
           "min": 1.01,
-          "max": 3,
-          "precision": 0.1
+          "max": 2,
+          "precision": 0.01
         },
         "adjust_pitch": {
           "default": false
