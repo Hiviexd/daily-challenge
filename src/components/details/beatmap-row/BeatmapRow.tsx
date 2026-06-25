@@ -350,26 +350,20 @@ export default function BeatmapRow({
                     <Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
                         <Group gap="xs" wrap="wrap" align="center" justify="space-between">
                             {hasBeatmap ? (
-                                <Tooltip
-                                    label={`${beatmap?.artist} - ${beatmap?.title}`}
-                                    multiline
-                                    maw={320}
-                                    disabled={!beatmap?.artist}>
-                                    <Anchor
-                                        fw={600}
-                                        lineClamp={2}
-                                        size="sm"
-                                        href={`https://osu.ppy.sh/beatmaps/${beatmap?.beatmapId}`}
-                                        target="_blank"
-                                        style={{
-                                            flex: "1 1 12rem",
-                                            minWidth: 0,
-                                            wordBreak: "break-word",
-                                            lineHeight: 1.3,
-                                        }}>
-                                        {beatmap?.artist} - {beatmap?.title}
-                                    </Anchor>
-                                </Tooltip>
+                                <Anchor
+                                    fw={600}
+                                    lineClamp={2}
+                                    size="sm"
+                                    href={`https://osu.ppy.sh/beatmaps/${beatmap?.beatmapId}`}
+                                    target="_blank"
+                                    style={{
+                                        flex: "1 1 12rem",
+                                        minWidth: 0,
+                                        wordBreak: "break-word",
+                                        lineHeight: 1.3,
+                                    }}>
+                                    {beatmap?.artist} - {beatmap?.title}
+                                </Anchor>
                             ) : (
                                 <Text size="sm" c="dimmed" fs="italic" style={{ flex: "1 1 12rem", minWidth: 0 }}>
                                     Empty slot
