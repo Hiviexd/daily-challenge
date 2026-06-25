@@ -414,39 +414,38 @@ export default function BeatmapRow({
                             </Group>
                         </Group>
 
-                        <Group gap={6} wrap="wrap" align="center">
-                            {modeAndDifficulty}
-                            {beatmap?.creator?.osuId && (
-                                <>
-                                    {hasMetaPrefix && (
-                                        <Text size="xs" c="dimmed">
-                                            ·
-                                        </Text>
-                                    )}
-                                    <UserLink
-                                        size="xs"
-                                        fw={500}
-                                        osuId={beatmap.creator.osuId}
-                                        username={beatmap.creator.username}
-                                    />
-                                </>
-                            )}
-                            {beatmap?.rankedDate && (
-                                <>
-                                    {(hasMetaPrefix || beatmap?.creator?.osuId) && (
-                                        <Text size="xs" c="dimmed">
-                                            ·
-                                        </Text>
-                                    )}
-                                    <DateBadge date={beatmap.rankedDate} size="xs" />
-                                </>
-                            )}
-                            {(hasMetaPrefix || beatmap?.creator?.osuId || beatmap?.rankedDate) && (
-                                <Text size="xs" c="dimmed">
-                                    ·
-                                </Text>
-                            )}
-                            {renderBeatmapId()}
+                        <Group gap={6} wrap="wrap" align="center" justify="space-between">
+                            <Group gap={6} wrap="wrap" align="center" style={{ flex: 1, minWidth: 0 }}>
+                                {modeAndDifficulty}
+                                {beatmap?.creator?.osuId && (
+                                    <>
+                                        {hasMetaPrefix && (
+                                            <Text size="xs" c="dimmed">
+                                                ·
+                                            </Text>
+                                        )}
+                                        <UserLink
+                                            size="xs"
+                                            fw={500}
+                                            osuId={beatmap.creator.osuId}
+                                            username={beatmap.creator.username}
+                                        />
+                                    </>
+                                )}
+                                {beatmap?.rankedDate && (
+                                    <>
+                                        {(hasMetaPrefix || beatmap?.creator?.osuId) && (
+                                            <Text size="xs" c="dimmed">
+                                                ·
+                                            </Text>
+                                        )}
+                                        <DateBadge date={beatmap.rankedDate} size="xs" />
+                                    </>
+                                )}
+                            </Group>
+                            <Group gap={4} wrap="nowrap" justify="flex-end" style={{ flexShrink: 0 }}>
+                                {renderBeatmapId()}
+                            </Group>
                         </Group>
 
                         {renderNotes()}
