@@ -10,7 +10,6 @@ import { useAtom } from "jotai";
 import { roundDuplicateWarningsAtom } from "@store/atoms";
 import { loggedInUserAtom } from "@store/atoms";
 import RoundDetailsSkeleton from "./RoundDetailsSkeleton";
-import { useState, useEffect } from "react";
 
 interface IProps {
     round: IRound | null;
@@ -40,27 +39,6 @@ export default function RoundDetails({ round }: IProps) {
     });
 
     const roundId = round?._id || "";
-
-    // Only track image loading for non-null beatmaps
-    const imageBeatmapIndices = displayBeatmaps
-        .map((bm, idx) => (bm ? idx : null))
-        .filter((idx) => idx !== null) as number[];
-    const [imagesLoaded, setImagesLoaded] = useState<boolean[]>(imageBeatmapIndices.map(() => false));
-    const allImagesLoaded = imagesLoaded.every(Boolean);
-
-    useEffect(() => {
-        setImagesLoaded(displayBeatmaps.filter(Boolean).map(() => false));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [roundId]);
-
-    const handleImageLoad = (imgIdx: number) => {
-        setImagesLoaded((prev) => {
-            if (prev[imgIdx]) return prev;
-            const next = [...prev];
-            next[imgIdx] = true;
-            return next;
-        });
-    };
 
     const getColors = (round: IRound) => {
         if (round?.isActive) return { title: "Active", color: "success", cssColor: "var(--mantine-color-success-6)" };
@@ -183,26 +161,21 @@ export default function RoundDetails({ round }: IProps) {
                     )}
                 </Group>
                 <Stack gap={0}>
-                    {displayBeatmaps.map((bm, idx) => {
-                        const imgIdx = imageBeatmapIndices.indexOf(idx);
-                        return (
-                            <BeatmapRow
-                                key={idx}
-                                beatmap={bm}
-                                slotMods={displaySlotMods[idx]}
-                                index={idx}
-                                roundId={roundId}
-                                startDate={new Date(round!.startDate)}
-                                isActiveRound={round?.isActive}
-                                roundIsQueued={round?.isQueued}
-                                warning={bm && bm.beatmapId ? warningMap.get(bm.beatmapId.toString()) : undefined}
-                                hasCheckedDuplicates={hasCheckedDuplicates}
-                                showSkeleton={!!bm && !allImagesLoaded}
-                                onImageLoad={bm ? () => handleImageLoad(imgIdx) : undefined}
-                                isLast={idx === displayBeatmaps.length - 1}
-                            />
-                        );
-                    })}
+                    {displayBeatmaps.map((bm, idx) => (
+                        <BeatmapRow
+                            key={idx}
+                            beatmap={bm}
+                            slotMods={displaySlotMods[idx]}
+                            index={idx}
+                            roundId={roundId}
+                            startDate={new Date(round!.startDate)}
+                            isActiveRound={round?.isActive}
+                            roundIsQueued={round?.isQueued}
+                            warning={bm && bm.beatmapId ? warningMap.get(bm.beatmapId.toString()) : undefined}
+                            hasCheckedDuplicates={hasCheckedDuplicates}
+                            isLast={idx === displayBeatmaps.length - 1}
+                        />
+                    ))}
                 </Stack>
             </Card>
         </Stack>

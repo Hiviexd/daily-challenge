@@ -50,8 +50,6 @@ interface IProps {
     roundIsQueued?: boolean;
     warning?: IWarning;
     hasCheckedDuplicates: boolean;
-    showSkeleton?: boolean;
-    onImageLoad?: () => void;
     isLast?: boolean;
 }
 
@@ -65,8 +63,6 @@ export default function BeatmapRow({
     roundIsQueued = false,
     warning,
     hasCheckedDuplicates,
-    showSkeleton,
-    onImageLoad,
     isLast = false,
 }: IProps) {
     const updateRoundBeatmapId = useUpdateRoundBeatmapId(roundId);
@@ -340,8 +336,6 @@ export default function BeatmapRow({
                     <BeatmapRowBackground
                         cover={beatmap.cover}
                         isCurrentDailyChallenge={isCurrentDailyChallenge}
-                        showSkeleton={showSkeleton}
-                        onImageLoad={onImageLoad}
                     />
                 )}
 

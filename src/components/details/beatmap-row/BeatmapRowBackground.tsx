@@ -1,22 +1,26 @@
+import { useEffect, useRef, useState } from "react";
 import { Box, Skeleton } from "@mantine/core";
 import { ROW_OVERLAY_GRADIENT } from "./constants";
 
 interface Props {
     cover: string;
     isCurrentDailyChallenge: boolean;
-    showSkeleton?: boolean;
-    onImageLoad?: () => void;
 }
 
-export default function BeatmapRowBackground({
-    cover,
-    isCurrentDailyChallenge,
-    showSkeleton,
-    onImageLoad,
-}: Props) {
+export default function BeatmapRowBackground({ cover, isCurrentDailyChallenge }: Props) {
+    const [loaded, setLoaded] = useState(false);
+    const imgRef = useRef<HTMLImageElement>(null);
+
+    useEffect(() => {
+        setLoaded(false);
+        if (imgRef.current?.complete) {
+            setLoaded(true);
+        }
+    }, [cover]);
+
     return (
         <>
-            {showSkeleton && (
+            {!loaded && (
                 <Skeleton pos="absolute" top={0} left={0} right={0} bottom={0} radius={0} style={{ zIndex: 0 }} />
             )}
             <Box
@@ -26,9 +30,11 @@ export default function BeatmapRowBackground({
                 right={0}
                 bottom={0}
                 style={{
-                    backgroundImage: showSkeleton ? undefined : `url(${cover})`,
+                    backgroundImage: `url(${cover})`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
+                    opacity: loaded ? 1 : 0,
+                    transition: "opacity 0.15s ease",
                     zIndex: 0,
                 }}
             />
@@ -44,6 +50,7 @@ export default function BeatmapRowBackground({
                 }}
             />
             <img
+                ref={imgRef}
                 src={cover}
                 alt=""
                 aria-hidden
@@ -54,7 +61,7 @@ export default function BeatmapRowBackground({
                     opacity: 0,
                     pointerEvents: "none",
                 }}
-                onLoad={onImageLoad}
+                onLoad={() => setLoaded(true)}
             />
         </>
     );
