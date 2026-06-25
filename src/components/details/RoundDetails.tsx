@@ -1,4 +1,4 @@
-import { Table, ScrollArea, Stack, Card, Text, Divider, Badge, Group, Button, Tooltip } from "@mantine/core";
+import { Stack, Card, Text, Divider, Badge, Group, Button, Tooltip } from "@mantine/core";
 import { IRound, IWarning } from "@interfaces/Round";
 import { IBeatmap } from "@interfaces/Beatmap";
 import { IBeatmapSlotMods } from "@interfaces/Mod";
@@ -169,59 +169,41 @@ export default function RoundDetails({ round }: IProps) {
                 </Stack>
             </Card>
             <Card shadow="sm" p="md" bg="primary.11">
-                <ScrollArea>
-                    <Table miw={{ base: 1280 }}>
-                        <Table.Thead>
-                            <Table.Tr>
-                                <Table.Th style={{ minWidth: 80, maxWidth: 100, width: 100 }}>Beatmap ID</Table.Th>
-                                <Table.Th style={{ textAlign: "center" }}>Star Rating</Table.Th>
-                                <Table.Th style={{ textAlign: "center", width: 56 }}>Mode</Table.Th>
-                                <Table.Th style={{ width: 140 }} />
-                                <Table.Th>Artist - Title</Table.Th>
-                                <Table.Th>Difficulty</Table.Th>
-                                <Table.Th>Host</Table.Th>
-                                <Table.Th>Date Ranked</Table.Th>
-                                <Table.Th>Notes</Table.Th>
-                                <Table.Th>Mods</Table.Th>
-                                {isStaff && (
-                                    <Table.Th style={{ textAlign: "center" }}>
-                                        <Button
-                                            size="xs"
-                                            variant="light"
-                                            onClick={handleCheckDuplicates}
-                                            loading={checkDuplicatesMutation.isPending}
-                                            leftSection={<FontAwesomeIcon icon="search" />}>
-                                            Check Duplicates
-                                        </Button>
-                                    </Table.Th>
-                                )}
-                            </Table.Tr>
-                        </Table.Thead>
-                        <Table.Tbody>
-                            {displayBeatmaps.map((bm, idx) => {
-                                // Only show skeleton logic for non-null beatmaps
-                                const imgIdx = imageBeatmapIndices.indexOf(idx);
-                                return (
-                                    <BeatmapRow
-                                        key={idx}
-                                        beatmap={bm}
-                                        slotMods={displaySlotMods[idx]}
-                                        index={idx}
-                                        roundId={roundId}
-                                        isActiveRound={round?.isActive}
-                                        roundIsQueued={round?.isQueued}
-                                        warning={
-                                            bm && bm.beatmapId ? warningMap.get(bm.beatmapId.toString()) : undefined
-                                        }
-                                        hasCheckedDuplicates={hasCheckedDuplicates}
-                                        showSkeleton={!!bm && !allImagesLoaded}
-                                        onImageLoad={bm ? () => handleImageLoad(imgIdx) : undefined}
-                                    />
-                                );
-                            })}
-                        </Table.Tbody>
-                    </Table>
-                </ScrollArea>
+                <Group justify="space-between" mb="sm">
+                    <Text fw={600}>Beatmaps</Text>
+                    {isStaff && (
+                        <Button
+                            size="xs"
+                            variant="light"
+                            onClick={handleCheckDuplicates}
+                            loading={checkDuplicatesMutation.isPending}
+                            leftSection={<FontAwesomeIcon icon="search" />}>
+                            Check Duplicates
+                        </Button>
+                    )}
+                </Group>
+                <Stack gap={0}>
+                    {displayBeatmaps.map((bm, idx) => {
+                        const imgIdx = imageBeatmapIndices.indexOf(idx);
+                        return (
+                            <BeatmapRow
+                                key={idx}
+                                beatmap={bm}
+                                slotMods={displaySlotMods[idx]}
+                                index={idx}
+                                roundId={roundId}
+                                startDate={new Date(round!.startDate)}
+                                isActiveRound={round?.isActive}
+                                roundIsQueued={round?.isQueued}
+                                warning={bm && bm.beatmapId ? warningMap.get(bm.beatmapId.toString()) : undefined}
+                                hasCheckedDuplicates={hasCheckedDuplicates}
+                                showSkeleton={!!bm && !allImagesLoaded}
+                                onImageLoad={bm ? () => handleImageLoad(imgIdx) : undefined}
+                                isLast={idx === displayBeatmaps.length - 1}
+                            />
+                        );
+                    })}
+                </Stack>
             </Card>
         </Stack>
     );

@@ -36,6 +36,7 @@ import {
     faListUl,
     faSliders,
     faArrowsRotate,
+    faNoteSticky,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function loadIcons() {
@@ -75,5 +76,6 @@ export default function loadIcons() {
         faListUl,
         faSliders,
         faArrowsRotate,
+        faNoteSticky,
     );
 }

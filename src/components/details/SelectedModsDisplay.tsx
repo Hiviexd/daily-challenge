@@ -1,10 +1,9 @@
-import { Badge, Group } from "@mantine/core";
+import { Group } from "@mantine/core";
 import ModBadge from "@components/common/ModBadge";
 import ModHoverPopover from "@components/common/ModHoverPopover";
 import { IBeatmapSlotMods, ISelectedMod, ModsCatalog } from "@interfaces/Mod";
 import { ModDefaultSettings } from "@interfaces/Settings";
 import { getModBadgeColor, getModDefinition, hasCustomModSettings } from "@utils/mods";
-import { MODE_LABELS } from "@themes/modeConfig";
 
 interface SelectedModBadgeProps {
     selectedMod: ISelectedMod;
@@ -54,12 +53,7 @@ export default function SelectedModsDisplay({ slotMods, catalog, defaultSettings
     if (!slotMods.selected.length) return null;
 
     return (
-        <Group gap={6} wrap="nowrap">
-            {slotMods.ruleset !== "osu" && (
-                <Badge size="xs" variant="light">
-                    {MODE_LABELS[slotMods.ruleset]}
-                </Badge>
-            )}
+        <Group gap={6} wrap="wrap">
             {slotMods.selected.map((selectedMod) => (
                 <SelectedModBadge
                     key={selectedMod.acronym}

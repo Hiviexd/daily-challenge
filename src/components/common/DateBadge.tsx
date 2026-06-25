@@ -9,7 +9,7 @@ interface IDateBadgeProps {
     warningAge?: number; // Days before warning color
     dangerAge?: number; // Days before danger color
     variant?: BadgeVariant;
-    size?: "sm" | "md" | "lg";
+    size?: "xs" | "sm" | "md" | "lg";
 }
 
 export default function DateBadge({
@@ -31,7 +31,7 @@ export default function DateBadge({
 
     return (
         <Badge variant={variant} color={getColor()} size={size}>
-            <FontAwesomeIcon icon="clock" />{" "}
+            <FontAwesomeIcon icon="clock" size={size === "xs" ? "xs" : "sm"} />{" "}
             <Tooltip label={moment(date).format("LLL")}>
                 <span>{utils.getShortRelativeTime(date)}</span>
             </Tooltip>

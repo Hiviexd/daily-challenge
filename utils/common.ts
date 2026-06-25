@@ -78,6 +78,28 @@ export function getCurrentDayIndex(): number {
 }
 
 /**
+ * Gets the calendar date for a beatmap slot (Thursday = index 0)
+ */
+export function getBeatmapSlotDate(startDate: Date, index: number): Date {
+    const start = toUTCDateOnly(startDate);
+    return new Date(start.getTime() + index * 24 * 60 * 60 * 1000);
+}
+
+/**
+ * Short day label for a beatmap slot (e.g. "Thu")
+ */
+export function getBeatmapSlotDayLabel(startDate: Date, index: number): string {
+    return moment(getBeatmapSlotDate(startDate, index)).format("ddd");
+}
+
+/**
+ * Short date label for a beatmap slot (e.g. "Jun 25")
+ */
+export function getBeatmapSlotShortDate(startDate: Date, index: number): string {
+    return moment(getBeatmapSlotDate(startDate, index)).format("MMM D");
+}
+
+/**
  * Checks if a week period qualifies as the first week of a month
  * A week qualifies if it has 4 or more days within days 1-7 of the majority month
  * @param startDate Start date of the week period

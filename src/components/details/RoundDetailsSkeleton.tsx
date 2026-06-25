@@ -1,4 +1,5 @@
-import { Stack, Card, Group, Skeleton, Text, ScrollArea, Table } from "@mantine/core";
+import { Stack, Card, Group, Skeleton, Text, Divider, Box } from "@mantine/core";
+import { LOADED_ROW_MIN_HEIGHT } from "./beatmap-row/constants";
 
 export default function RoundDetailsSkeleton({ isStaff }: { isStaff: boolean }) {
     return (
@@ -24,70 +25,31 @@ export default function RoundDetailsSkeleton({ isStaff }: { isStaff: boolean }) 
                 </Stack>
             </Card>
             <Card shadow="sm" p="md" bg="primary.11">
-                <ScrollArea w="100%" type="auto" style={{ minWidth: 1200 }}>
-                    <Table>
-                        <Table.Thead>
-                            <Table.Tr>
-                                <Table.Th style={{ minWidth: 80, maxWidth: 100, width: 100 }}>Beatmap ID</Table.Th>
-                                <Table.Th style={{ textAlign: "center" }}>Star Rating</Table.Th>
-                                <Table.Th style={{ textAlign: "center", width: 56 }}>Mode</Table.Th>
-                                <Table.Th style={{ width: 140 }} />
-                                <Table.Th>Artist - Title</Table.Th>
-                                <Table.Th>Difficulty</Table.Th>
-                                <Table.Th>Host</Table.Th>
-                                <Table.Th>Date Ranked</Table.Th>
-                                <Table.Th>Notes</Table.Th>
-                                <Table.Th>Mods</Table.Th>
-                                {isStaff && (
-                                    <Table.Th style={{ textAlign: "center" }}>
-                                        <Skeleton height={18} width={60} radius="sm" />
-                                    </Table.Th>
-                                )}
-                            </Table.Tr>
-                        </Table.Thead>
-                        <Table.Tbody>
-                            {Array.from({ length: 7 }).map((_, idx) => (
-                                <Table.Tr key={idx}>
-                                    <Table.Td>
-                                        <Skeleton height={18} width={60} radius="sm" />
-                                    </Table.Td>
-                                    <Table.Td>
-                                        <Skeleton height={18} width={50} radius="sm" />
-                                    </Table.Td>
-                                    <Table.Td>
-                                        <Skeleton height={20} width={20} radius="sm" mx="auto" />
-                                    </Table.Td>
-                                    <Table.Td>
-                                        <Skeleton height={32} width={120} radius="sm" />
-                                    </Table.Td>
-                                    <Table.Td>
-                                        <Skeleton height={18} width={180} radius="sm" />
-                                    </Table.Td>
-                                    <Table.Td>
-                                        <Skeleton height={18} width={80} radius="sm" />
-                                    </Table.Td>
-                                    <Table.Td>
-                                        <Skeleton height={18} width={100} radius="sm" />
-                                    </Table.Td>
-                                    <Table.Td>
-                                        <Skeleton height={18} width={90} radius="sm" />
-                                    </Table.Td>
-                                    <Table.Td>
-                                        <Skeleton height={18} width={100} radius="sm" />
-                                    </Table.Td>
-                                    <Table.Td>
-                                        <Skeleton height={18} width={80} radius="sm" />
-                                    </Table.Td>
-                                    {isStaff && (
-                                        <Table.Td>
-                                            <Skeleton height={18} width={60} radius="sm" />
-                                        </Table.Td>
-                                    )}
-                                </Table.Tr>
-                            ))}
-                        </Table.Tbody>
-                    </Table>
-                </ScrollArea>
+                <Group justify="space-between" mb="sm">
+                    <Skeleton height={20} width={90} radius="sm" />
+                    {isStaff && <Skeleton height={28} width={130} radius="sm" />}
+                </Group>
+                <Stack gap={0}>
+                    {Array.from({ length: 7 }).map((_, idx) => (
+                        <Box key={idx} pos="relative" mih={LOADED_ROW_MIN_HEIGHT} style={{ overflow: "hidden" }}>
+                            <Skeleton pos="absolute" top={0} left={0} right={0} bottom={0} radius={0} />
+                            <Group align="center" wrap="nowrap" gap="sm" py={8} px="md" pos="relative" style={{ zIndex: 1 }}>
+                                <Stack gap={4} align="center" w={44}>
+                                    <Skeleton height={14} width={28} radius="sm" />
+                                    <Skeleton height={12} width={16} radius="sm" />
+                                </Stack>
+                                <Stack gap={6} style={{ flex: 1 }}>
+                                    <Group justify="space-between">
+                                        <Skeleton height={16} width="60%" radius="sm" />
+                                        <Skeleton height={20} width={80} radius="sm" />
+                                    </Group>
+                                    <Skeleton height={14} width="45%" radius="sm" />
+                                </Stack>
+                            </Group>
+                            {idx < 6 && <Divider />}
+                        </Box>
+                    ))}
+                </Stack>
             </Card>
         </Stack>
     );
