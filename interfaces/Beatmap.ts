@@ -9,7 +9,7 @@ export interface IBeatmap extends Document {
     artist: string;
     title: string;
     version: string;
-    cover: string; // cover@2x
+    cover: string; // slimcover@2x
     rankedDate: Date;
     creator: {
         osuId: number;

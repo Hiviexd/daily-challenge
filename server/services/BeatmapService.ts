@@ -1,6 +1,11 @@
 import Beatmap from "@models/beatmapModel";
 import OsuApiService from "@services/OsuApiService";
+import { IBeatmap as IOsuBeatmap } from "@interfaces/OsuApi";
 import { normalizeOsuGameMode } from "@utils/mods";
+
+function getSlimCoverUrl(beatmapResponse: IOsuBeatmap) {
+    return beatmapResponse.beatmapset.covers["slimcover@2x"];
+}
 
 class BeatmapService {
     public async getOrCreateBeatmap(beatmapId: string | number, accessToken: string) {
@@ -31,7 +36,7 @@ class BeatmapService {
         const artist = beatmapResponse.beatmapset.artist;
         const title = beatmapResponse.beatmapset.title;
         const version = beatmapResponse.version;
-        const cover = beatmapResponse.beatmapset.covers.cover;
+        const cover = getSlimCoverUrl(beatmapResponse);
         const rankedDate = new Date(beatmapResponse.beatmapset.ranked_date);
         const creator = {
             osuId: beatmapResponse.beatmapset.user_id,
@@ -66,8 +71,19 @@ class BeatmapService {
         }
 
         const mode = normalizeOsuGameMode(beatmapResponse.mode);
-        if (mode) {
+        const cover = getSlimCoverUrl(beatmapResponse);
+
+        let dirty = false;
+        if (mode && beatmap.mode !== mode) {
             beatmap.mode = mode;
+            dirty = true;
+        }
+        if (cover && beatmap.cover !== cover) {
+            beatmap.cover = cover;
+            dirty = true;
+        }
+
+        if (dirty) {
             await beatmap.save();
         }
 
