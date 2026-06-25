@@ -137,6 +137,14 @@ export default function BeatmapRow({
         setIsEditingNotes(false);
     };
 
+    const handleToggleNotesEdit = () => {
+        if (isEditingNotes) {
+            handleCancelNotes();
+            return;
+        }
+        setIsEditingNotes(true);
+    };
+
     const handleCancelBeatmapId = () => {
         setBeatmapId(beatmap?.beatmapId === 0 || beatmap?.beatmapId == null ? "" : beatmap?.beatmapId?.toString());
         setIsEditingBeatmapId(false);
@@ -301,6 +309,8 @@ export default function BeatmapRow({
         );
     };
 
+    const notesActionLabel = isEditingNotes ? "Cancel notes" : hasNotes ? "Edit notes" : "Add notes";
+
     const modeAndDifficulty = renderModeAndDifficulty();
     const hasMetaPrefix = !!modeAndDifficulty;
     const { ref: rowContentRef, height: rowHeight } = useElementSize();
@@ -393,14 +403,14 @@ export default function BeatmapRow({
                                 )}
                                 {loggedInUser?.isStaff && (
                                     <>
-                                        <Tooltip label={hasNotes ? "Edit notes" : "Add notes"}>
+                                        <Tooltip label={notesActionLabel}>
                                             <ActionIcon
                                                 color={isEditingNotes ? "yellow" : "blue"}
                                                 variant={isEditingNotes ? "light" : "subtle"}
-                                                onClick={() => setIsEditingNotes(true)}
+                                                onClick={handleToggleNotesEdit}
                                                 size="sm"
                                                 disabled={beatmapMissing}
-                                                aria-label={hasNotes ? "Edit notes" : "Add notes"}>
+                                                aria-label={notesActionLabel}>
                                                 <FontAwesomeIcon icon="note-sticky" size="sm" />
                                             </ActionIcon>
                                         </Tooltip>
