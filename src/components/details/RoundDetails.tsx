@@ -2,7 +2,7 @@ import { Stack, Card, Text, Divider, Badge, Group, Button, Tooltip } from "@mant
 import { IRound, IWarning } from "@interfaces/Round";
 import { IBeatmap } from "@interfaces/Beatmap";
 import { IBeatmapSlotMods } from "@interfaces/Mod";
-import BeatmapRow from "./BeatmapRow";
+import BeatmapRow from "./beatmap-row/BeatmapRow";
 import RoundManagement from "./RoundManagement";
 import { useCheckRoundDuplicates } from "@hooks/useRounds";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
