@@ -1,14 +1,4 @@
-import {
-    Box,
-    TextInput,
-    Group,
-    Anchor,
-    Text,
-    ActionIcon,
-    Tooltip,
-    Stack,
-    Divider,
-} from "@mantine/core";
+import { Box, TextInput, Group, Anchor, Text, ActionIcon, Tooltip, Stack, Divider } from "@mantine/core";
 import { IBeatmap } from "@interfaces/Beatmap";
 import { IBeatmapSlotMods } from "@interfaces/Mod";
 import {
@@ -34,11 +24,11 @@ import { buildAddBeatmapCommand, resolveBeatmapSlotRuleset } from "@utils/mods";
 import { getGameModeLabel } from "@themes/modeConfig";
 import SelectedModsDisplay from "../SelectedModsDisplay";
 import useModCatalog from "@hooks/useModCatalog";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useElementSize } from "@mantine/hooks";
 import GameModeIcon from "@components/common/GameModeIcon";
 import BeatmapRowBackground from "./BeatmapRowBackground";
 import BeatmapRowDayRail from "./BeatmapRowDayRail";
-import { LOADED_ROW_MIN_HEIGHT } from "./constants";
+import { LOADED_ROW_MIN_HEIGHT, DAY_RAIL_WIDTH, ROW_HEIGHT_TRANSITION } from "./constants";
 
 interface IProps {
     beatmap: IBeatmap | null;
@@ -73,7 +63,7 @@ export default function BeatmapRow({
     const [modModalOpen, { open: openModModal, close: closeModModal }] = useDisclosure(false);
 
     const [beatmapId, setBeatmapId] = useState(
-        beatmap?.beatmapId === 0 || beatmap?.beatmapId == null ? "" : beatmap?.beatmapId?.toString()
+        beatmap?.beatmapId === 0 || beatmap?.beatmapId == null ? "" : beatmap?.beatmapId?.toString(),
     );
     const [notes, setNotes] = useState(beatmap?.notes || "");
 
@@ -313,41 +303,61 @@ export default function BeatmapRow({
 
     const modeAndDifficulty = renderModeAndDifficulty();
     const hasMetaPrefix = !!modeAndDifficulty;
+    const { ref: rowContentRef, height: rowHeight } = useElementSize();
+
+    const rowBorderLeft = isCurrentDailyChallenge
+        ? "3px solid var(--mantine-color-yellow-5)"
+        : "3px solid transparent";
+
+    let rowBackgroundColor: string | undefined;
+    if (!hasBeatmap) {
+        rowBackgroundColor = isCurrentDailyChallenge ? "rgba(255, 215, 0, 0.04)" : "var(--mantine-color-dark-7)";
+    }
 
     return (
         <>
             <Box
                 pos="relative"
-                py={hasBeatmap ? 8 : "xs"}
-                px="md"
-                mih={hasBeatmap ? LOADED_ROW_MIN_HEIGHT : undefined}
                 style={{
                     overflow: "hidden",
-                    borderLeft: isCurrentDailyChallenge
-                        ? "3px solid var(--mantine-color-yellow-5)"
-                        : "3px solid transparent",
-                    backgroundColor: hasBeatmap
-                        ? undefined
-                        : isCurrentDailyChallenge
-                            ? "rgba(255, 215, 0, 0.04)"
-                            : "var(--mantine-color-dark-7)",
+                    ...(rowHeight > 0 ? { height: rowHeight, transition: ROW_HEIGHT_TRANSITION } : {}),
                 }}>
-                {hasBeatmap && beatmap.cover && (
-                    <BeatmapRowBackground
-                        cover={beatmap.cover}
-                        isCurrentDailyChallenge={isCurrentDailyChallenge}
-                    />
-                )}
-
-                <Group align="center" wrap="nowrap" gap="sm" pos="relative" style={{ zIndex: 2 }}>
+                <Box
+                    pos="absolute"
+                    top={0}
+                    bottom={0}
+                    left="var(--mantine-spacing-md)"
+                    w={DAY_RAIL_WIDTH}
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        zIndex: 2,
+                    }}>
                     <BeatmapRowDayRail
                         dayLabel={dayLabel}
                         dayOfMonth={slotDate.getUTCDate()}
                         slotDateLabel={slotDateLabel}
                         isCurrentDailyChallenge={isCurrentDailyChallenge}
                     />
+                </Box>
+                <Box
+                    ref={rowContentRef}
+                    pos="relative"
+                    py={hasBeatmap ? 8 : "xs"}
+                    pr="md"
+                    pl={`calc(var(--mantine-spacing-md) + ${DAY_RAIL_WIDTH}px + var(--mantine-spacing-sm))`}
+                    mih={hasBeatmap ? LOADED_ROW_MIN_HEIGHT : undefined}
+                    style={{
+                        overflow: "hidden",
+                        borderLeft: rowBorderLeft,
+                        backgroundColor: rowBackgroundColor,
+                    }}>
+                    {hasBeatmap && beatmap.cover && (
+                        <BeatmapRowBackground cover={beatmap.cover} isCurrentDailyChallenge={isCurrentDailyChallenge} />
+                    )}
 
-                    <Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
+                    <Stack gap={4} pos="relative" style={{ zIndex: 2, minWidth: 0 }}>
                         <Group gap="xs" wrap="wrap" align="center" justify="space-between">
                             {hasBeatmap ? (
                                 <Anchor
@@ -450,7 +460,7 @@ export default function BeatmapRow({
 
                         {renderNotes()}
                     </Stack>
-                </Group>
+                </Box>
             </Box>
             {!isLast && <Divider />}
 

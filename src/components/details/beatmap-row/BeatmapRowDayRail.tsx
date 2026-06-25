@@ -1,5 +1,6 @@
 import { Stack, Text, Tooltip } from "@mantine/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { DAY_RAIL_WIDTH } from "./constants";
 
 interface Props {
     dayLabel: string;
@@ -21,8 +22,8 @@ export default function BeatmapRowDayRail({
                 gap={2}
                 align="center"
                 justify="center"
-                w={44}
-                style={{ flexShrink: 0, cursor: "default", alignSelf: "center" }}>
+                w={DAY_RAIL_WIDTH}
+                style={{ cursor: "default" }}>
                 <Text fw={700} size="sm" lh={1}>
                     {dayLabel}
                 </Text>

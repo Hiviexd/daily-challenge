@@ -4,3 +4,7 @@ export const ROW_OVERLAY_GRADIENT = {
 };
 
 export const LOADED_ROW_MIN_HEIGHT = 68;
+
+export const DAY_RAIL_WIDTH = 44;
+
+export const ROW_HEIGHT_TRANSITION = "height 200ms ease";
